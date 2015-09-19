@@ -48,7 +48,7 @@ public class Client extends JFrame{
         clientName = JOptionPane.showInputDialog(this, "What's your name?");
         serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", "148.166.155.99");
         
-        setSize(300,150);
+        setSize(500,500);
         setVisible(true);      
     }
     
@@ -90,7 +90,7 @@ public class Client extends JFrame{
         do{
             try{
                 message = (String) input.readObject();
-                showMessage("\n"+message);
+                showMessage(message);
             }
             catch(ClassNotFoundException classNotFoundException){
                 showMessage("\nClass not found exception");
@@ -116,7 +116,6 @@ public class Client extends JFrame{
         try{
             output.writeObject(clientName + " - " + message);
             output.flush();
-            showMessage("\n" + clientName + " - " + message);
         }
         catch(IOException ioException){
             chatWindow.append("\nUnable to send message");

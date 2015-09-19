@@ -14,6 +14,8 @@ import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.swing.*;
 
 //separate connection,output, and input into their own connection class
@@ -31,6 +33,7 @@ public class Server extends JFrame{
     private ServerSocket server;
     private ArrayList<Socket> connection = new ArrayList<Socket>();
     
+    ExecutorService executor = Executors.newCachedThreadPool();    
     //constructor
     public Server(){
         super("Server Chat");
@@ -38,7 +41,7 @@ public class Server extends JFrame{
         chatWindow = new JTextArea();
         chatWindow.setEditable(false);
         add(new JScrollPane(chatWindow));
-        setSize(300,150);
+        setSize(500,500);
         setVisible(true);
     }
     
@@ -46,15 +49,20 @@ public class Server extends JFrame{
     public void startRunning(){
         try{
             server = new ServerSocket(5000, 100); //First number is port and second number is backlog of how many people can access server
+            
             while(true){
                 try{
                     waitForConnection();
+                    server.setSoTimeout(100);
                     setupStream();
                     whileChatting();
                 }
                 
-                catch(EOFException eofException){//EOF Exception represents end of a stream
+              /*  catch(EOFException eofException){//EOF Exception represents end of a stream
                     showMessage("\n Server ended the connection!");
+                }*/
+                catch(Exception e){
+                    showMessage(e+"e");
                 }
                 
                 finally{
@@ -69,17 +77,21 @@ public class Server extends JFrame{
     }
     
     //Wait for a connection, then display connection information
-    private void waitForConnection() throws IOException{
+    private void waitForConnection(){
         showMessage("Waiting for someone to connect...\n");
+        try{
+            connection.add(server.accept());
+            connection.get(0).setSoTimeout(100);
+        }
+        catch(Exception e){}
+        showMessage("Now connected to "+connection.get(0).getInetAddress().getHostName());
         
         //Listens for a connection to be made accepts it
-        connection.add(server.accept()); //Throw ioException if no connection is made
+     /*   connection.add(server.accept()); //Throw ioException if no connection is made
         showMessage("Now connect to "+connection.get(0).getInetAddress().getHostName());
         showMessage("\nWaiting for Second connection");
         connection.add(server.accept());
-        //If ioException occurs when there is no connection, the try 
-        //block will end and the while loop will start again
-        showMessage("Now connect to "+connection.get(1).getInetAddress().getHostName());
+        showMessage("Now connect to "+connection.get(1).getInetAddress().getHostName());*/
         
     }
     
@@ -89,36 +101,66 @@ public class Server extends JFrame{
         output.get(0).flush();
         
         input.add(new ObjectInputStream(connection.get(0).getInputStream()));
-        showMessage("\n Streams1 are now setup! \n");   
         
         
-        output.add(new ObjectOutputStream(connection.get(1).getOutputStream()));
+   /*     output.add(new ObjectOutputStream(connection.get(1).getOutputStream()));
         output.get(1).flush();
         
-        input.add(new ObjectInputStream(connection.get(1).getInputStream()));
-        showMessage("\n Streams1 are now setup! \n");
+        input.add(new ObjectInputStream(connection.get(1).getInputStream()));*/
     }
     
     //Occurs during the conversation
     private void whileChatting() throws IOException{
-        String message = "Connection Successful";
-        sendMessage(message);
-        
+        String message="hi";
         do{
             try{
-                message = (String) input.get(0).readObject();
-                showMessage("\n"+message);
-                sendMessage("\n"+message);
+                checkAdditionalConnections();
+                checkNewMessages();
                 
-                message = (String) input.get(1).readObject();
+             /*   message = (String) input.get(1).readObject();
                 showMessage("\n"+message);
-                sendMessage("\n"+message);
+                sendMessage("\n"+message);*/
             }
-            catch(ClassNotFoundException classNotFoundException){
+            catch(Exception e){
                 showMessage("\n Class Not Found Exception");
             }           
         }
         while(!message.equals("CLIENT - END"));
+    }
+    
+    private void checkAdditionalConnections() throws IOException{
+     /*   executor.submit(new Runnable(){
+            public void run(){
+                try{
+                connection.add(server.accept());
+                showMessage("Now connected to "+connection.get(0).getInetAddress().getHostName()+"\n");
+                }
+                catch(Exception e){}
+            }
+        });
+        executor.shutdown();*/
+        try{
+        connection.add(server.accept());
+        connection.get(connection.size()-1).setSoTimeout(100);
+        showMessage("\nNow connected to "+connection.get(connection.size()-1).getInetAddress().getHostName());
+        
+        output.add(new ObjectOutputStream(connection.get(connection.size()-1).getOutputStream()));
+        output.get(0).flush();
+        
+        input.add(new ObjectInputStream(connection.get(connection.size()-1).getInputStream()));
+        }
+        catch(Exception e){}
+    }
+    
+    private void checkNewMessages(){
+        for(ObjectInputStream socket:input){
+            try{
+            String message = (String) socket.readObject();
+            showMessage("\n"+message);
+            sendMessage("\n"+message);
+            }
+            catch(Exception e){}
+        }
     }
     
     //Close streams and sockets at the end of chat
@@ -130,9 +172,9 @@ public class Server extends JFrame{
             input.get(0).close();
             connection.get(0).close();
             
-            output.get(1).close();
+          /*  output.get(1).close();
             input.get(1).close();
-            connection.get(1).close();
+            connection.get(1).close();*/
         }
         catch(IOException ioException){
             ioException.printStackTrace();
@@ -141,18 +183,14 @@ public class Server extends JFrame{
     
     //Send message to client
     private void sendMessage(String message){
-        try{
-            
-            output.get(0).writeObject(message);
-            output.get(0).flush();
-            
-            output.get(1).writeObject(message);
-            output.get(1).flush();
-            
-            showMessage(message);
-        }
-        catch(IOException ioException){
-            chatWindow.append("\n ERROR: COULDN'T SEND MESSAGE");
+        for(ObjectOutputStream socket:output){
+            try{
+                socket.writeObject(message);
+                socket.flush();
+            }
+            catch(IOException ioException){
+                chatWindow.append("\n ERROR: COULDN'T SEND MESSAGE");
+            }
         }
     }
     
@@ -168,6 +206,4 @@ public class Server extends JFrame{
             }
         );
     }
-    
-    //Toggle users ability to type into message box
 }
