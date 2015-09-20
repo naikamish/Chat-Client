@@ -46,7 +46,7 @@ public class Client extends JFrame{
         add(new JScrollPane(chatWindow), BorderLayout.CENTER);
         
         clientName = JOptionPane.showInputDialog(this, "What's your name?");
-        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", "148.166.155.99");
+        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", "148.166.154.46");
         
         setSize(500,500);
         setVisible(true);      

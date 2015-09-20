@@ -34,6 +34,8 @@ public class Server extends JFrame{
     private ArrayList<Socket> connection = new ArrayList<Socket>();
     
     ExecutorService executor = Executors.newCachedThreadPool();    
+    private ArrayList<Thread> threads = new ArrayList<Thread>();
+    
     //constructor
     public Server(){
         super("Server Chat");
@@ -102,6 +104,21 @@ public class Server extends JFrame{
         
         input.add(new ObjectInputStream(connection.get(0).getInputStream()));
         
+        threads.add(new Thread(
+            new Runnable(){
+                public void run(){
+                    while(true){
+                    try{
+                        String message = (String) input.get(0).readObject();
+                        showMessage("\n"+message);
+                        sendMessage("\n"+message);
+                    }
+                    catch(Exception e){}
+                }
+                }
+            }));
+        threads.get(0).start();
+        
         
    /*     output.add(new ObjectOutputStream(connection.get(1).getOutputStream()));
         output.get(1).flush();
@@ -122,7 +139,7 @@ public class Server extends JFrame{
                 sendMessage("\n"+message);*/
             }
             catch(Exception e){
-                showMessage("\n Class Not Found Exception");
+                showMessage(e+"\n");
             }           
         }
         while(!message.equals("CLIENT - END"));
@@ -139,28 +156,47 @@ public class Server extends JFrame{
             }
         });
         executor.shutdown();*/
-        try{
+        try{    
         connection.add(server.accept());
-        connection.get(connection.size()-1).setSoTimeout(100);
+    //    connection.get(connection.size()-1).setSoTimeout(10000);
         showMessage("\nNow connected to "+connection.get(connection.size()-1).getInetAddress().getHostName());
         
         output.add(new ObjectOutputStream(connection.get(connection.size()-1).getOutputStream()));
         output.get(0).flush();
         
         input.add(new ObjectInputStream(connection.get(connection.size()-1).getInputStream()));
+        threads.add(new Thread(
+            new Runnable(){
+                public int inputNum=input.size()-1;
+                public void run(){
+                    while(true){
+                    try{
+                        String message = (String) input.get(inputNum).readObject();
+                        showMessage("\n"+message);
+                        sendMessage("\n"+message);
+                    }
+                    catch(Exception e){}
+                    }
+                }
+            }));
+        threads.get(threads.size()-1).start();
         }
         catch(Exception e){}
     }
     
     private void checkNewMessages(){
-        for(ObjectInputStream socket:input){
+        
+            
+        
+       
+     /*   for(ObjectInputStream socket:input){
             try{
             String message = (String) socket.readObject();
             showMessage("\n"+message);
             sendMessage("\n"+message);
             }
             catch(Exception e){}
-        }
+        }*/
     }
     
     //Close streams and sockets at the end of chat
