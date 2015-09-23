@@ -33,7 +33,7 @@ public class Server extends JFrame{
     private ServerSocket server;
     private ArrayList<Socket> connection = new ArrayList<Socket>();
     
-    ExecutorService executor = Executors.newCachedThreadPool();    
+ //   ExecutorService executor = Executors.newCachedThreadPool();    
     private ArrayList<Thread> threads = new ArrayList<Thread>();
     private Thread t1;
     
@@ -53,19 +53,7 @@ public class Server extends JFrame{
         try{
             server = new ServerSocket(5000, 100); //First number is port and second number is backlog of how many people can access server
             showMessage("Waiting for someone to connect...\n");
-            while(true){
-                try{
-                    waitForConnection();
-                    setupStream();
-                }
-                catch(Exception e){
-                    showMessage(e+"e");
-                }
-                
-                finally{
-                    closeStreams();
-                }
-            }
+            waitForConnection();
         }
         
         catch(IOException ioException){
@@ -103,12 +91,20 @@ public class Server extends JFrame{
                 public int inputNum=input.size()-1;
                 public void run(){
                     while(true){
-                    try{
-                        String message = (String) input.get(inputNum).readObject();
-                        showMessage("\n"+message);
-                        sendMessage("\n"+message);
-                    }
-                    catch(Exception e){}
+                        try{
+                            String message = (String) input.get(inputNum).readObject();
+                            showMessage("\n"+message);
+                            sendMessage("\n"+message);
+                        }
+                        catch(Exception e)
+                        {
+                           // input.remove(inputNum);
+
+                          //  output.remove(inputNum);
+
+                           // connection.get(inputNum).close();
+                           // connection.remove(inputNum);
+                        }
                     }
                 }
             }));
@@ -118,13 +114,13 @@ public class Server extends JFrame{
     }
     
     //Close streams and sockets at the end of chat
-    public void closeStreams(){
+   /* public void closeStreams(){
         try{
             connection.get(0).close();
         }
         catch(IOException ioException){
         }
-    }
+    }*/
     
     //Send message to client
     private void sendMessage(String message){

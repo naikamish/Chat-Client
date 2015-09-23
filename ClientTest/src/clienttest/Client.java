@@ -46,7 +46,14 @@ public class Client extends JFrame{
         add(new JScrollPane(chatWindow), BorderLayout.CENTER);
         
         clientName = JOptionPane.showInputDialog(this, "What's your name?");
-        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", "148.166.154.46");
+        
+        String myip="";
+        try{
+        myip = InetAddress.getLocalHost().getHostAddress();
+        }
+        catch(Exception e){}
+
+        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", myip+"");
         
         setSize(500,500);
         setVisible(true);      
@@ -63,6 +70,7 @@ public class Client extends JFrame{
         }
         catch(IOException ioException){
             ioException.printStackTrace();
+            showMessage(ioException+"");
         }
         finally{
             closeStreams();
@@ -92,8 +100,8 @@ public class Client extends JFrame{
                 message = (String) input.readObject();
                 showMessage(message);
             }
-            catch(ClassNotFoundException classNotFoundException){
-                showMessage("\nClass not found exception");
+            catch(Exception e){
+                showMessage(e+"");
             }
         }
         while(!message.equals("SERVER - END"));
