@@ -23,18 +23,11 @@ import javax.swing.*;
 
 public class Server extends JFrame{
     
-    private JTextArea chatWindow;
+    private static JTextArea chatWindow;
     
-    //This is how computers communicate with each other
-    private ArrayList<ObjectOutputStream> output = new ArrayList<ObjectOutputStream>(); //Output is messages we send out
-    private ArrayList<ObjectInputStream> input = new ArrayList<ObjectInputStream>(); //Input is messages we receive
-    
-    
-    private ServerSocket server;
-    private ArrayList<Socket> connection = new ArrayList<Socket>();
-    
- //   ExecutorService executor = Executors.newCachedThreadPool();    
-    private ArrayList<Thread> threads = new ArrayList<Thread>();
+    private ServerSocket server; 
+    private static ArrayList<Connection> connections = new ArrayList<Connection>();
+
     private Thread t1;
     
     //constructor
@@ -51,7 +44,7 @@ public class Server extends JFrame{
     //Set upand run the server
     public void startRunning(){
         try{
-            server = new ServerSocket(5000, 100); //First number is port and second number is backlog of how many people can access server
+            server = new ServerSocket(5000,100); //First number is port and second number is backlog of how many people can access server
             showMessage("Waiting for someone to connect...\n");
             waitForConnection();
         }
@@ -68,9 +61,8 @@ public class Server extends JFrame{
                 public void run(){
                     while(true){
                     try{
-                        connection.add(server.accept());
-                        showMessage("Now connected to "+connection.get(0).getInetAddress().getHostName()+"\n");
-                        setupStream();
+                        Connection tempConn = new Connection(server.accept());
+                        connections.add(tempConn);
                     }
                     catch(Exception e){}
                 }
@@ -79,64 +71,15 @@ public class Server extends JFrame{
         t1.start();    
     }
     
-    //Get stream to send and receive data
-    private void setupStream() throws IOException{
-        try{    
-        output.add(new ObjectOutputStream(connection.get(connection.size()-1).getOutputStream()));
-        output.get(connection.size()-1).flush();
-        
-        input.add(new ObjectInputStream(connection.get(connection.size()-1).getInputStream()));
-        threads.add(new Thread(
-            new Runnable(){
-                public int inputNum=input.size()-1;
-                public void run(){
-                    while(true){
-                        try{
-                            String message = (String) input.get(inputNum).readObject();
-                            showMessage("\n"+message);
-                            sendMessage("\n"+message);
-                        }
-                        catch(Exception e)
-                        {
-                           // input.remove(inputNum);
-
-                          //  output.remove(inputNum);
-
-                           // connection.get(inputNum).close();
-                           // connection.remove(inputNum);
-                        }
-                    }
-                }
-            }));
-        threads.get(threads.size()-1).start();
-        }
-        catch(Exception e){}
-    }
-    
-    //Close streams and sockets at the end of chat
-   /* public void closeStreams(){
-        try{
-            connection.get(0).close();
-        }
-        catch(IOException ioException){
-        }
-    }*/
-    
     //Send message to client
-    private void sendMessage(String message){
-        for(ObjectOutputStream socket:output){
-            try{
-                socket.writeObject(message);
-                socket.flush();
-            }
-            catch(IOException ioException){
-                chatWindow.append("\n ERROR: COULDN'T SEND MESSAGE");
-            }
+    public static void sendMessage(String message){
+        for(Connection socket:connections){
+            socket.sendMessage(message);
         }
     }
     
     //Updates chat window
-    private void showMessage(final String text){
+    public static void showMessage(final String text){
         
         //Update the GUI instead of totally recreating the chat window
         SwingUtilities.invokeLater(
