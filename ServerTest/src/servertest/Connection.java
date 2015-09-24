@@ -18,6 +18,7 @@ public class Connection{
     private ObjectInputStream input;
     private Socket connection;
     private Thread thread;
+    private Group group;
     
     public Connection(Socket socket){
         connection = socket;
@@ -28,7 +29,17 @@ public class Connection{
         input = new ObjectInputStream(connection.getInputStream());
         }
         catch(Exception e){}
-        sendMessage("a");
+    }
+    
+    public void sendMessage(String message){
+        try{
+        output.writeObject(message);
+        output.flush();
+        }
+        catch(Exception e){}
+    }
+    
+    private void setUpThread(Group g){
         thread= new Thread(
             new Runnable(){
                 public void run(){
@@ -36,7 +47,7 @@ public class Connection{
                         try{
                             String message = (String) input.readObject();
                             Server.showMessage("\n"+message);
-                            Server.sendMessage("\n"+message);
+                            g.sendMessage("\n"+message);
                         }
                         catch(Exception e){}
                     }
@@ -45,10 +56,19 @@ public class Connection{
         thread.start();
     }
     
-    public void sendMessage(String message){
+    public void setGroup(Group g){
+        group = g;
+        setUpThread(group);
+        Server.showMessage("\n"+group.getName()+"\n");
+    }
+    
+    public void getGroup(){
         try{
-        output.writeObject(message);
-        output.flush();
+            //Read the string sent by the client which says what group 
+            //they want to be part of then get the server to set 
+            //this connections group
+            String message = (String) input.readObject();
+            Server.setGroup(this, message);
         }
         catch(Exception e){}
     }

@@ -18,15 +18,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.*;
 
-//separate connection,output, and input into their own connection class
-    
-
 public class Server extends JFrame{
     
     private static JTextArea chatWindow;
     
     private ServerSocket server; 
-    private static ArrayList<Connection> connections = new ArrayList<Connection>();
+    //private ArrayList<Group> group = new ArrayList<Group>();
+    private static Group group1, group2, group3;
 
     private Thread t1;
     
@@ -46,6 +44,9 @@ public class Server extends JFrame{
         try{
             server = new ServerSocket(5000,100); //First number is port and second number is backlog of how many people can access server
             showMessage("Waiting for someone to connect...\n");
+            group1 = new Group(server,"group1");
+            group2 = new Group(server,"group2");
+            group3 = new Group(server,"group3");
             waitForConnection();
         }
         
@@ -61,8 +62,10 @@ public class Server extends JFrame{
                 public void run(){
                     while(true){
                     try{
+                        //Create a temporary connection and find out which group 
+                        //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
-                        connections.add(tempConn);
+                        tempConn.getGroup();
                     }
                     catch(Exception e){}
                 }
@@ -71,10 +74,22 @@ public class Server extends JFrame{
         t1.start();    
     }
     
-    //Send message to client
-    public static void sendMessage(String message){
-        for(Connection socket:connections){
-            socket.sendMessage(message);
+    //Send the client the group that they want to be part of
+    //as a parameter so they can create a thread
+    //that lets them send their messages to everyone in that group
+    //Also add the client to that group through addConnection method
+    public static void setGroup(Connection conn, String s){
+        if(s.equals("group1")){
+            conn.setGroup(group1);
+            group1.addConnection(conn);
+        }
+        else if(s.equals("group2")){
+            conn.setGroup(group2);
+            group2.addConnection(conn);
+        }
+        else{
+            conn.setGroup(group3);
+            group3.addConnection(conn);
         }
     }
     

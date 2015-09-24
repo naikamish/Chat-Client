@@ -26,6 +26,7 @@ public class Client extends JFrame{
     private String serverIP;
     private Socket connection;
     private String clientName;
+    private String groupName;
     
     public Client(){
         super("Client Chat");
@@ -34,7 +35,7 @@ public class Client extends JFrame{
         userText.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    sendMessage(e.getActionCommand());
+                    sendMessage(clientName + " - " + e.getActionCommand());
                     userText.setText("");
                 }
             }
@@ -55,6 +56,8 @@ public class Client extends JFrame{
 
         serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", myip+"");
         
+        groupName = JOptionPane.showInputDialog(this, "What Group do you want to connect to?", "group1");
+        
         setSize(500,500);
         setVisible(true);      
     }
@@ -66,11 +69,11 @@ public class Client extends JFrame{
             whileChatting();
         }
         catch(EOFException eofException){
-            showMessage("\nClient terminated connection");
+            //showMessage("\nClient terminated connection");
         }
         catch(IOException ioException){
             ioException.printStackTrace();
-            showMessage(ioException+"");
+           // showMessage(ioException+"");
         }
         finally{
             closeStreams();
@@ -91,6 +94,7 @@ public class Client extends JFrame{
         
         input = new ObjectInputStream(connection.getInputStream());
         showMessage("\nStreams are now set up\n");
+        sendMessage(groupName);
     }
     
     private void whileChatting() throws IOException{
@@ -101,7 +105,7 @@ public class Client extends JFrame{
                 showMessage(message);
             }
             catch(Exception e){
-                showMessage(e+"");
+               // showMessage(e+"");
             }
         }
         while(!message.equals("SERVER - END"));
@@ -122,7 +126,7 @@ public class Client extends JFrame{
     
     private void sendMessage(String message){
         try{
-            output.writeObject(clientName + " - " + message);
+            output.writeObject(message);
             output.flush();
         }
         catch(IOException ioException){
