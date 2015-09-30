@@ -18,6 +18,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.*;
 
+//make it so that connection in group closes properly when client exits chat
+//will probably have to catch an ioexception error and remove connection from
+//the group
+
 public class Server extends JFrame{
     
     private static JTextArea chatWindow;
@@ -25,6 +29,7 @@ public class Server extends JFrame{
     private ServerSocket server; 
     //private ArrayList<Group> group = new ArrayList<Group>();
     private static Group group1, group2, group3;
+    private String groupList = "group1,group2,group3";
 
     private Thread t1;
     
@@ -65,6 +70,7 @@ public class Server extends JFrame{
                         //Create a temporary connection and find out which group 
                         //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
+                        tempConn.sendMessage(groupList);
                         tempConn.getGroup();
                     }
                     catch(Exception e){}
@@ -73,6 +79,7 @@ public class Server extends JFrame{
             });
         t1.start();    
     }
+    
     
     //Send the client the group that they want to be part of
     //as a parameter so they can create a thread
