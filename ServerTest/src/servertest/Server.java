@@ -71,7 +71,8 @@ public class Server extends JFrame{
                         //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
                         tempConn.sendMessage(groupList);
-                        tempConn.getGroup();
+                        tempConn.getInfo();
+                       // tempConn.sendClientList();
                     }
                     catch(Exception e){}
                 }
@@ -88,14 +89,17 @@ public class Server extends JFrame{
     public static void setGroup(Connection conn, String s){
         if(s.equals("group1")){
             conn.setGroup(group1);
+          //  conn.sendClientList();
             group1.addConnection(conn);
         }
         else if(s.equals("group2")){
             conn.setGroup(group2);
+         //   conn.sendClientList();
             group2.addConnection(conn);
         }
         else{
             conn.setGroup(group3);
+         //   conn.sendClientList();
             group3.addConnection(conn);
         }
     }

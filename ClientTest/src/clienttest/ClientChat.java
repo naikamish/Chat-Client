@@ -29,6 +29,7 @@ public class ClientChat extends JFrame{
     private String clientName;
     private String groupName;
     private Thread thread;
+    private DefaultListModel listModel = new DefaultListModel();
     
     public ClientChat(Connection conn, String grp){
         super("Client Chat");
@@ -41,7 +42,7 @@ public class ClientChat extends JFrame{
         userText.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    sendMessage(clientName + " - " + e.getActionCommand());
+                    sendMessage("CLIENT - "+clientName + " - " + e.getActionCommand());
                     userText.setText("");
                 }
             }
@@ -58,13 +59,42 @@ public class ClientChat extends JFrame{
                     while(true){
                         try{
                             String message = (String) connection.input.readObject();
-                            showMessage("\n"+message);
+                            String source = message.substring(0,6);
+                           // SERVER - add awoiefwa
+                            if(source.equals("SERVER")){
+                                String action = message.substring(9,12);
+                                if(action.equals("SRT")){
+                                    message=message.substring(13);
+                                    String[] data = message.split(",");
+
+                                    for(String s : data){
+                                        listModel.addElement(s);
+                                    }
+                                }
+                                else if(action.equals("ADD")){
+                                    listModel.addElement(message.substring(13));
+                                }
+                                else if(action.equals("DEL")){
+                                    
+                                }
+                            }
+                            else{
+                            showMessage("\n"+message.substring(9));
+                            }
                         }
                         catch(Exception e){}
                     }
                 }
             });
         thread.start();
+        
+        sendMessage(groupName);
+        sendMessage(clientName);
+        
+        JList clientList = new JList(listModel);
+        add(new JScrollPane(clientList), BorderLayout.EAST);
+        //setGroupList();
+        
         
         
         setSize(500,500);
@@ -84,6 +114,18 @@ public class ClientChat extends JFrame{
             }
         );
     }
+    
+  /*  private void setGroupList(){
+        try{
+            String message = (String) connection.input.readObject();
+            String[] data = message.split(",");
+            
+            for(String s : data){
+                listModel.addElement(s);
+            }
+        }
+        catch(Exception e){}
+    }*/
     
     
 }

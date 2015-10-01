@@ -19,6 +19,7 @@ public class Connection{
     private Socket connection;
     private Thread thread;
     private Group group;
+    private String clientName;
     
     public Connection(Socket socket){
         connection = socket;
@@ -58,18 +59,30 @@ public class Connection{
     
     public void setGroup(Group g){
         group = g;
+        sendClientList();
         setUpThread(group);
         Server.showMessage("\n"+group.getName()+"\n");
     }
     
-    public void getGroup(){
+    public void getInfo(){
         try{
             //Read the string sent by the client which says what group 
             //they want to be part of then get the server to set 
             //this connections group
             String message = (String) input.readObject();
             Server.setGroup(this, message);
+            String message2 = (String) input.readObject();
+            clientName = message2;
+            group.sendMessage("SERVER - ADD "+clientName);
         }
         catch(Exception e){}
+    }
+    
+    public String getName(){
+        return clientName;
+    }
+    
+    public void sendClientList(){
+        sendMessage("SERVER - SRT "+group.getClientList());
     }
 }

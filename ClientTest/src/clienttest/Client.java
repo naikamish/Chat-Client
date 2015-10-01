@@ -74,7 +74,7 @@ public class Client extends JFrame{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage(groupsList.getSelectedValue().toString());
+               // sendMessage(groupsList.getSelectedValue().toString());
                 chatWindow = new ClientChat(connection, groupsList.getSelectedValue().toString());
              //   chatWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             }
@@ -111,14 +111,14 @@ public class Client extends JFrame{
     
     private void getGroupList(){
         try{
-        message = (String) connection.input.readObject();
-        //data = new ArrayList(Arrays.asList(message.split(" , ")));
-        data = message.split(",");
-          // String[] data = {"1","2","3"};
-        
-        for(String s : data){
-        listModel.addElement(s);
-    }
+            message = (String) connection.input.readObject();
+            //data = new ArrayList(Arrays.asList(message.split(" , ")));
+            data = message.split(",");
+              // String[] data = {"1","2","3"};
+
+            for(String s : data){
+                listModel.addElement(s);
+            }
         }
         catch(Exception e){}
     }

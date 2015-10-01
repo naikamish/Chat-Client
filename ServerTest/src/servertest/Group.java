@@ -39,4 +39,14 @@ public class Group {
     public String getName(){
         return groupName;
     }
+    
+    public String getClientList(){
+        String groupList = "";
+        if(!connections.isEmpty()){
+        for(Connection socket:connections){
+            groupList += ","+socket.getName();
+        }
+        }
+        return groupList;
+    }
 }
