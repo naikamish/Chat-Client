@@ -29,7 +29,8 @@ public class Connection{
         output.flush();
         input = new ObjectInputStream(connection.getInputStream());
         }
-        catch(Exception e){}
+        catch(Exception e){//Server.showMessage("\nline32 connection\n");
+        }
     }
     
     public void sendMessage(String message){
@@ -37,7 +38,8 @@ public class Connection{
         output.writeObject(message);
         output.flush();
         }
-        catch(Exception e){}
+        catch(Exception e){//Server.showMessage("\nline40 connection\n");
+        }
     }
     
     private void setUpThread(Group g){
@@ -50,7 +52,8 @@ public class Connection{
                             Server.showMessage("\n"+message);
                             g.sendMessage("\n"+message);
                         }
-                        catch(Exception e){}
+                        catch(Exception e){//Server.showMessage("\nline53 connection\n");
+                        }
                     }
                 }
             });
@@ -70,12 +73,15 @@ public class Connection{
             //they want to be part of then get the server to set 
             //this connections group
             String message = (String) input.readObject();
-            Server.setGroup(this, message);
-            String message2 = (String) input.readObject();
-            clientName = message2;
+            String[] data = message.split(",");
+            
+            Server.setGroup(this, data[0]);
+           // String message2 = (String) input.readObject();
+            clientName = data[1];
             group.sendMessage("SERVER - ADD "+clientName);
         }
-        catch(Exception e){}
+        catch(Exception e){//Server.showMessage("\nline80 connection\n");
+        }
     }
     
     public String getName(){
@@ -83,6 +89,9 @@ public class Connection{
     }
     
     public void sendClientList(){
-        sendMessage("SERVER - SRT "+group.getClientList());
+        String clientList = group.getClientList();
+        if(!clientList.equals("")){
+            sendMessage("SERVER - SRT "+group.getClientList());
+        }
     }
 }

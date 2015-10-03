@@ -27,9 +27,9 @@ public class Server extends JFrame{
     private static JTextArea chatWindow;
     
     private ServerSocket server; 
-    //private ArrayList<Group> group = new ArrayList<Group>();
-    private static Group group1, group2, group3;
-    private String groupList = "group1,group2,group3";
+    private static ArrayList<Group> groups = new ArrayList<Group>();
+   // private static Group group1, group2, group3;
+//    private String groupList = "group1,group2,group3";
 
     private Thread t1;
     
@@ -49,14 +49,17 @@ public class Server extends JFrame{
         try{
             server = new ServerSocket(5000,100); //First number is port and second number is backlog of how many people can access server
             showMessage("Waiting for someone to connect...\n");
-            group1 = new Group(server,"group1");
-            group2 = new Group(server,"group2");
-            group3 = new Group(server,"group3");
+            groups.add(new Group(server,"group1"));
+            groups.add(new Group(server,"group2"));
+            groups.add(new Group(server,"group3"));
+        //    group1 = new Group(server,"group1");
+        //    group2 = new Group(server,"group2");
+        //    group3 = new Group(server,"group3");
             waitForConnection();
         }
         
-        catch(IOException ioException){
-            ioException.printStackTrace();
+        catch(Exception e){
+            //showMessage("\nline62 server\n");
         }
     }
     
@@ -70,15 +73,24 @@ public class Server extends JFrame{
                         //Create a temporary connection and find out which group 
                         //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
-                        tempConn.sendMessage(groupList);
+                        tempConn.sendMessage(getGroupList());
                         tempConn.getInfo();
                        // tempConn.sendClientList();
                     }
-                    catch(Exception e){}
+                    catch(Exception e){//showMessage("\nline80 server\n");
+                    }
                 }
                 }
             });
         t1.start();    
+    }
+    
+    private String getGroupList(){
+        String groupList = "";
+        for(Group group:groups){
+            groupList+=","+group.getName();
+        }
+        return groupList;
     }
     
     
@@ -87,20 +99,12 @@ public class Server extends JFrame{
     //that lets them send their messages to everyone in that group
     //Also add the client to that group through addConnection method
     public static void setGroup(Connection conn, String s){
-        if(s.equals("group1")){
-            conn.setGroup(group1);
-          //  conn.sendClientList();
-            group1.addConnection(conn);
-        }
-        else if(s.equals("group2")){
-            conn.setGroup(group2);
-         //   conn.sendClientList();
-            group2.addConnection(conn);
-        }
-        else{
-            conn.setGroup(group3);
-         //   conn.sendClientList();
-            group3.addConnection(conn);
+        for(Group group:groups){
+            if(s.equals(group.getName())){
+                conn.setGroup(group);
+                //conn.sendClientList();
+                group.addConnection(conn);
+            }
         }
     }
     
