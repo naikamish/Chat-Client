@@ -47,7 +47,8 @@ public class ClientChat extends JFrame{
         userText.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    sendMessage("CLIENT - "+clientName + " - " + e.getActionCommand());
+                    //MSG group1 amish - hello
+                    sendMessage("MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
                     userText.setText("");
                 }
             }
@@ -72,9 +73,9 @@ public class ClientChat extends JFrame{
     }
     
     public void startRunning(){
-        sendMessage(groupName+","+clientName);
+        sendMessage("CMD JOIN " + groupName+","+clientName);
        // sendMessage(clientName);
-        thread= new Thread(
+    /*    thread= new Thread(
             new Runnable(){
                 public void run(){
                     while(true){
@@ -115,14 +116,14 @@ public class ClientChat extends JFrame{
                     }
                 }
             });
-        thread.start();
+        thread.start();*/
     }
     
     private void sendMessage(String message){
         connection.sendMessage(message);
     }
     
-    private void showMessage(final String text){
+    public void showMessage(final String text){
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
@@ -132,6 +133,18 @@ public class ClientChat extends JFrame{
         );
     }
     
+    public String getGroup(){
+        return groupName;
+    }
+    
+    public void setGroupList(String list){
+        String[] data = list.split(",");
+        for(String s : data){
+            s = "<html><font color=green>"+s+"</font></html>";
+            listModel.addElement(s);
+            clientListPane.updateUI();
+        }
+    }
   /*  private void setGroupList(){
         try{
             String message = (String) connection.input.readObject();

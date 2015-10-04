@@ -20,7 +20,7 @@ import javax.swing.*;
 public class Client extends JFrame{
     
   //  private JTextField userText;
-    private ClientChat chatWindow;
+    private static ArrayList<ClientChat> chats = new ArrayList<ClientChat>();
     
     private ObjectOutputStream output;
     private ObjectInputStream input;
@@ -38,29 +38,8 @@ public class Client extends JFrame{
     
     public Client(){
         super("Client Chat");
-       /* userText = new JTextField();
-        userText.setEditable(false);
-        userText.addActionListener(
-            new ActionListener(){
-                public void actionPerformed(ActionEvent e){
-                    sendMessage(clientName + " - " + e.getActionCommand());
-                    userText.setText("");
-                }
-            }
-        );
-        add(userText, BorderLayout.NORTH);
-        
-        chatWindow = new JTextArea();
-        chatWindow.setEditable(false);
-        add(new JScrollPane(chatWindow), BorderLayout.CENTER);
-      */ 
-        String myip="";
-        try{
-        myip = InetAddress.getLocalHost().getHostAddress();
-        }
-        catch(Exception e){}
 
-        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to", myip+"");
+        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to?");
         clientName = JOptionPane.showInputDialog(this, "What's your name?");
         //groupName = JOptionPane.showInputDialog(this, "What Group do you want to connect to?", "group1");
 
@@ -75,8 +54,9 @@ public class Client extends JFrame{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                chatWindow = new ClientChat(connection, groupsList.getSelectedValue().toString(), clientName);
+                ClientChat chatWindow = new ClientChat(connection, groupsList.getSelectedValue().toString(), clientName);
                 chatWindow.startRunning();
+                chats.add(chatWindow);
             }
             
         });
@@ -89,6 +69,23 @@ public class Client extends JFrame{
          connectToServer();
     }
     
+    public static void sendGroupList(String g, String list){
+        for(ClientChat chat:chats){
+            if(chat.getGroup().equals(g)){
+                chat.setGroupList(list);
+            }
+        }
+    }
+    
+    public static void showMessage(String g, String message){
+        for(ClientChat chat:chats){
+            if(chat.getGroup().equals(g)){
+                chat.showMessage("\n"+message);
+            }
+        }
+    }
+
+    
     //Connect to Server
     private void connectToServer(){
         try{
@@ -99,6 +96,7 @@ public class Client extends JFrame{
                 listModel.addElement(s);
             }
             connectButton.setEnabled(true);
+            connection.setUpThread();
         }
         catch(Exception e){}
     }

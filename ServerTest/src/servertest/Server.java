@@ -29,6 +29,7 @@ public class Server extends JFrame{
     
     private ServerSocket server; 
     private static ArrayList<Group> groups = new ArrayList<Group>();
+    private static ArrayList<Connection> connections = new ArrayList<Connection>();
    // private static Group group1, group2, group3;
 //    private String groupList = "group1,group2,group3";
 
@@ -75,7 +76,8 @@ public class Server extends JFrame{
                         //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
                         tempConn.sendMessage(getGroupList());
-                        tempConn.getInfo();
+                     //   tempConn.getInfo();
+                        connections.add(tempConn);
                        // tempConn.sendClientList();
                     }
                     catch(Exception e){//showMessage("\nline80 server\n");
@@ -84,6 +86,25 @@ public class Server extends JFrame{
                 }
             });
         t1.start();    
+    }
+    
+    public static Group addToGroup(Connection c, String g){
+        for(Group group:groups){
+            if(group.getName().equals(g)){
+                group.sendMessage("CMD ADDS "+group.getName()+" "+c.getName());
+                group.addConnection(c);
+                return group;
+            }
+        }
+        return null;
+    }
+    
+    public static void sendGroupMessage(String g, String message){
+        for(Group group:groups){
+            if(group.getName().equals(g)){
+                group.sendMessage(message);
+            }
+        }
     }
     
     private String getGroupList(){

@@ -19,6 +19,7 @@ public class Connection {
     private ObjectOutputStream output;
     public ObjectInputStream input;
     private Socket connection;
+    private Thread thread;
     
     public Connection(Socket socket){
         connection = socket;
@@ -28,6 +29,41 @@ public class Connection {
         input = new ObjectInputStream(connection.getInputStream());
         }
         catch(Exception e){}
+    }
+    
+    public void setUpThread(){
+        thread= new Thread(
+            new Runnable(){
+                public void run(){
+                    while(true){
+                        try{
+                            String message = (String) input.readObject();
+                            String source = message.substring(0,3);
+                            //CMD STRT group1 a,b,c,d
+                            if(source.equals("CMD")){
+                                String action = message.substring(4,8);
+                                if(action.equals("STRT")||action.equals("ADDS")){
+                                    String groupName=message.substring(9,15);
+                                    String groupList = message.substring(16);
+                                    
+                                    Client.sendGroupList(groupName, groupList);
+                                    Client.showMessage(groupName,message);
+                                }
+                            }
+                            //MSG group1 hello
+                            else if(source.equals("MSG")){
+                                String groupName = message.substring(4,10);
+                                Client.showMessage(groupName,message);
+                            }
+                            //Server.showMessage("\n"+message);
+                           // g.sendMessage(""+message);
+                        }
+                        catch(Exception e){//Server.showMessage("\nline53 connection\n");
+                        }
+                    }
+                }
+            });
+        thread.start();
     }
     
     public void sendMessage(String message){
