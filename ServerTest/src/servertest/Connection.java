@@ -50,7 +50,7 @@ public class Connection{
                         try{
                             String message = (String) input.readObject();
                             Server.showMessage("\n"+message);
-                            g.sendMessage("\n"+message);
+                            g.sendMessage(""+message);
                         }
                         catch(Exception e){//Server.showMessage("\nline53 connection\n");
                         }

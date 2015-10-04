@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.*;
 
@@ -53,6 +55,8 @@ public class ClientChat extends JFrame{
         add(userText, BorderLayout.NORTH);
         
         chatWindow = new JTextArea();
+        chatWindow.setLineWrap(true);
+        chatWindow.setWrapStyleWord(true);
         chatWindow.setEditable(false);
         add(new JScrollPane(chatWindow), BorderLayout.CENTER);
         
@@ -85,19 +89,25 @@ public class ClientChat extends JFrame{
                                     String[] data = groupList.split(",");
 
                                     for(String s : data){
+                                        s = "<html><font color=green>"+s+"</font></html>";
                                         listModel.addElement(s);
                                         clientListPane.updateUI();
                                     }
                                 }
                                 else if(action.equals("ADD")){
-                                    listModel.addElement(message.substring(13));
+                                    String s = message.substring(13);
+                                    s = "<html><font color=green>"+s+"</font></html>";
+                                    listModel.addElement(s);
                                 }
                                 else if(action.equals("DEL")){
                                     
                                 }
                             }
                            // else{
-                            showMessage("\n"+message);
+                            Date date = new Date();
+                            SimpleDateFormat stf = new SimpleDateFormat("hh:mm:ss");
+                            String justTime = stf.format(date);
+                            showMessage("\n"+justTime+"   "+message);
                            // }
                         }
                         catch(Exception e){//showMessage("\nline103 clientchat\n");

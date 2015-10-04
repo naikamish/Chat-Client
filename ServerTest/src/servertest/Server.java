@@ -21,6 +21,7 @@ import javax.swing.*;
 //make it so that connection in group closes properly when client exits chat
 //will probably have to catch an ioexception error and remove connection from
 //the group
+//allow people to join multiple groups 
 
 public class Server extends JFrame{
     
