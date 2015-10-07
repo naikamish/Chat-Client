@@ -24,7 +24,7 @@ public class Client extends JFrame{
     
     private ObjectOutputStream output;
     private ObjectInputStream input;
-    private String message = "";
+   // private String message = "";
     private String serverIP;
  //   private Socket connection;
     private String clientName;
@@ -34,7 +34,7 @@ public class Client extends JFrame{
     private DefaultListModel listModel = new DefaultListModel();
     
     Connection connection;
-    JButton connectButton;
+    JButton connectButton, createGroupButton;
     
     public Client(){
         super("Client Chat");
@@ -55,8 +55,24 @@ public class Client extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 ClientChat chatWindow = new ClientChat(connection, groupsList.getSelectedValue().toString(), clientName);
+                
+                chatWindow.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                
+                
                 chatWindow.startRunning();
                 chats.add(chatWindow);
+            }
+            
+        });
+        
+        createGroupButton = new JButton("Create New Group");
+        add(createGroupButton,BorderLayout.NORTH);
+        
+        createGroupButton.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
             }
             
         });
@@ -77,10 +93,23 @@ public class Client extends JFrame{
         }
     }
     
-    public static void showMessage(String g, String message){
+    public static void showMessage(String[] message){
         for(ClientChat chat:chats){
-            if(chat.getGroup().equals(g)){
-                chat.showMessage("\n"+message);
+            if(chat.getGroup().equals(message[2])){
+                chat.showMessage(message);
+            }
+        }
+    }
+    
+    public static void removeFromGroup(ClientChat c){
+        chats.remove(c);
+    }
+    
+    public static void deleteFromList(String g, String user){
+        for(ClientChat chat:chats){
+            if((chat.getGroup()).equals(g)){
+                //chat.showMessage(new String[]{"hello"});
+                chat.deleteFromList(user);
             }
         }
     }
@@ -90,8 +119,8 @@ public class Client extends JFrame{
     private void connectToServer(){
         try{
             connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000));
-            message = (String) connection.input.readObject();
-            data = message.split(",");
+            String[] message = (String[]) connection.input.readObject();
+            data = message[4].split(",");
             for(String s : data){
                 listModel.addElement(s);
             }

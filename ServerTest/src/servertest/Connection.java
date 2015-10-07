@@ -34,7 +34,7 @@ public class Connection{
         setUpThread();
     }
     
-    public void sendMessage(String message){
+    public void sendMessage(String[] message){
         try{
         output.writeObject(message);
         output.flush();
@@ -49,23 +49,31 @@ public class Connection{
                 public void run(){
                     while(true){
                         try{
-                            String message = (String) input.readObject();
-                            String source = message.substring(0,3);
+                            String[] message = (String[]) input.readObject();
+                           // String source = message.substring(0,3);
                             //CMD JOIN group1,amish
-                            if(source.equals("CMD")){
-                                String action = message.substring(4,8);
-                                if(action.equals("JOIN")){
-                                    String info = message.substring(9);
-                                    addToGroup(info);
+                            if(message[0].equals("CMD")){
+                              //  String action = message.substring(4,8);
+                                if(message[1].equals("JOIN")){
+                                 //   String info = message.substring(9);
+                                    addToGroup(message[2],message[3]);
                                    // sendMessage
+                                }
+                                else if(message[1].equals("EXIT")){
+                                    leaveGroup(message[2]);
+                                   // Server.removeFromGroup(message[2],this);
                                 }
                             }
                             //MSG group1 hello
-                            else if(source.equals("MSG")){
-                                String groupNum = message.substring(4,10);
-                                Server.sendGroupMessage(groupNum,message);
+                            else if(message[0].equals("MSG")){
+                              //  String groupName = message.substring(4,10);
+                                Server.sendGroupMessage(new String[]{"MSG", "SEND", message[2],message[3],message[4]});
                             }
-                            Server.showMessage("\n"+message);
+                            StringBuilder strBuilder = new StringBuilder();
+                            for (int i = 0; i < message.length; i++) {
+                                strBuilder.append( message[i]+" " );
+                             }
+                            Server.showMessage(strBuilder.toString());
                            // g.sendMessage(""+message);
                         }
                         catch(Exception e){//Server.showMessage("\nline53 connection\n");
@@ -76,16 +84,21 @@ public class Connection{
         thread.start();
     }
     
-    public void addToGroup(String info){
-        String[] data = info.split(",");
-        Group g = Server.addToGroup(this, data[0]);
-        clientName = data[1];
+    public void leaveGroup(String g){
+        Server.removeFromGroup(this, g);
+    }
+    
+    public void addToGroup(String group, String user){
+       // String[] data = info.split(",");
+        clientName = user;
+        Group g = Server.addToGroup(this, group);
+       // clientName = user;
         String clientList = g.getClientList();
         if(!clientList.equals("")){
-            sendMessage("CMD STRT "+g.getName()+" "+clientList);
+            sendMessage(new String[]{"CMD", "STRT", g.getName(), "", clientList});
             //Server.showMessage("\nCMD - STRT "+g.getName()+" "+clientList);
         }
-        //g.sendMessage("CMD ADDS "+g.getName()+" "+clientName);
+       // g.sendMessage(new String[]{"CMD", "ADDS", g.getName(), "", clientName});//CMD ADDS "+g.getName()+" "+clientName);
     }
     
     public void setGroup(Group g){
@@ -106,7 +119,7 @@ public class Connection{
             Server.setGroup(this, data[0]);
            // String message2 = (String) input.readObject();
             clientName = data[1];
-            group.sendMessage("SERVER - ADD "+clientName);
+           // group.sendMessage("SERVER - ADD "+clientName);
         }
         catch(Exception e){//Server.showMessage("\nline80 connection\n");
         }
@@ -119,7 +132,7 @@ public class Connection{
     public void sendClientList(){
         String clientList = group.getClientList();
         if(!clientList.equals("")){
-            sendMessage("SERVER - SRT "+group.getClientList());
+           // sendMessage("SERVER - SRT "+group.getClientList());
         }
     }
 }

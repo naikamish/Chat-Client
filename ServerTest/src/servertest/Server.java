@@ -18,20 +18,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.*;
 
-//make it so that connection in group closes properly when client exits chat
-//will probably have to catch an ioexception error and remove connection from
-//the group
-//allow people to join multiple groups 
+ 
 
 public class Server extends JFrame{
     
-    private static JTextArea chatWindow;
+  //  private static JTextArea chatWindow;
+    private static JTextPane chatWindow;
     
     private ServerSocket server; 
     private static ArrayList<Group> groups = new ArrayList<Group>();
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
    // private static Group group1, group2, group3;
 //    private String groupList = "group1,group2,group3";
+    private static String fullText = "";
 
     private Thread t1;
     
@@ -39,7 +38,10 @@ public class Server extends JFrame{
     public Server(){
         super("Server Chat");
         
-        chatWindow = new JTextArea();
+     //   chatWindow = new JTextArea();
+        chatWindow = new JTextPane();
+        chatWindow.setContentType("text/html");
+        chatWindow.setAutoscrolls(true);
         chatWindow.setEditable(false);
         add(new JScrollPane(chatWindow));
         setSize(500,500);
@@ -75,7 +77,7 @@ public class Server extends JFrame{
                         //Create a temporary connection and find out which group 
                         //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
-                        tempConn.sendMessage(getGroupList());
+                        tempConn.sendMessage(new String[]{"CMD","LIST","","",getGroupList()});
                      //   tempConn.getInfo();
                         connections.add(tempConn);
                        // tempConn.sendClientList();
@@ -91,7 +93,7 @@ public class Server extends JFrame{
     public static Group addToGroup(Connection c, String g){
         for(Group group:groups){
             if(group.getName().equals(g)){
-                group.sendMessage("CMD ADDS "+group.getName()+" "+c.getName());
+                group.sendMessage(new String[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
                 return group;
             }
@@ -99,10 +101,10 @@ public class Server extends JFrame{
         return null;
     }
     
-    public static void sendGroupMessage(String g, String message){
+    public static void sendGroupMessage(String[] msg){
         for(Group group:groups){
-            if(group.getName().equals(g)){
-                group.sendMessage(message);
+            if(group.getName().equals(msg[2])){
+                group.sendMessage(msg);
             }
         }
     }
@@ -130,6 +132,15 @@ public class Server extends JFrame{
         }
     }
     
+    public static void removeFromGroup(Connection user, String g){
+        for(Group group:groups){
+            if(g.equals(group.getName())){
+                group.removeFromGroup(user);
+                //conn.sendClientList();
+            }
+        }
+    }
+    
     //Updates chat window
     public static void showMessage(final String text){
         
@@ -137,7 +148,9 @@ public class Server extends JFrame{
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
-                    chatWindow.append(text);
+                    fullText+="<font color=green>"+text+"</font><br>";
+                    chatWindow.setText(fullText);
+                   // chatWindow.append(text);
                 }
             }
         );

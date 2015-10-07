@@ -37,24 +37,28 @@ public class Connection {
                 public void run(){
                     while(true){
                         try{
-                            String message = (String) input.readObject();
-                            String source = message.substring(0,3);
+                            String[] message = (String[]) input.readObject();
+                            //String source = message.substring(0,3);
                             //CMD STRT group1 a,b,c,d
-                            if(source.equals("CMD")){
-                                String action = message.substring(4,8);
-                                if(action.equals("STRT")||action.equals("ADDS")){
-                                    String groupName=message.substring(9,15);
-                                    String groupList = message.substring(16);
+                            if(message[0].equals("CMD")){
+                               // String action = message.substring(4,8);
+                                if(message[1].equals("STRT")||message[1].equals("ADDS")){
+                                 //   String groupName=message.substring(9,15);
+                                 //   String groupList = message.substring(16);
                                     
-                                    Client.sendGroupList(groupName, groupList);
-                                    Client.showMessage(groupName,message);
+                                    Client.sendGroupList(message[2],message[4]);//groupName, groupList);
+                                   // Client.showMessage(groupName,message);
+                                }
+                                else if(message[1].equals("RMOV")){
+                                    Client.deleteFromList(message[2],message[3]);
                                 }
                             }
                             //MSG group1 hello
-                            else if(source.equals("MSG")){
-                                String groupName = message.substring(4,10);
-                                Client.showMessage(groupName,message);
-                            }
+                          //  else if(message[0].equals("MSG")){
+                               // String groupName = message.substring(4,10);
+                                Client.showMessage(message);
+                                //Client.showMessage(message[2],message[3], message[4]);//groupName,message);
+                         //   }
                             //Server.showMessage("\n"+message);
                            // g.sendMessage(""+message);
                         }
@@ -66,7 +70,7 @@ public class Connection {
         thread.start();
     }
     
-    public void sendMessage(String message){
+    public void sendMessage(String[] message){
         try{
         output.writeObject(message);
         output.flush();

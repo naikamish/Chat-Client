@@ -26,14 +26,19 @@ public class Group {
     }
     
     //Send message to client
-    public void sendMessage(String message){
+    public void sendMessage(String[] msg){
         for(Connection socket:connections){
-            socket.sendMessage(message);
+            socket.sendMessage(msg);
         }
     }
     
     public void addConnection(Connection conn){
         connections.add(conn);
+    }
+    
+    public void removeFromGroup(Connection user){
+        connections.remove(user);
+        sendMessage(new String[]{"CMD","RMOV",groupName,user.getName(),""});
     }
     
     public String getName(){

@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.*;
+import java.awt.event.*;
 
 /**
  *
@@ -22,7 +23,9 @@ import javax.swing.*;
  */
 public class ClientChat extends JFrame{
     private JTextField userText;
-    private JTextArea chatWindow;
+   // private JTextPane userText;
+   // private JTextArea chatWindow;
+    private JTextPane chatWindow;
     private ObjectOutputStream output;
     private ObjectInputStream input;
     private String message = "";
@@ -36,6 +39,8 @@ public class ClientChat extends JFrame{
     private JList<String> clientList;
     private JScrollPane clientListPane = new JScrollPane();
     
+    private String fullText = "";
+    
     public ClientChat(Connection conn, String grp, String name){
         super("Client Chat");
         connection = conn;       
@@ -48,16 +53,19 @@ public class ClientChat extends JFrame{
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     //MSG group1 amish - hello
-                    sendMessage("MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+                    sendMessage(new String[]{"MSG", "SEND", groupName, clientName, e.getActionCommand()});//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
                     userText.setText("");
                 }
             }
         );
         add(userText, BorderLayout.NORTH);
         
-        chatWindow = new JTextArea();
-        chatWindow.setLineWrap(true);
-        chatWindow.setWrapStyleWord(true);
+      //  chatWindow = new JTextArea();
+        chatWindow = new JTextPane();
+      //  chatWindow.setLineWrap(true);
+     //   chatWindow.setWrapStyleWord(true);
+        chatWindow.setContentType("text/html");
+        chatWindow.setAutoscrolls(true);
         chatWindow.setEditable(false);
         add(new JScrollPane(chatWindow), BorderLayout.CENTER);
         
@@ -66,14 +74,25 @@ public class ClientChat extends JFrame{
         clientListPane.setViewportView(clientList);
         //setGroupList();
         
-        
+        addWindowListener( new WindowAdapter() {
+                    @Override
+                    public void windowClosing(WindowEvent we) {
+                       closeWindow();
+                    }
+                } );
         
         setSize(500,500);
         setVisible(true);
     }
     
+    public void closeWindow(){
+        sendMessage(new String[]{"CMD", "EXIT", groupName, clientName, ""});
+        Client.removeFromGroup(this);
+        this.dispose();
+    }
+    
     public void startRunning(){
-        sendMessage("CMD JOIN " + groupName+","+clientName);
+        sendMessage(new String[]{"CMD", "JOIN", groupName, clientName,""});//CMD JOIN " + groupName+","+clientName);
        // sendMessage(clientName);
     /*    thread= new Thread(
             new Runnable(){
@@ -119,18 +138,31 @@ public class ClientChat extends JFrame{
         thread.start();*/
     }
     
-    private void sendMessage(String message){
+    private void sendMessage(String[] message){
         connection.sendMessage(message);
     }
     
-    public void showMessage(final String text){
+    public void showMessage(final String[] text){
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
-                    chatWindow.append(text);
+                    StringBuilder strBuilder = new StringBuilder();
+                            for (int i = 0; i < text.length; i++) {
+                                strBuilder.append( text[i]+" " );
+                             }
+                    //chatWindow.append(text);
+                    fullText+="<font color=green>"+strBuilder.toString()+"</font><br>";
+                    chatWindow.setText(fullText);
                 }
             }
         );
+    }
+    
+    public void deleteFromList(String user){
+        // showMessage(new String[]{"removed",user});
+        listModel.removeElement(user);
+       // showMessage(new String[]{"removed",user});
+        clientListPane.updateUI();
     }
     
     public String getGroup(){
@@ -140,7 +172,7 @@ public class ClientChat extends JFrame{
     public void setGroupList(String list){
         String[] data = list.split(",");
         for(String s : data){
-            s = "<html><font color=green>"+s+"</font></html>";
+            //s = "<html><font color=green>"+s+"</font></html>";
             listModel.addElement(s);
             clientListPane.updateUI();
         }
