@@ -19,32 +19,30 @@ import javax.swing.*;
 
 public class Client extends JFrame{
     
-  //  private JTextField userText;
     private static ArrayList<ClientChat> chats = new ArrayList<ClientChat>();
     
     private ObjectOutputStream output;
     private ObjectInputStream input;
-   // private String message = "";
     private String serverIP;
- //   private Socket connection;
     private String clientName;
     private String groupName;
-   // private ArrayList<String> data;
     private String[] data;
-    private DefaultListModel listModel = new DefaultListModel();
+    private static DefaultListModel listModel = new DefaultListModel();
     
     Connection connection;
     JButton connectButton, createGroupButton;
+    private static JScrollPane groupsListPane = new JScrollPane();
+    JList groupsList;
     
     public Client(){
         super("Client Chat");
 
         serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to?");
         clientName = JOptionPane.showInputDialog(this, "What's your name?");
-        //groupName = JOptionPane.showInputDialog(this, "What Group do you want to connect to?", "group1");
-
-        JList groupsList = new JList(listModel);
-        add(new JScrollPane(groupsList), BorderLayout.CENTER);
+        
+        groupsList = new JList(listModel);
+        add(groupsListPane, BorderLayout.CENTER);
+        groupsListPane.setViewportView(groupsList);
         
         connectButton = new JButton("Connect");
         add(connectButton,BorderLayout.SOUTH);
@@ -72,7 +70,8 @@ public class Client extends JFrame{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                String newGroup = JOptionPane.showInputDialog("What is the name of the group you wish to create?");
+                connection.sendMessage(new String[]{"CMD","CRTE",newGroup,"",""});
             }
             
         });
@@ -82,7 +81,17 @@ public class Client extends JFrame{
     }
     
     public void startRunning(){
-         connectToServer();
+        try{
+            connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000));
+            String[] message = (String[]) connection.input.readObject();
+            data = message[4].split(",");
+            for(String s : data){
+                listModel.addElement(s);
+            }
+            connectButton.setEnabled(true);
+            connection.setUpThread();
+        }
+        catch(Exception e){}
     }
     
     public static void sendGroupList(String g, String list){
@@ -108,26 +117,13 @@ public class Client extends JFrame{
     public static void deleteFromList(String g, String user){
         for(ClientChat chat:chats){
             if((chat.getGroup()).equals(g)){
-                //chat.showMessage(new String[]{"hello"});
                 chat.deleteFromList(user);
             }
         }
     }
-
     
-    //Connect to Server
-    private void connectToServer(){
-        try{
-            connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000));
-            String[] message = (String[]) connection.input.readObject();
-            data = message[4].split(",");
-            for(String s : data){
-                listModel.addElement(s);
-            }
-            connectButton.setEnabled(true);
-            connection.setUpThread();
-        }
-        catch(Exception e){}
+    public static void addGroup(String groupName){
+        listModel.addElement(groupName);
+        groupsListPane.updateUI();
     }
-
 }

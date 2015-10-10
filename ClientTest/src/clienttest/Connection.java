@@ -38,29 +38,18 @@ public class Connection {
                     while(true){
                         try{
                             String[] message = (String[]) input.readObject();
-                            //String source = message.substring(0,3);
-                            //CMD STRT group1 a,b,c,d
                             if(message[0].equals("CMD")){
-                               // String action = message.substring(4,8);
                                 if(message[1].equals("STRT")||message[1].equals("ADDS")){
-                                 //   String groupName=message.substring(9,15);
-                                 //   String groupList = message.substring(16);
-                                    
                                     Client.sendGroupList(message[2],message[4]);//groupName, groupList);
-                                   // Client.showMessage(groupName,message);
                                 }
                                 else if(message[1].equals("RMOV")){
                                     Client.deleteFromList(message[2],message[3]);
                                 }
+                                else if(message[1].equals("CRTE")){
+                                    Client.addGroup(message[2]);
+                                }
                             }
-                            //MSG group1 hello
-                          //  else if(message[0].equals("MSG")){
-                               // String groupName = message.substring(4,10);
-                                Client.showMessage(message);
-                                //Client.showMessage(message[2],message[3], message[4]);//groupName,message);
-                         //   }
-                            //Server.showMessage("\n"+message);
-                           // g.sendMessage(""+message);
+                            Client.showMessage(message);
                         }
                         catch(Exception e){//Server.showMessage("\nline53 connection\n");
                         }
@@ -76,17 +65,5 @@ public class Connection {
         output.flush();
         }
         catch(Exception e){}
-    }
-    
-    public void close(){
-        try{
-            input.close();
-            output.close();
-            connection.close();
-        }
-        catch(IOException ioException){
-            ioException.printStackTrace();
-        }
-    }
-    
+    }   
 }

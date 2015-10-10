@@ -18,27 +18,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.*;
 
- 
+ //create and delete group, store group names in txt file
 
 public class Server extends JFrame{
     
-  //  private static JTextArea chatWindow;
     private static JTextPane chatWindow;
     
-    private ServerSocket server; 
+    private static ServerSocket server; 
     private static ArrayList<Group> groups = new ArrayList<Group>();
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
-   // private static Group group1, group2, group3;
-//    private String groupList = "group1,group2,group3";
     private static String fullText = "";
 
     private Thread t1;
     
-    //constructor
     public Server(){
         super("Server Chat");
         
-     //   chatWindow = new JTextArea();
         chatWindow = new JTextPane();
         chatWindow.setContentType("text/html");
         chatWindow.setAutoscrolls(true);
@@ -48,42 +43,97 @@ public class Server extends JFrame{
         setVisible(true);
     }
     
-    //Set upand run the server
     public void startRunning(){
         try{
             server = new ServerSocket(5000,100); //First number is port and second number is backlog of how many people can access server
             showMessage("Waiting for someone to connect...\n");
-            groups.add(new Group(server,"group1"));
-            groups.add(new Group(server,"group2"));
-            groups.add(new Group(server,"group3"));
-        //    group1 = new Group(server,"group1");
-        //    group2 = new Group(server,"group2");
-        //    group3 = new Group(server,"group3");
+            createGroupList();
             waitForConnection();
         }
         
-        catch(Exception e){
-            //showMessage("\nline62 server\n");
+        catch(Exception e){}
+    }
+    
+    private void createGroupList(){
+        // The name of the file to open.
+        String fileName = "grouplist.txt";
+
+        // This will reference one line at a time
+        String line = null;
+
+        try {
+            // FileReader reads text files in the default encoding.
+            FileReader fileReader = 
+                new FileReader(fileName);
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader = 
+                new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+                groups.add(new Group(server,line));
+            } 
+
+            // Always close files.
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                "Unable to open file '" + 
+                fileName + "'");                
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+            // Or we could just do this: 
+            // ex.printStackTrace();
         }
     }
     
-    //Wait for a connection, then display connection information
+    public static void createGroup(String groupName){
+        String fileName = "grouplist.txt";
+        
+        try{
+        FileWriter fileWriter =
+                new FileWriter(fileName,true);
+
+            // Always wrap FileWriter in BufferedWriter.
+            BufferedWriter bufferedWriter =
+                new BufferedWriter(fileWriter);
+
+            // Note that write() does not automatically
+            // append a newline character.
+            bufferedWriter.newLine();
+            bufferedWriter.write(groupName);
+
+            // Always close files.
+            bufferedWriter.close();
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error writing to file '"
+                + fileName + "'");
+            // Or we could just do this:
+            // ex.printStackTrace();
+        }
+        groups.add(new Group(server,groupName));
+        for(Connection connection:connections){
+            connection.sendMessage(new String[]{"CMD", "CRTE", groupName,"",""});
+        }
+    }
+    
     private void waitForConnection(){
         t1 = new Thread(
             new Runnable(){
                 public void run(){
                     while(true){
                     try{
-                        //Create a temporary connection and find out which group 
-                        //the connection wants to be a part of
                         Connection tempConn = new Connection(server.accept());
                         tempConn.sendMessage(new String[]{"CMD","LIST","","",getGroupList()});
-                     //   tempConn.getInfo();
                         connections.add(tempConn);
-                       // tempConn.sendClientList();
                     }
-                    catch(Exception e){//showMessage("\nline80 server\n");
-                    }
+                    catch(Exception e){}
                 }
                 }
             });
@@ -117,40 +167,20 @@ public class Server extends JFrame{
         return groupList;
     }
     
-    
-    //Send the client the group that they want to be part of
-    //as a parameter so they can create a thread
-    //that lets them send their messages to everyone in that group
-    //Also add the client to that group through addConnection method
-    public static void setGroup(Connection conn, String s){
-        for(Group group:groups){
-            if(s.equals(group.getName())){
-                conn.setGroup(group);
-                //conn.sendClientList();
-                group.addConnection(conn);
-            }
-        }
-    }
-    
     public static void removeFromGroup(Connection user, String g){
         for(Group group:groups){
             if(g.equals(group.getName())){
                 group.removeFromGroup(user);
-                //conn.sendClientList();
             }
         }
     }
     
-    //Updates chat window
     public static void showMessage(final String text){
-        
-        //Update the GUI instead of totally recreating the chat window
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
                     fullText+="<font color=green>"+text+"</font><br>";
                     chatWindow.setText(fullText);
-                   // chatWindow.append(text);
                 }
             }
         );
