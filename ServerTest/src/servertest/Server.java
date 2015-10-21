@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.*;
+import message.Message;
 
  //create and delete group, store group names in txt file
 
@@ -119,7 +120,7 @@ public class Server extends JFrame{
         }
         groups.add(new Group(server,groupName));
         for(Connection connection:connections){
-            connection.sendMessage(new String[]{"CMD", "CRTE", groupName,"",""});
+            connection.sendMessage(new Message("CMD", "CRTE", groupName));//{"CMD", "CRTE", groupName,"",""});
         }
     }
     
@@ -130,7 +131,7 @@ public class Server extends JFrame{
                     while(true){
                     try{
                         Connection tempConn = new Connection(server.accept());
-                        tempConn.sendMessage(new String[]{"CMD","LIST","","",getGroupList()});
+                        tempConn.sendMessage(new Message("CMD","LIST",getGroupList()));//[]{"CMD","LIST","","",getGroupList()});
                         connections.add(tempConn);
                     }
                     catch(Exception e){}
@@ -143,26 +144,29 @@ public class Server extends JFrame{
     public static Group addToGroup(Connection c, String g){
         for(Group group:groups){
             if(group.getName().equals(g)){
-                group.sendMessage(new String[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
+                group.sendMessage(new Message("CMD", "ADDS", group.getName(),c.getName()));//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
+               // showMessage(group.getName());
                 return group;
             }
         }
         return null;
     }
     
-    public static void sendGroupMessage(String[] msg){
+    public static void sendGroupMessage(Message msg){
         for(Group group:groups){
-            if(group.getName().equals(msg[2])){
+            if(group.getName().equals(msg.groupName)){
                 group.sendMessage(msg);
             }
         }
     }
     
-    private String getGroupList(){
-        String groupList = "";
+    private String[] getGroupList(){
+        String[] groupList = new String[groups.size()];
+        int i = 0;
         for(Group group:groups){
-            groupList+=","+group.getName();
+            groupList[i]=group.getName();
+            i++;
         }
         return groupList;
     }

@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import message.Message;
 
 /**
  *
@@ -37,16 +38,20 @@ public class Connection {
                 public void run(){
                     while(true){
                         try{
-                            String[] message = (String[]) input.readObject();
-                            if(message[0].equals("CMD")){
-                                if(message[1].equals("STRT")||message[1].equals("ADDS")){
-                                    Client.sendGroupList(message[2],message[4]);//groupName, groupList);
+                            Message message = (Message) input.readObject();
+                            if(message.type.equals("CMD")){
+                                if(message.cmd.equals("STRT")){
+                                    Client.sendGroupList(message.groupName, message.clientList);//groupName, groupList);
                                 }
-                                else if(message[1].equals("RMOV")){
-                                    Client.deleteFromList(message[2],message[3]);
+                                else if(message.cmd.equals("ADDS")){
+                                    String[] client = {message.clientName};
+                                    Client.sendGroupList(message.groupName,client);
                                 }
-                                else if(message[1].equals("CRTE")){
-                                    Client.addGroup(message[2]);
+                                else if(message.type.equals("RMOV")){
+                                    Client.deleteFromList(message.groupName, message.clientName);
+                                }
+                                else if(message.cmd.equals("CRTE")){
+                                    Client.addGroup(message.groupName);
                                 }
                             }
                             Client.showMessage(message);
@@ -59,7 +64,7 @@ public class Connection {
         thread.start();
     }
     
-    public void sendMessage(String[] message){
+    public void sendMessage(Message message){
         try{
         output.writeObject(message);
         output.flush();

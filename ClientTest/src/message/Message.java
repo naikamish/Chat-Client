@@ -3,15 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package clienttest;
+package message;
 
 /**
  *
  * @author Amish Naik
  */
-public class Message {
-    private String type, cmd, groupName, clientName, message;
-    private String[] groupList, clientList;
+import java.io.Serializable;
+
+/**
+ *
+ * @author Amish Naik
+ */
+public class Message implements Serializable{
+    private static final long serialVersionUID = 5950169519310163575L;
+    public String type="", cmd="", groupName="", clientName="", message="";
+    public String[] groupList, clientList;
     
     //Send client list to newly joined client
     public Message(String type, String cmd, String groupName, String[] clientList){
@@ -47,4 +54,9 @@ public class Message {
         this.cmd = cmd;
         this.groupName = groupName;
     }
+    
+    public String toString(){
+        return type+cmd+groupName+clientName+message;
+    }
 }
+

@@ -16,6 +16,7 @@ import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.*;
 import java.awt.event.*;
+import message.Message;
 
 /**
  *
@@ -46,7 +47,7 @@ public class ClientChat extends JFrame{
         userText.addActionListener(
             new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    sendMessage(new String[]{"MSG", "SEND", groupName, clientName, e.getActionCommand()});//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+                    sendMessage(new Message("MSG", "SEND", groupName, clientName, e.getActionCommand()));//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
                     userText.setText("");
                 }
             }
@@ -75,28 +76,29 @@ public class ClientChat extends JFrame{
     }
     
     public void closeWindow(){
-        sendMessage(new String[]{"CMD", "EXIT", groupName, clientName, ""});
+        sendMessage(new Message("CMD", "EXIT", groupName, clientName));
         Client.removeFromGroup(this);
         this.dispose();
     }
     
     public void startRunning(){
-        sendMessage(new String[]{"CMD", "JOIN", groupName, clientName,""});//CMD JOIN " + groupName+","+clientName);
+        sendMessage(new Message("CMD", "JOIN", groupName, clientName));//CMD JOIN " + groupName+","+clientName);
     }
     
-    private void sendMessage(String[] message){
+    private void sendMessage(Message message){
         connection.sendMessage(message);
     }
     
-    public void showMessage(final String[] text){
+    public void showMessage(final Message message){
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
-                    StringBuilder strBuilder = new StringBuilder();
+                   /* StringBuilder strBuilder = new StringBuilder();
                             for (int i = 0; i < text.length; i++) {
                                 strBuilder.append( text[i]+" " );
-                             }
-                    fullText+="<font color=green>"+strBuilder.toString()+"</font><br>";
+                             }*/
+                    
+                    fullText+="<font color=green>"+message.toString()+"</font><br>";
                     chatWindow.setText(fullText);
                 }
             }
@@ -112,9 +114,9 @@ public class ClientChat extends JFrame{
         return groupName;
     }
     
-    public void setGroupList(String list){
-        String[] data = list.split(",");
-        for(String s : data){
+    public void setGroupList(String[] list){
+       // String[] data = list.split(",");
+        for(String s : list){
             listModel.addElement(s);
             clientListPane.updateUI();
         }

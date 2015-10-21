@@ -16,6 +16,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.*;
+import message.Message;
 
 public class Client extends JFrame{
     
@@ -71,7 +72,7 @@ public class Client extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String newGroup = JOptionPane.showInputDialog("What is the name of the group you wish to create?");
-                connection.sendMessage(new String[]{"CMD","CRTE",newGroup,"",""});
+                connection.sendMessage(new Message("CMD","CRTE",newGroup));
             }
             
         });
@@ -83,9 +84,9 @@ public class Client extends JFrame{
     public void startRunning(){
         try{
             connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000));
-            String[] message = (String[]) connection.input.readObject();
-            data = message[4].split(",");
-            for(String s : data){
+            Message message = (Message) connection.input.readObject();
+          //  data = message[4].split(",");
+            for(String s : message.groupList){
                 listModel.addElement(s);
             }
             connectButton.setEnabled(true);
@@ -94,7 +95,7 @@ public class Client extends JFrame{
         catch(Exception e){}
     }
     
-    public static void sendGroupList(String g, String list){
+    public static void sendGroupList(String g, String[] list){
         for(ClientChat chat:chats){
             if(chat.getGroup().equals(g)){
                 chat.setGroupList(list);
@@ -102,9 +103,9 @@ public class Client extends JFrame{
         }
     }
     
-    public static void showMessage(String[] message){
+    public static void showMessage(Message message){
         for(ClientChat chat:chats){
-            if(chat.getGroup().equals(message[2])){
+            if(chat.getGroup().equals(message.groupName)){
                 chat.showMessage(message);
             }
         }

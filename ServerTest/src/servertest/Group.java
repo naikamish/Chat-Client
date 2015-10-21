@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
+import message.Message;
 
 /**
  *
@@ -26,7 +27,7 @@ public class Group {
     }
     
     //Send message to client
-    public void sendMessage(String[] msg){
+    public void sendMessage(Message msg){
         for(Connection socket:connections){
             socket.sendMessage(msg);
         }
@@ -38,20 +39,22 @@ public class Group {
     
     public void removeFromGroup(Connection user){
         connections.remove(user);
-        sendMessage(new String[]{"CMD","RMOV",groupName,user.getName(),""});
+        sendMessage(new Message("CMD", "RMOV", groupName, user.getName()));//{"CMD","RMOV",groupName,user.getName(),""});
     }
     
     public String getName(){
         return groupName;
     }
     
-    public String getClientList(){
-        String groupList = "";
-        if(!connections.isEmpty()){
-        for(Connection socket:connections){
-            groupList += ","+socket.getName();
-        }
-        }
+    public String[] getClientList(){
+        String[] groupList = new String[connections.size()];
+        int i = 0;
+      //  if(!connections.isEmpty()){
+            for(Connection socket:connections){
+                groupList[i]=socket.getName();
+                i++;
+            }
+      //  }
         return groupList;
     }
 }
