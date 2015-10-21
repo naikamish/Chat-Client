@@ -40,21 +40,24 @@ public class Connection {
                         try{
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
-                                if(message.cmd.equals("STRT")){
+                                if(message.cmd.equals("START")){
                                     Client.sendGroupList(message.groupName, message.clientList);//groupName, groupList);
                                 }
-                                else if(message.cmd.equals("ADDS")){
+                                else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
                                     Client.sendGroupList(message.groupName,client);
                                 }
-                                else if(message.type.equals("RMOV")){
+                                else if(message.cmd.equals("REMOVE")){
                                     Client.deleteFromList(message.groupName, message.clientName);
                                 }
-                                else if(message.cmd.equals("CRTE")){
+                                else if(message.cmd.equals("CREATE")){
                                     Client.addGroup(message.groupName);
                                 }
                             }
-                            Client.showMessage(message);
+                            else if(message.type.equals("MSG")){
+                                Client.showMessage(message);
+                            }
+                            //Client.showMessage(message);
                         }
                         catch(Exception e){//Server.showMessage("\nline53 connection\n");
                         }

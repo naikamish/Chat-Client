@@ -59,7 +59,7 @@ public class Connection{
                                 else if(message.cmd.equals("EXIT")){
                                     leaveGroup(message.groupName);
                                 }
-                                else if(message.cmd.equals("CRTE")){
+                                else if(message.cmd.equals("CREATE")){
                                     Server.createGroup(message.groupName);
                                 }
                             }
@@ -91,7 +91,7 @@ public class Connection{
         Group g = Server.addToGroup(this, group);
         String[] clientList = g.getClientList();
        // if(!clientList.equals("")){
-            sendMessage(new Message("CMD", "STRT", g.getName(), clientList));//{"CMD", "STRT", g.getName(), "", clientList});
+            sendMessage(new Message("CMD", "START", g.getName(), clientList));//{"CMD", "STRT", g.getName(), "", clientList});
        // }
     }
 

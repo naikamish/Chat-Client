@@ -120,7 +120,7 @@ public class Server extends JFrame{
         }
         groups.add(new Group(server,groupName));
         for(Connection connection:connections){
-            connection.sendMessage(new Message("CMD", "CRTE", groupName));//{"CMD", "CRTE", groupName,"",""});
+            connection.sendMessage(new Message("CMD", "CREATE", groupName));//{"CMD", "CRTE", groupName,"",""});
         }
     }
     
@@ -144,7 +144,7 @@ public class Server extends JFrame{
     public static Group addToGroup(Connection c, String g){
         for(Group group:groups){
             if(group.getName().equals(g)){
-                group.sendMessage(new Message("CMD", "ADDS", group.getName(),c.getName()));//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
+                group.sendMessage(new Message("CMD", "ADD", group.getName(),c.getName()));//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
                // showMessage(group.getName());
                 return group;

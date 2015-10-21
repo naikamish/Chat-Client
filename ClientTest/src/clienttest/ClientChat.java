@@ -97,8 +97,19 @@ public class ClientChat extends JFrame{
                             for (int i = 0; i < text.length; i++) {
                                 strBuilder.append( text[i]+" " );
                              }*/
+                    String style;
+                    if(message.clientName.equals(clientName)){
+                        style = "<span style='color:#ff0000; font-weight:bold;'>";
+                    }
+                    else{
+                        style = "<span style='color:#0000ff; font-weight:bold;'>";
+                    }
                     
-                    fullText+="<font color=green>"+message.toString()+"</font><br>";
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+                    Date date = new Date();
+                    
+                    fullText+=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message+"<br>";
+                   // fullText+=message.toString()+"<br>";
                     chatWindow.setText(fullText);
                 }
             }

@@ -39,7 +39,7 @@ public class Group {
     
     public void removeFromGroup(Connection user){
         connections.remove(user);
-        sendMessage(new Message("CMD", "RMOV", groupName, user.getName()));//{"CMD","RMOV",groupName,user.getName(),""});
+        sendMessage(new Message("CMD", "REMOVE", groupName, user.getName()));//{"CMD","RMOV",groupName,user.getName(),""});
     }
     
     public String getName(){

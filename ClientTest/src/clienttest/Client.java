@@ -72,7 +72,7 @@ public class Client extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String newGroup = JOptionPane.showInputDialog("What is the name of the group you wish to create?");
-                connection.sendMessage(new Message("CMD","CRTE",newGroup));
+                connection.sendMessage(new Message("CMD","CREATE",newGroup));
             }
             
         });
