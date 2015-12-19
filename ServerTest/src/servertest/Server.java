@@ -11,11 +11,7 @@ package servertest;
  */
 import java.io.*;
 import java.net.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.swing.*;
 import message.Message;
 
@@ -161,7 +157,7 @@ public class Server extends JFrame{
         }
     }
     
-    private String[] getGroupList(){
+    public static String[] getGroupList(){
         String[] groupList = new String[groups.size()];
         int i = 0;
         for(Group group:groups){

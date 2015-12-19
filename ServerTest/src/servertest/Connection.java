@@ -5,9 +5,12 @@
  */
 package servertest;
 
+import databaselibrary.DatabaseLibrary;
+import gmaillibrary.GmailLibrary;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.ResultSet;
 import message.Message;
 
 /**
@@ -21,6 +24,7 @@ public class Connection{
     private Thread thread;
     private Group group;
     private String clientName;
+    private DatabaseLibrary dbLib;
     
     public Connection(Socket socket){
         connection = socket;
@@ -33,6 +37,13 @@ public class Connection{
         catch(Exception e){//Server.showMessage("\nline32 connection\n");
         }
         setUpThread();
+        
+        try{
+            dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
+        }
+        catch(Exception e){
+            //Server.showMessage(e.toString());
+        }
     }
     
     public void sendMessage(Message message){
@@ -66,15 +77,59 @@ public class Connection{
                             else if(message.type.equals("MSG")){
                                 Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]});
                             }
-                         /*   StringBuilder strBuilder = new StringBuilder();
-                            for (int i = 0; i < message.length; i++) {
-                                strBuilder.append( message[i]+" " );
-                             }*/
+                            else if(message.type.equals("SEND CODE")){
+                                String query = "insert into registrationCodes(email,code) values('"+message.email+"',"+message.code+");";
+                                try{
+                                    dbLib.insertQuery(query);
+                                    new GmailLibrary("mailToSecureYou","mailstodeliver",message.email,"Passcode","Code: "+message.code);
+                                }
+                                catch(Exception e){
+                                    Server.showMessage(e.toString());
+                                }
+                            }
                             
+                            else if(message.type.equals("REGISTER")){
+                                String query = "select code from registrationcodes where email='"+message.email+"';";
+                                try{
+                                ResultSet resultSet = dbLib.selectQuery(query);
+                                Server.showMessage(message.code+"");
+                                while (resultSet.next()) {
+                                    if(resultSet.getInt("code")==message.code){
+                                        String pass = new String(message.password);
+                                        String query3 = "insert into users(name,username,password,email) values('"+message.name+"','"+message.username+"','"+pass+"','"+message.email+"');";
+                                        try{
+                                            dbLib.insertQuery(query3);
+                                        }
+                                        catch(Exception e){
+                                            Server.showMessage(e.toString());
+                                        }
+                                    }
+                                }
+                                }
+                                catch(Exception e){}
+                            }
                             
+                            else if(message.type.equals("LOGIN")){
+                                String pass = new String(message.password);
+                                String query = "select username from users where username='"+message.username+"' and password='"+pass+"';";
+                                Server.showMessage(query);
+                                try{
+                                    ResultSet resultSet = dbLib.selectQuery(query);
+                                    if (!resultSet.next() ) {
+                                        Server.showMessage("no data");
+                                    }
+                                    else{
+                                        sendMessage(new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList()));
+                                    }
+                                }
+                                catch(Exception e){
+                                    Server.showMessage(e.toString()+"line 120");
+                                }
+                            }
                             Server.showMessage(message.toString());
                         }
-                        catch(Exception e){//Server.showMessage(e.toString());
+                        catch(Exception e){
+                            
                         }
                     }
                 }
