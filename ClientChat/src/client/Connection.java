@@ -9,6 +9,8 @@ package client;
  *
  * @author Amish Naik
  */
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -29,9 +31,9 @@ public class Connection {
         login = loginForm;
         connection = socket;
         try{
-        output = new ObjectOutputStream(connection.getOutputStream());
-        output.flush();
-        input = new ObjectInputStream(connection.getInputStream());
+            output = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+            output.flush();
+            input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         }
         catch(Exception e){}
     }

@@ -7,6 +7,9 @@ package servertest;
 
 import databaselibrary.DatabaseLibrary;
 import gmaillibrary.GmailLibrary;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -30,9 +33,9 @@ public class Connection{
         connection = socket;
         Server.showMessage("\nNow connected to "+connection.getInetAddress().getHostName()+"\n");
         try{
-        output = new ObjectOutputStream(connection.getOutputStream());
-        output.flush();
-        input = new ObjectInputStream(connection.getInputStream());
+            output = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+            output.flush();
+            input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         }
         catch(Exception e){//Server.showMessage("\nline32 connection\n");
         }
