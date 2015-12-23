@@ -116,7 +116,7 @@ public class Connection{
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
-                                        Server.showMessage("no data");
+                                        sendMessage(new Message("LOGIN UNSUCCESSFUL","Invalid username/password"));
                                     }
                                     else{
                                         sendMessage(new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList()));

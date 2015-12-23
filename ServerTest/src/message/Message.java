@@ -79,6 +79,11 @@ public class Message implements Serializable{
         this.password = password;
     }
     
+    public Message(String type, String message){
+        this.type = type;
+        this.message = message;
+    }
+    
     public String toString(){
         return type+cmd+groupName+clientName+message+name+username+email+code;
     }

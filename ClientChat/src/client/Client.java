@@ -37,7 +37,6 @@ public class Client extends JFrame{
     
     public Client(){
         super("Client Chat");
-
         groupsList = new JList(listModel);
         add(groupsListPane, BorderLayout.CENTER);
         groupsListPane.setViewportView(groupsList);
@@ -80,10 +79,12 @@ public class Client extends JFrame{
     
     public void startRunning(String[] groupList, Connection connection, String username){
         try{
+            //JOptionPane.showConfirmDialog(null,groupList[1]);
             clientName = username;
             this.connection = connection;
             for(String s : groupList){
                 listModel.addElement(s);
+                groupsListPane.updateUI();
             }
             connectButton.setEnabled(true);
         }

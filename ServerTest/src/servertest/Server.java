@@ -127,7 +127,6 @@ public class Server extends JFrame{
                     while(true){
                     try{
                         Connection tempConn = new Connection(server.accept());
-                        tempConn.sendMessage(new Message("CMD","LIST",getGroupList()));//[]{"CMD","LIST","","",getGroupList()});
                         connections.add(tempConn);
                     }
                     catch(Exception e){}
@@ -142,7 +141,6 @@ public class Server extends JFrame{
             if(group.getName().equals(g)){
                 group.sendMessage(new Message("CMD", "ADD", group.getName(),c.getName()));//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
-               // showMessage(group.getName());
                 return group;
             }
         }

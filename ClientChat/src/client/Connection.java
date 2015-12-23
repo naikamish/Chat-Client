@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import javax.swing.JOptionPane;
 import message.Message;
 
 
@@ -22,8 +23,10 @@ public class Connection {
     public static ObjectInputStream input;
     private static Socket connection;
     private Thread thread;
+    private Login login;
     
-    public Connection(Socket socket){
+    public Connection(Socket socket, Login loginForm){
+        login = loginForm;
         connection = socket;
         try{
         output = new ObjectOutputStream(connection.getOutputStream());
@@ -59,7 +62,10 @@ public class Connection {
                                 Client.showMessage(message);
                             }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){
-                                Login.successfullyLoggedIn(message.groupList);
+                                login.successfullyLoggedIn(message.groupList);
+                            }
+                            else if(message.type.equals("LOGIN UNSUCCESSFUL")){
+                                login.unsuccessfulLogin(message.message);
                             }
                             //Client.showMessage(message);
                         }

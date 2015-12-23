@@ -1,6 +1,7 @@
 package client;
 
 
+import java.awt.Color;
 import java.net.InetAddress;
 import java.net.Socket;
 import javax.swing.JFrame;
@@ -45,6 +46,7 @@ public class Login extends javax.swing.JFrame {
         LoginButton = new javax.swing.JButton();
         RegisterButton = new javax.swing.JButton();
         PasswordTextField = new javax.swing.JPasswordField();
+        errorMessageLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
@@ -67,28 +69,32 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        errorMessageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        errorMessageLabel.setText("Please Login or Register");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 120, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(41, 41, 41)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(PasswordLabel)
-                            .addComponent(UsernameLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                            .addComponent(PasswordTextField)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(111, 111, 111)
+                        .addGap(9, 9, 9)
                         .addComponent(LoginButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(102, 102, 102)
-                        .addComponent(RegisterButton)))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addComponent(RegisterButton))
+                .addGap(104, 104, 104))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(PasswordLabel)
+                    .addComponent(UsernameLabel))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                    .addComponent(PasswordTextField))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(errorMessageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,7 +111,9 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(LoginButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(RegisterButton)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(errorMessageLabel)
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         pack();
@@ -165,16 +173,22 @@ public class Login extends javax.swing.JFrame {
     
     public void startRunning(){
         try{
-            connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000));
+            connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000),this);
             connection.setUpThread();
         }
         catch(Exception e){}
     }
     
-    public static void successfullyLoggedIn(String[] groupList){
+    public void successfullyLoggedIn(String[] groupList){
         Client myClient = new Client();
         myClient.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         myClient.startRunning(groupList,connection, username);
+        this.setVisible(false);
+    }
+    
+    public void unsuccessfulLogin(String message){
+        errorMessageLabel.setForeground(Color.RED);
+        errorMessageLabel.setText(message);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -184,5 +198,6 @@ public class Login extends javax.swing.JFrame {
     private static javax.swing.JButton RegisterButton;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JTextField UsernameTextField;
+    private javax.swing.JLabel errorMessageLabel;
     // End of variables declaration//GEN-END:variables
 }
