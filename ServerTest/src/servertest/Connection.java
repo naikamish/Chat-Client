@@ -29,7 +29,7 @@ public class Connection{
     private String clientName;
     private DatabaseLibrary dbLib;
     
-    public Connection(Socket socket){
+    public Connection(Socket socket, DatabaseLibrary dbLib){
         connection = socket;
         Server.showMessage("\nNow connected to "+connection.getInetAddress().getHostName()+"\n");
         try{
@@ -42,7 +42,8 @@ public class Connection{
         setUpThread();
         
         try{
-            dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
+            this.dbLib=dbLib;
+            //this.dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
         }
         catch(Exception e){
             //Server.showMessage(e.toString());
@@ -74,7 +75,15 @@ public class Connection{
                                     leaveGroup(message.groupName);
                                 }
                                 else if(message.cmd.equals("CREATE")){
-                                    Server.createGroup(message.groupName);
+                                    String query = "insert into groups(groupName) values('"+message.groupName+"');";
+                                    try{
+                                        dbLib.insertQuery(query);
+                                        Server.createGroup(message.groupName);
+                                    }
+                                    catch(Exception e){
+                                        Server.showMessage(e.toString()+"line 82");
+                                    }
+                                    //Server.createGroup(message.groupName);
                                 }
                             }
                             else if(message.type.equals("MSG")){
@@ -94,20 +103,20 @@ public class Connection{
                             else if(message.type.equals("REGISTER")){
                                 String query = "select code from registrationcodes where email='"+message.email+"';";
                                 try{
-                                ResultSet resultSet = dbLib.selectQuery(query);
-                                Server.showMessage(message.code+"");
-                                while (resultSet.next()) {
-                                    if(resultSet.getInt("code")==message.code){
-                                        String pass = new String(message.password);
-                                        String query3 = "insert into users(name,username,password,email) values('"+message.name+"','"+message.username+"','"+pass+"','"+message.email+"');";
-                                        try{
-                                            dbLib.insertQuery(query3);
-                                        }
-                                        catch(Exception e){
-                                            Server.showMessage(e.toString());
+                                    ResultSet resultSet = dbLib.selectQuery(query);
+                                    Server.showMessage(message.code+"");
+                                    while (resultSet.next()) {
+                                        if(resultSet.getInt("code")==message.code){
+                                            String pass = new String(message.password);
+                                            String query3 = "insert into users(name,username,password,email) values('"+message.name+"','"+message.username+"','"+pass+"','"+message.email+"');";
+                                            try{
+                                                dbLib.insertQuery(query3);
+                                            }
+                                            catch(Exception e){
+                                                Server.showMessage(e.toString());
+                                            }
                                         }
                                     }
-                                }
                                 }
                                 catch(Exception e){}
                             }

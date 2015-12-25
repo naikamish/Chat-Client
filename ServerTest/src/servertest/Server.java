@@ -9,8 +9,10 @@ package servertest;
  *
  * @author Amish Naik
  */
+import databaselibrary.DatabaseLibrary;
 import java.io.*;
 import java.net.*;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.*;
 import message.Message;
@@ -25,6 +27,7 @@ public class Server extends JFrame{
     private static ArrayList<Group> groups = new ArrayList<Group>();
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
     private static String fullText = "";
+    private DatabaseLibrary dbLib;
 
     private Thread t1;
     
@@ -38,6 +41,13 @@ public class Server extends JFrame{
         add(new JScrollPane(chatWindow));
         setSize(500,500);
         setVisible(true);
+        
+        try{
+            dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
+        }
+        catch(Exception e){
+            //Server.showMessage(e.toString());
+        }
     }
     
     public void startRunning(){
@@ -52,68 +62,20 @@ public class Server extends JFrame{
     }
     
     private void createGroupList(){
+        String query = "select groupName from groups;";
+        
+        try{
+            ResultSet resultSet = dbLib.selectQuery(query);
+            while (resultSet.next()) {
+                groups.add(new Group(server, resultSet.getString("groupName")));
+                System.out.println(resultSet.getString("groupName"));
+            }
+        }
+        catch(Exception e){}
         // The name of the file to open.
-        String fileName = "grouplist.txt";
-
-        // This will reference one line at a time
-        String line = null;
-
-        try {
-            // FileReader reads text files in the default encoding.
-            FileReader fileReader = 
-                new FileReader(fileName);
-
-            // Always wrap FileReader in BufferedReader.
-            BufferedReader bufferedReader = 
-                new BufferedReader(fileReader);
-
-            while((line = bufferedReader.readLine()) != null) {
-                groups.add(new Group(server,line));
-            } 
-
-            // Always close files.
-            bufferedReader.close();         
-        }
-        catch(FileNotFoundException ex) {
-            System.out.println(
-                "Unable to open file '" + 
-                fileName + "'");                
-        }
-        catch(IOException ex) {
-            System.out.println(
-                "Error reading file '" 
-                + fileName + "'");                  
-            // Or we could just do this: 
-            // ex.printStackTrace();
-        }
     }
     
     public static void createGroup(String groupName){
-        String fileName = "grouplist.txt";
-        
-        try{
-        FileWriter fileWriter =
-                new FileWriter(fileName,true);
-
-            // Always wrap FileWriter in BufferedWriter.
-            BufferedWriter bufferedWriter =
-                new BufferedWriter(fileWriter);
-
-            // Note that write() does not automatically
-            // append a newline character.
-            bufferedWriter.newLine();
-            bufferedWriter.write(groupName);
-
-            // Always close files.
-            bufferedWriter.close();
-        }
-        catch(IOException ex) {
-            System.out.println(
-                "Error writing to file '"
-                + fileName + "'");
-            // Or we could just do this:
-            // ex.printStackTrace();
-        }
         groups.add(new Group(server,groupName));
         for(Connection connection:connections){
             connection.sendMessage(new Message("CMD", "CREATE", groupName));//{"CMD", "CRTE", groupName,"",""});
@@ -126,7 +88,7 @@ public class Server extends JFrame{
                 public void run(){
                     while(true){
                     try{
-                        Connection tempConn = new Connection(server.accept());
+                        Connection tempConn = new Connection(server.accept(),dbLib);
                         connections.add(tempConn);
                     }
                     catch(Exception e){}
