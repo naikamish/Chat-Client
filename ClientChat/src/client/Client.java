@@ -29,6 +29,7 @@ public class Client extends JFrame{
     private String groupName;
     private String[] data;
     private static DefaultListModel listModel = new DefaultListModel();
+    static Notification notifications;
     
     Connection connection;
     JButton connectButton, createGroupButton;
@@ -72,6 +73,17 @@ public class Client extends JFrame{
             }
             
         });
+        
+        try{
+            notifications = new Notification();
+        }
+        catch(Exception e){
+            StringWriter sw = new StringWriter();
+PrintWriter pw = new PrintWriter(sw);
+e.printStackTrace(pw);
+            listModel.addElement(sw.toString());
+            groupsListPane.updateUI();
+        }
         
         setSize(10,200);
         setVisible(true);

@@ -27,7 +27,9 @@ public class Login extends javax.swing.JFrame {
      */
     public Login() {
         initComponents();
-        serverIP = JOptionPane.showInputDialog(this, "What IP do you want to connect to?");
+        getRootPane().setDefaultButton(LoginButton);
+        //serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
+        serverIP = "173.3.97.96";
         startRunning();
     }
 

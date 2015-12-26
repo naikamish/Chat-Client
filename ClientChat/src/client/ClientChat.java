@@ -97,6 +97,12 @@ public class ClientChat extends JFrame{
         SwingUtilities.invokeLater(
             new Runnable(){
                 public void run(){
+                    try{
+                        Client.notifications.displayMessage(message.clientName, message.message);
+                    }
+                    catch(Exception e){
+                        chatWindow.setText(e.toString());
+                    }
                    /* StringBuilder strBuilder = new StringBuilder();
                             for (int i = 0; i < text.length; i++) {
                                 strBuilder.append( text[i]+" " );

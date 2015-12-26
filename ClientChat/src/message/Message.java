@@ -19,6 +19,7 @@ public class Message implements Serializable{
     private static final long serialVersionUID = 5950169519310163575L;
     public String type="", cmd="", groupName="", clientName="", message="";
     public String name="", username="", email="";
+    public String fullMessage="";
     public int code;
     public char[] password;
     public String[] groupList, clientList;
@@ -29,6 +30,7 @@ public class Message implements Serializable{
         this.cmd = cmd;
         this.groupName = groupName;
         this.clientList = clientList;
+        fullMessage = "Send client list for group "+this.groupName+" to "+this.groupName;
     }
     //Send add message to a group when a new client joins or leaves
     public Message(String type, String cmd, String groupName, String clientName){
@@ -36,6 +38,10 @@ public class Message implements Serializable{
         this.cmd = cmd;
         this.groupName = groupName;
         this.clientName = clientName;
+        if(cmd.equals("JOIN"))
+            fullMessage = this.clientName + " joined group " + this.groupName;
+        else if(cmd.equals("EXIT"))
+            fullMessage = this.clientName + " left group " + this.groupName;
     }
     //Send message to a group of people
     public Message(String type, String cmd, String groupName, String clientName, String msg){
@@ -44,6 +50,7 @@ public class Message implements Serializable{
         this.groupName = groupName;
         this.clientName = clientName;
         this.message = msg;
+        fullMessage = this.groupName + "- " + this.clientName + ": " + this.message;
     }
     //Send group list to newly joined client
     public Message(String type, String cmd, String[] groupList){
@@ -56,14 +63,18 @@ public class Message implements Serializable{
         this.type = type;
         this.cmd = cmd;
         this.groupName = groupName;
+        fullMessage = "New group created: " + this.groupName;
     }
     
+    //Send registration activation code
     public Message(String type, String email, int code){
         this.type = type;
         this.email = email;
         this.code = code;
+        fullMessage = "Sent activation code " + this.code + " to " + this.email + ".";
     }
     
+    //Send registration information from client to server
     public Message(String type, String name, String username, char[] password, String email, int code){
         this.type = type;
         this.name = name;
@@ -71,20 +82,24 @@ public class Message implements Serializable{
         this.password = password;
         this.email = email;
         this.code = code;
+        fullMessage = this.username + " attempted to create a new account.";
     }
     
+    //Send login information from client to server
     public Message(String type, String username, char[] password){
         this.type = type;
         this.username = username;
         this.password = password;
+        fullMessage = this.username + " logged in.";
     }
     
+    //Send unsuccessful login message from server to client
     public Message(String type, String message){
         this.type = type;
         this.message = message;
     }
     
     public String toString(){
-        return type+cmd+groupName+clientName+message+name+username+email+code;
+        return fullMessage;
     }
 }

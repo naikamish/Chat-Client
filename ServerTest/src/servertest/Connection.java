@@ -68,7 +68,6 @@ public class Connection{
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("JOIN")){
-                                    Server.showMessage(message.toString());
                                     addToGroup(message.groupName,message.clientName);
                                 }
                                 else if(message.cmd.equals("EXIT")){
@@ -104,7 +103,6 @@ public class Connection{
                                 String query = "select code from registrationcodes where email='"+message.email+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
-                                    Server.showMessage(message.code+"");
                                     while (resultSet.next()) {
                                         if(resultSet.getInt("code")==message.code){
                                             String pass = new String(message.password);
@@ -124,7 +122,6 @@ public class Connection{
                             else if(message.type.equals("LOGIN")){
                                 String pass = new String(message.password);
                                 String query = "select username from users where username='"+message.username+"' and password='"+pass+"';";
-                                Server.showMessage(query);
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
