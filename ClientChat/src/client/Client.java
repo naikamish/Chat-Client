@@ -79,13 +79,13 @@ public class Client extends JFrame{
         }
         catch(Exception e){
             StringWriter sw = new StringWriter();
-PrintWriter pw = new PrintWriter(sw);
-e.printStackTrace(pw);
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
             listModel.addElement(sw.toString());
             groupsListPane.updateUI();
         }
         
-        setSize(10,200);
+        setSize(100,400);
         setVisible(true);
     }
     

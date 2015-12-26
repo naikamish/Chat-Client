@@ -49,13 +49,24 @@ public class Login extends javax.swing.JFrame {
         RegisterButton = new javax.swing.JButton();
         PasswordTextField = new javax.swing.JPasswordField();
         errorMessageLabel = new javax.swing.JLabel();
+        bg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        UsernameLabel.setFont(new java.awt.Font("Batang", 1, 16)); // NOI18N
+        UsernameLabel.setForeground(new java.awt.Color(255, 255, 255));
         UsernameLabel.setText("Username");
+        getContentPane().add(UsernameLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(41, 43, -1, -1));
 
+        PasswordLabel.setFont(new java.awt.Font("Batang", 1, 16)); // NOI18N
+        PasswordLabel.setForeground(new java.awt.Color(255, 255, 255));
         PasswordLabel.setText("Password");
+        getContentPane().add(PasswordLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(45, 97, -1, -1));
+        getContentPane().add(UsernameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 40, 127, -1));
 
         LoginButton.setText("Login");
         LoginButton.addActionListener(new java.awt.event.ActionListener() {
@@ -63,6 +74,7 @@ public class Login extends javax.swing.JFrame {
                 LoginButtonActionPerformed(evt);
             }
         });
+        getContentPane().add(LoginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(129, 157, -1, -1));
 
         RegisterButton.setText("Register");
         RegisterButton.addActionListener(new java.awt.event.ActionListener() {
@@ -70,53 +82,17 @@ public class Login extends javax.swing.JFrame {
                 RegisterButtonActionPerformed(evt);
             }
         });
+        getContentPane().add(RegisterButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 195, -1, -1));
+        getContentPane().add(PasswordTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 94, 127, -1));
 
+        errorMessageLabel.setFont(new java.awt.Font("Batang", 1, 16)); // NOI18N
+        errorMessageLabel.setForeground(new java.awt.Color(255, 255, 255));
         errorMessageLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         errorMessageLabel.setText("Please Login or Register");
+        getContentPane().add(errorMessageLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 240, 313, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 120, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(9, 9, 9)
-                        .addComponent(LoginButton))
-                    .addComponent(RegisterButton))
-                .addGap(104, 104, 104))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(PasswordLabel)
-                    .addComponent(UsernameLabel))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(UsernameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                    .addComponent(PasswordTextField))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(errorMessageLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(UsernameLabel)
-                    .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(PasswordLabel)
-                    .addComponent(PasswordTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
-                .addComponent(LoginButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(RegisterButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(errorMessageLabel)
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
+        bg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/client/image1.jpg"))); // NOI18N
+        getContentPane().add(bg, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 313, 280));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -130,7 +106,8 @@ public class Login extends javax.swing.JFrame {
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
         // TODO add your handling code here:
         if(UsernameTextField.getText().equals("")||PasswordTextField.getPassword().length==0){
-            JOptionPane.showMessageDialog(this, "Please fill out all fields");
+            errorMessageLabel.setForeground(Color.RED);
+            errorMessageLabel.setText("Please fill out all fields");
         }
         else{
             username = UsernameTextField.getText();
@@ -200,6 +177,7 @@ public class Login extends javax.swing.JFrame {
     private static javax.swing.JButton RegisterButton;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JTextField UsernameTextField;
+    private javax.swing.JLabel bg;
     private javax.swing.JLabel errorMessageLabel;
     // End of variables declaration//GEN-END:variables
 }
