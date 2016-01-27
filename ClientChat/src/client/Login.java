@@ -29,7 +29,7 @@ public class Login extends javax.swing.JFrame {
         initComponents();
         getRootPane().setDefaultButton(LoginButton);
         //serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
-        serverIP = "173.3.97.96";
+        serverIP = "localhost";
         startRunning();
     }
 

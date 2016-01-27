@@ -37,6 +37,7 @@ public class ClientChat extends JFrame{
     
     private JList<String> clientList;
     private JScrollPane clientListPane = new JScrollPane();
+    private JButton doodleButton;
     
     private String fullText = "";
     
@@ -67,6 +68,19 @@ public class ClientChat extends JFrame{
         clientList = new JList(listModel);
         add(clientListPane, BorderLayout.EAST);
         clientListPane.setViewportView(clientList);
+        
+        doodleButton = new JButton("Doodle");
+        add(doodleButton,BorderLayout.SOUTH);
+        
+        doodleButton.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DoodleFrame doodleFrame;
+                doodleFrame = new DoodleFrame();
+            }
+            
+        });
         
         addWindowListener( new WindowAdapter() {
                     @Override
