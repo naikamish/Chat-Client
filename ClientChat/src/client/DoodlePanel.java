@@ -27,17 +27,13 @@ public class DoodlePanel extends JPanel implements MouseListener, MouseMotionLis
     
     
     public DoodlePanel() {
-        setBackground(Color.WHITE); // Make the background color white
+        setBackground(Color.WHITE);
 
-        // Necessary for mouse interaction:
         addMouseListener(this);
         addMouseMotionListener(this);
     }
 
-    ///// DRAWING
-    /**
-     * Draw the disks.
-     */
+    
     @Override
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
@@ -48,6 +44,10 @@ public class DoodlePanel extends JPanel implements MouseListener, MouseMotionLis
         }
         
         g.draw(path);        
+    }
+    
+    public void setDoodle(LinkedList<GeneralPath> doodle){
+        storedPaths = doodle;
     }
 
     @Override

@@ -9,7 +9,9 @@ package message;
  *
  * @author Amish Naik
  */
+import java.awt.geom.GeneralPath;
 import java.io.Serializable;
+import java.util.LinkedList;
 
 /**
  *
@@ -23,6 +25,7 @@ public class Message implements Serializable{
     public int code;
     public char[] password;
     public String[] groupList, clientList;
+    public LinkedList<GeneralPath> doodle;
     
     //Send client list to newly joined client
     public Message(String type, String cmd, String groupName, String[] clientList){
@@ -38,9 +41,9 @@ public class Message implements Serializable{
         this.cmd = cmd;
         this.groupName = groupName;
         this.clientName = clientName;
-        if(type.equals("JOIN"))
+        if(cmd.equals("JOIN"))
             fullMessage = this.clientName + " joined group " + this.groupName;
-        else if(type.equals("EXIT"))
+        else if(cmd.equals("EXIT"))
             fullMessage = this.clientName + " left group " + this.groupName;
     }
     //Send message to a group of people
@@ -97,6 +100,15 @@ public class Message implements Serializable{
     public Message(String type, String message){
         this.type = type;
         this.message = message;
+    }
+    
+    //Send doodle
+    public Message(String type, String cmd, String groupName, String clientName, LinkedList<GeneralPath> doodle){
+        this.type = type;
+        this.cmd = cmd;
+        this.groupName = groupName;
+        this.clientName = clientName;
+        this.doodle=doodle;
     }
     
     public String toString(){

@@ -28,8 +28,8 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         getRootPane().setDefaultButton(LoginButton);
-        //serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
-        serverIP = "localhost";
+        serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
+       // serverIP = "localhost";
         startRunning();
     }
 

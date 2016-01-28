@@ -114,7 +114,12 @@ public class Client extends JFrame{
     public static void showMessage(Message message){
         for(ClientChat chat:chats){
             if(chat.getGroup().equals(message.groupName)){
-                chat.showMessage(message);
+                if(message.cmd.equals("SEND")){
+                    chat.showMessage(message);
+                }
+                else if(message.cmd.equals("DOODLE")){
+                    chat.showDoodle(message);
+                }
             }
         }
     }

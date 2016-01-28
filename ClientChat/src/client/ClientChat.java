@@ -20,6 +20,8 @@ import java.util.Date;
 import javax.swing.DefaultListModel;
 import javax.swing.*;
 import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.util.LinkedList;
 import message.Message;
 
 /**
@@ -77,7 +79,7 @@ public class ClientChat extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 DoodleFrame doodleFrame;
-                doodleFrame = new DoodleFrame();
+                doodleFrame = new DoodleFrame(getThis());
             }
             
         });
@@ -93,6 +95,22 @@ public class ClientChat extends JFrame{
         setVisible(true);
     }
     
+    public ClientChat getThis(){
+        return this;
+    }
+    
+    public void sendDoodle(LinkedList<GeneralPath> generalPath){
+        sendMessage(new Message("MSG", "DOODLE", groupName, clientName,generalPath));
+    }
+    
+    public void showDoodle(Message message){
+        if(!clientName.equals(message.clientName)){
+            DoodleFrame doodleFrame;
+            doodleFrame = new DoodleFrame(this);
+            doodleFrame.setDoodle(message.doodle);
+        }
+    }
+    
     public void closeWindow(){
         sendMessage(new Message("CMD", "EXIT", groupName, clientName));
         Client.removeFromGroup(this);
@@ -103,7 +121,7 @@ public class ClientChat extends JFrame{
         sendMessage(new Message("CMD", "JOIN", groupName, clientName));//CMD JOIN " + groupName+","+clientName);
     }
     
-    private void sendMessage(Message message){
+    public void sendMessage(Message message){
         connection.sendMessage(message);
     }
     
