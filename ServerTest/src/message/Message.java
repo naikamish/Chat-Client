@@ -26,6 +26,8 @@ public class Message implements Serializable{
     public char[] password;
     public String[] groupList, clientList;
     public LinkedList<DoodlePath> doodle;
+    public byte[] file;
+    public String extension="";
     
     //Send client list to newly joined client
     public Message(String type, String cmd, String groupName, String[] clientList){
@@ -109,6 +111,16 @@ public class Message implements Serializable{
         this.groupName = groupName;
         this.clientName = clientName;
         this.doodle=doodle;
+    }
+    
+    //Send File
+    public Message(String type, String cmd, String groupName, String clientName, byte[] file, String extension){
+        this.type = type;
+        this.cmd = cmd;
+        this.groupName = groupName;
+        this.clientName = clientName;
+        this.file=file;
+        this.extension = extension;
     }
     
     public String toString(){

@@ -9,6 +9,7 @@ import databaselibrary.DatabaseLibrary;
 import gmaillibrary.GmailLibrary;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -86,7 +87,18 @@ public class Connection{
                                 }
                             }
                             else if(message.type.equals("MSG")){
-                                Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]});
+                                if(message.cmd.equals("FILE")){
+                                    byte [] bytearray  = message.file;
+                                    FileOutputStream fos = new FileOutputStream("copy."+message.extension);
+                                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                                    bos.write(bytearray, 0 , bytearray.length);
+                                    bos.flush();
+                                    bos.close();
+                                    Server.showMessage("success");
+                                }
+                                else{
+                                    Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]});                           
+                                }
                             }
                             else if(message.type.equals("SEND CODE")){
                                 String query = "insert into registrationCodes(email,code) values('"+message.email+"',"+message.code+");";

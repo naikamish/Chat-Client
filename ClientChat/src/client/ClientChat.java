@@ -21,6 +21,9 @@ import javax.swing.DefaultListModel;
 import javax.swing.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.LinkedList;
 import message.DoodlePath;
 import message.Message;
@@ -40,7 +43,8 @@ public class ClientChat extends JFrame{
     
     private JList<String> clientList;
     private JScrollPane clientListPane = new JScrollPane();
-    private JButton doodleButton;
+    private JButton doodleButton, uploadFileButton;
+    private JPanel optionsPanel;
     
     private String fullText = "";
     
@@ -71,10 +75,8 @@ public class ClientChat extends JFrame{
         clientList = new JList(listModel);
         add(clientListPane, BorderLayout.EAST);
         clientListPane.setViewportView(clientList);
-        
+                
         doodleButton = new JButton("Doodle");
-        add(doodleButton,BorderLayout.SOUTH);
-        
         doodleButton.addActionListener(new ActionListener(){
 
             @Override
@@ -84,6 +86,42 @@ public class ClientChat extends JFrame{
             }
             
         });
+        
+        uploadFileButton = new JButton("Upload File");
+        uploadFileButton.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                int returnVal = fc.showOpenDialog(rootPane);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    byte [] bytearray  = new byte [(int)file.length()];
+                    String extension = "";
+
+                    int i = file.getPath().lastIndexOf('.');
+                    int p = Math.max(file.getPath().lastIndexOf('/'), file.getPath().lastIndexOf('\\'));
+
+                    if (i > p) {
+                        extension = file.getPath().substring(i+1);
+                    }
+                    try{
+                        FileInputStream fin = new FileInputStream(file);
+                        BufferedInputStream bin = new BufferedInputStream(fin);
+                        bin.read(bytearray,0,bytearray.length);
+                        sendMessage(new Message("MSG", "FILE", groupName, clientName, bytearray, extension));
+                    }
+                    catch(Exception ex){}
+                }
+            }
+            
+        });
+        
+        optionsPanel = new JPanel();
+        optionsPanel.add(doodleButton);
+        optionsPanel.add(uploadFileButton);
+        add(optionsPanel, BorderLayout.SOUTH);
         
         addWindowListener( new WindowAdapter() {
                     @Override
