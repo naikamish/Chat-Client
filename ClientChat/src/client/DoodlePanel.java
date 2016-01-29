@@ -5,6 +5,7 @@
  */
 package client;
 
+import message.DoodlePath;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -23,8 +24,9 @@ import javax.swing.JPanel;
 public class DoodlePanel extends JPanel implements MouseListener, MouseMotionListener{
     GeneralPath path=new GeneralPath();
 
-    LinkedList<GeneralPath> storedPaths = new LinkedList<GeneralPath>();
-    
+    LinkedList<DoodlePath> storedPaths = new LinkedList<DoodlePath>();
+    Color activeColor = Color.BLACK;
+    int brushSize = 3;
     
     public DoodlePanel() {
         setBackground(Color.WHITE);
@@ -38,16 +40,26 @@ public class DoodlePanel extends JPanel implements MouseListener, MouseMotionLis
     public void paintComponent(Graphics graphics) {
         super.paintComponent(graphics);
         Graphics2D g = (Graphics2D) graphics;
-        g.setStroke(new BasicStroke(3));        
-        for (GeneralPath storedPath : storedPaths ) {
-            g.draw(storedPath);
+        for (DoodlePath storedPath : storedPaths ) {
+            g.setStroke(new BasicStroke(storedPath.getBrushSize()));
+            g.setColor(storedPath.getColor());
+            g.draw(storedPath.getGeneralPath());
         }
-        
+        g.setStroke(new BasicStroke(brushSize));
+        g.setColor(activeColor);
         g.draw(path);        
     }
     
-    public void setDoodle(LinkedList<GeneralPath> doodle){
+    public void setDoodle(LinkedList<DoodlePath> doodle){
         storedPaths = doodle;
+    }
+    
+    public void setActiveColor(Color color){
+        activeColor = color;
+    }
+    
+    public void setBrushSize(int size){
+        brushSize = size;
     }
 
     @Override
@@ -71,7 +83,7 @@ public class DoodlePanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseReleased(MouseEvent me) {
-        storedPaths.add(path);
+        storedPaths.add(new DoodlePath(path,activeColor,brushSize));
         path=new GeneralPath();
         repaint();
         

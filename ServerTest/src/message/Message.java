@@ -25,7 +25,7 @@ public class Message implements Serializable{
     public int code;
     public char[] password;
     public String[] groupList, clientList;
-    public LinkedList<GeneralPath> doodle;
+    public LinkedList<DoodlePath> doodle;
     
     //Send client list to newly joined client
     public Message(String type, String cmd, String groupName, String[] clientList){
@@ -103,7 +103,7 @@ public class Message implements Serializable{
     }
     
     //Send doodle
-    public Message(String type, String cmd, String groupName, String clientName, LinkedList<GeneralPath> doodle){
+    public Message(String type, String cmd, String groupName, String clientName, LinkedList<DoodlePath> doodle){
         this.type = type;
         this.cmd = cmd;
         this.groupName = groupName;

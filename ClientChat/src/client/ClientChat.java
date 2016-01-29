@@ -22,6 +22,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
 import java.util.LinkedList;
+import message.DoodlePath;
 import message.Message;
 
 /**
@@ -99,7 +100,7 @@ public class ClientChat extends JFrame{
         return this;
     }
     
-    public void sendDoodle(LinkedList<GeneralPath> generalPath){
+    public void sendDoodle(LinkedList<DoodlePath> generalPath){
         sendMessage(new Message("MSG", "DOODLE", groupName, clientName,generalPath));
     }
     
