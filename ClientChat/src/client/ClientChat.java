@@ -22,9 +22,14 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.geom.GeneralPath;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.LinkedList;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 import message.DoodlePath;
 import message.Message;
 
@@ -47,6 +52,8 @@ public class ClientChat extends JFrame{
     private JPanel optionsPanel;
     
     private String fullText = "";
+    private HTMLEditorKit kit;
+    private HTMLDocument doc;
     
     public ClientChat(Connection conn, String grp, String name){
         super("Client Chat");
@@ -123,6 +130,12 @@ public class ClientChat extends JFrame{
         optionsPanel.add(uploadFileButton);
         add(optionsPanel, BorderLayout.SOUTH);
         
+        
+        kit = new HTMLEditorKit();
+        doc = new HTMLDocument();
+        chatWindow.setEditorKit(kit);
+        chatWindow.setDocument(doc);
+        
         addWindowListener( new WindowAdapter() {
                     @Override
                     public void windowClosing(WindowEvent we) {
@@ -150,6 +163,31 @@ public class ClientChat extends JFrame{
         }
     }
     
+    public void showFile(Message message){
+        if(!clientName.equals(message.clientName)){
+            /*JButton l=new JButton(message.message);
+            chatWindow.insertComponent(l);*/
+            String dialogMessage = message.clientName+" has sent you a file.\n"+message.filename+"\nWould you like to download this file?";
+            String dialogTitle = "Download File";
+            int reply = JOptionPane.showConfirmDialog(this, dialogMessage, dialogTitle, JOptionPane.YES_NO_OPTION);
+            if(reply==JOptionPane.YES_OPTION){
+                byte [] bytearray  = message.file;
+                try{
+                    FileOutputStream fos = new FileOutputStream(message.filename);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    bos.write(bytearray, 0 , bytearray.length);
+                    bos.flush();
+                    bos.close();
+                    JOptionPane.showMessageDialog(this,"Download Complete");
+                }
+                catch(Exception e)
+                {
+                    JOptionPane.showMessageDialog(this,e.toString());
+                }
+            }
+        }
+    }
+    
     public void closeWindow(){
         sendMessage(new Message("CMD", "EXIT", groupName, clientName));
         Client.removeFromGroup(this);
@@ -174,10 +212,7 @@ public class ClientChat extends JFrame{
                     catch(Exception e){
                         chatWindow.setText(e.toString());
                     }
-                   /* StringBuilder strBuilder = new StringBuilder();
-                            for (int i = 0; i < text.length; i++) {
-                                strBuilder.append( text[i]+" " );
-                             }*/
+                    
                     String style;
                     if(message.clientName.equals(clientName)){
                         style = "<span style='color:#ff0000; font-weight:bold;'>";
@@ -189,9 +224,16 @@ public class ClientChat extends JFrame{
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                     Date date = new Date();
                     
-                    fullText+=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message+"<br>";
+                    //fullText+=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message+"<br>";
                    // fullText+=message.toString()+"<br>";
-                    chatWindow.setText(fullText);
+                    fullText=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message;
+                    
+
+                    try {
+                        kit.insertHTML(doc, doc.getLength(), "<p>"+fullText, 0, 0, HTML.Tag.P);
+                        kit.insertHTML(doc, doc.getLength(), "<p></p>", 0, 0, null);
+                    } catch(Exception e){}
+                    //chatWindow.setText(fullText);
                 }
             }
         );

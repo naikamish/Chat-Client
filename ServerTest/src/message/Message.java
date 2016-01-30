@@ -27,7 +27,7 @@ public class Message implements Serializable{
     public String[] groupList, clientList;
     public LinkedList<DoodlePath> doodle;
     public byte[] file;
-    public String extension="";
+    public String extension="", filename="";
     
     //Send client list to newly joined client
     public Message(String type, String cmd, String groupName, String[] clientList){

@@ -120,6 +120,9 @@ public class Client extends JFrame{
                 else if(message.cmd.equals("DOODLE")){
                     chat.showDoodle(message);
                 }
+                else if(message.cmd.equals("FILE")){
+                    chat.showFile(message);
+                }
             }
         }
     }

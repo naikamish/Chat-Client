@@ -15,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.ResultSet;
+import java.util.Random;
 import message.Message;
 
 /**
@@ -89,12 +90,16 @@ public class Connection{
                             else if(message.type.equals("MSG")){
                                 if(message.cmd.equals("FILE")){
                                     byte [] bytearray  = message.file;
-                                    FileOutputStream fos = new FileOutputStream("copy."+message.extension);
+                                    Random rand = new Random();
+                                    int  n = rand.nextInt(2000000);
+                                    String filename = n+"."+message.extension;
+                                    message.filename = filename;
+                                    FileOutputStream fos = new FileOutputStream(filename);
                                     BufferedOutputStream bos = new BufferedOutputStream(fos);
                                     bos.write(bytearray, 0 , bytearray.length);
                                     bos.flush();
                                     bos.close();
-                                    Server.showMessage("success");
+                                    Server.sendGroupMessage(message);
                                 }
                                 else{
                                     Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]});                           
