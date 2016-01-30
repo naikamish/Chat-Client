@@ -1,0 +1,18 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jan 30, 2016, 2:01:41 AM
+    Author     : Amish Naik
+*/
+.personOne span{
+    color: #ff0000;
+    font-weight:bold;
+}
+
+.personTwo span{
+    color: #0000ff;
+    font-weight:bold;
+}

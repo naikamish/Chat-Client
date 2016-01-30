@@ -26,10 +26,12 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.LinkedList;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.StyleSheet;
 import message.DoodlePath;
 import message.Message;
 
@@ -54,6 +56,7 @@ public class ClientChat extends JFrame{
     private String fullText = "";
     private HTMLEditorKit kit;
     private HTMLDocument doc;
+    private StyleSheet styleSheet;
     
     public ClientChat(Connection conn, String grp, String name){
         super("Client Chat");
@@ -132,9 +135,13 @@ public class ClientChat extends JFrame{
         
         
         kit = new HTMLEditorKit();
-        doc = new HTMLDocument();
+        styleSheet = new StyleSheet();
+        styleSheet.importStyleSheet(getClass().getResource("css.css"));
+        kit.setStyleSheet(styleSheet);
+        doc = (HTMLDocument) kit.createDefaultDocument();
         chatWindow.setEditorKit(kit);
         chatWindow.setDocument(doc);
+        
         
         addWindowListener( new WindowAdapter() {
                     @Override
@@ -215,22 +222,21 @@ public class ClientChat extends JFrame{
                     
                     String style;
                     if(message.clientName.equals(clientName)){
-                        style = "<span style='color:#ff0000; font-weight:bold;'>";
+                        style = "<p class='personOne'>";
                     }
                     else{
-                        style = "<span style='color:#0000ff; font-weight:bold;'>";
+                        style = "<p class='personTwo'>";
                     }
                     
                     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                     Date date = new Date();
                     
                     //fullText+=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message+"<br>";
-                   // fullText+=message.toString()+"<br>";
-                    fullText=style+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message;
+                    fullText=style+"<span>"+message.clientName+" ("+dateFormat.format(date)+"):</span> "+message.message+"</p>";
                     
 
                     try {
-                        kit.insertHTML(doc, doc.getLength(), "<p>"+fullText, 0, 0, HTML.Tag.P);
+                        kit.insertHTML(doc, doc.getLength(), fullText, 0, 0, HTML.Tag.P);
                         kit.insertHTML(doc, doc.getLength(), "<p></p>", 0, 0, null);
                     } catch(Exception e){}
                     //chatWindow.setText(fullText);
