@@ -137,15 +137,17 @@ public class Connection{
                             }
                             
                             else if(message.type.equals("LOGIN")){
-                                String pass = new String(message.password);
+                                String pass = message.password;
                                 String query = "select username from users where username='"+message.username+"' and password='"+pass+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
                                         sendMessage(new Message("LOGIN UNSUCCESSFUL","Invalid username/password"));
+                                        Server.showMessage("login unsuccessful\n");
                                     }
                                     else{
                                         sendMessage(new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList()));
+                                        Server.showMessage("login successful\n");
                                     }
                                 }
                                 catch(Exception e){
