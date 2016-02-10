@@ -73,17 +73,13 @@ public class ChatWindowController implements Initializable {
     private Connection connection;
     public String clientName;
     public String groupName;
+    private int userID;
     private DefaultListModel listModel = new DefaultListModel();
     
     private JList<String> clientList;
     private JScrollPane clientListPane = new JScrollPane();
-    private JButton  uploadFileButton;
-    private JPanel optionsPanel;
     
     private String fullText = "";
-    private HTMLEditorKit kit;
-    private HTMLDocument doc;
-    private StyleSheet styleSheet;
     private Scene scene;
     
     @Override
@@ -104,11 +100,14 @@ public class ChatWindowController implements Initializable {
         doodleIcon.setImage(doodleImage);
     }  
     
-    public void setValues(Connection connection, String groupName, String user){
+    public void setValues(Connection connection, String groupName, String user, int userID){
         this.connection = connection;
         clientName = user;
         this.groupName = groupName;
-        sendMessage(new Message("CMD", "JOIN", groupName, clientName));
+        this.userID = userID;
+        Message message = new Message("CMD", "JOIN", groupName, clientName);
+        message.userID = this.userID;
+        sendMessage(message);
     }
     
     @FXML
@@ -145,14 +144,14 @@ public class ChatWindowController implements Initializable {
         });
     } 
     
-    private void addUser(String username){
+    private void addUser(String username, int id){
         HBox hbox = new HBox();
         ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
         icon.fitHeightProperty().set(55.0);
         icon.fitWidthProperty().set(53.0);
         Text text = new Text(username);
         hbox.getChildren().addAll(icon,text);
-        hbox.setId(username);
+        hbox.setId(Integer.toString(id));
         usersBox.getChildren().add(hbox);
     }
     
@@ -206,7 +205,9 @@ public class ChatWindowController implements Initializable {
     }
     
     public void closeWindow(){
-        sendMessage(new Message("CMD", "EXIT", groupName, clientName));
+        Message message = new Message("CMD", "EXIT", groupName, clientName);
+        message.userID=this.userID;
+        sendMessage(message);
         ChannelListController.removeFromGroup(this);
     }
     
@@ -214,12 +215,12 @@ public class ChatWindowController implements Initializable {
         sendMessage(new Message("CMD", "JOIN", groupName, clientName));//CMD JOIN " + groupName+","+clientName);
     }
     
-    public void deleteFromList(String user){
+    public void deleteFromList(int id){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
                 for(Node node:usersBox.getChildren()){
-                    if(node.getId().equals(user)){
+                    if(node.getId().equals(Integer.toString(id))){
                         usersBox.getChildren().remove(node);
                     }
                 }
@@ -227,13 +228,16 @@ public class ChatWindowController implements Initializable {
         });
     }
     
-    public void setGroupList(String[] list){
+    public void setGroupList(String[] list, int[] idList){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
-                for(String s : list){
-                    addUser(s);
+                for(int i=0; i<list.length; i++){
+                    addUser(list[i],idList[i]);
                 }
+                /*for(String s : list){
+                    addUser(s);
+                }*/
             }
         });
     } 

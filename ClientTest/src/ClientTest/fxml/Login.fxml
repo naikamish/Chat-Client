@@ -2,16 +2,24 @@
 
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane id="AnchorPane" prefHeight="338.0" prefWidth="545.0" styleClass="mainFxmlClass" stylesheets="/login.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientTest.LoginController">
    <children>
-      <Text layoutX="115.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" />
-      <Text layoutX="117.0" layoutY="169.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
-      <TextField fx:id="UsernameTextField" layoutX="205.0" layoutY="91.0" />
-      <TextField fx:id="PasswordTextField" layoutX="205.0" layoutY="143.0" />
-      <Button fx:id="loginButton" layoutX="238.0" layoutY="210.0" mnemonicParsing="false" onAction="#loginButtonClicked" text="Login" />
+      <Text layoutX="115.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textLabel" text="Username" />
+      <Text layoutX="117.0" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textLabel" text="Password" />
+      <TextField fx:id="UsernameTextField" layoutX="225.0" layoutY="140.0" />
+      <TextField fx:id="PasswordTextField" layoutX="225.0" layoutY="192.0" />
+      <Button fx:id="loginButton" layoutX="247.0" layoutY="253.0" mnemonicParsing="false" onAction="#loginButtonClicked" text="Login" />
       <Text fx:id="errorMessageLabel" layoutY="287.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="errorMessageLabel" textAlignment="CENTER" wrappingWidth="545.0" />
+      <HBox alignment="CENTER" layoutY="40.0" prefHeight="68.0" prefWidth="545.0"  styleClass="imagesHBox">
+         <children>
+            <ImageView fx:id="chatIcon" fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="doodleIcon" fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="fileIcon" fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </HBox>
    </children>
 </AnchorPane>

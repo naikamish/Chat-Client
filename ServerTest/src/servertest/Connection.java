@@ -30,6 +30,7 @@ public class Connection{
     private Group group;
     private String clientName;
     private DatabaseLibrary dbLib;
+    private int userID;
     
     public Connection(Socket socket, DatabaseLibrary dbLib){
         connection = socket;
@@ -70,13 +71,14 @@ public class Connection{
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("JOIN")){
-                                    addToGroup(message.groupName,message.clientName);
+                                    addToGroup(message.groupName,message.clientName, message.userID);
                                 }
                                 else if(message.cmd.equals("EXIT")){
                                     leaveGroup(message.groupName);
+                                    Server.showMessage(Integer.toString(message.userID));
                                 }
                                 else if(message.cmd.equals("CREATE")){
-                                    String query = "insert into groups(groupName) values('"+message.groupName+"');";
+                                    String query = "insert into groups(groupName, userID) values('"+message.groupName+"',"+message.userID+");";
                                     try{
                                         dbLib.insertQuery(query);
                                         Server.createGroup(message.groupName);
@@ -138,7 +140,7 @@ public class Connection{
                             
                             else if(message.type.equals("LOGIN")){
                                 String pass = message.password;
-                                String query = "select username from users where username='"+message.username+"' and password='"+pass+"';";
+                                String query = "select username, userID from users where username='"+message.username+"' and password='"+pass+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
@@ -146,7 +148,15 @@ public class Connection{
                                         Server.showMessage("login unsuccessful\n");
                                     }
                                     else{
-                                        sendMessage(new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList()));
+                                        int userID=0;
+                                        //while(resultSet.next()){
+                                            userID = resultSet.getInt("userID");
+                                            //resultSet.getInt("code")==message.code
+                                        //}
+                                        Server.showMessage(Integer.toString(userID));
+                                        Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
+                                        userMessage.userID=userID;
+                                        sendMessage(userMessage);
                                         Server.showMessage("login successful\n");
                                     }
                                 }
@@ -169,16 +179,24 @@ public class Connection{
         Server.removeFromGroup(this, g);
     }
     
-    public void addToGroup(String group, String user){
+    public void addToGroup(String group, String user, int userID){
         clientName = user;
+        this.userID = userID;
         Group g = Server.addToGroup(this, group);
         String[] clientList = g.getClientList();
+        int[] clientListIDs = g.getClientIDs();
+        Message message = new Message("CMD", "START", g.getName(), clientList);
+        message.groupUserIDs = clientListIDs;
        // if(!clientList.equals("")){
-            sendMessage(new Message("CMD", "START", g.getName(), clientList));//{"CMD", "STRT", g.getName(), "", clientList});
+            sendMessage(message);//{"CMD", "STRT", g.getName(), "", clientList});
        // }
     }
 
     public String getName(){
         return clientName;
+    }
+    
+    public int getID(){
+        return userID;
     }
 }

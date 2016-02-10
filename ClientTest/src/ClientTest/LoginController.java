@@ -20,6 +20,8 @@ import java.net.Socket;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,6 +36,7 @@ public class LoginController implements Initializable {
     @FXML private TextField UsernameTextField, PasswordTextField;
     @FXML private Text errorMessageLabel;
     @FXML private Button loginButton;
+    @FXML private ImageView chatIcon, doodleIcon, fileIcon;
     
     private String serverIP;
     static Connection connection;
@@ -68,7 +71,7 @@ public class LoginController implements Initializable {
         this.stage = stage;
     }
     
-    public void successfullyLoggedIn(String[] grp) throws Exception{
+    public void successfullyLoggedIn(String[] grp, int userID) throws Exception{
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
@@ -77,7 +80,8 @@ public class LoginController implements Initializable {
                 Parent root = (Parent)fxmlLoader.load();
                 ChannelListController controller = fxmlLoader.<ChannelListController>getController();
                 connection.setChannelListController(controller);
-                controller.startRunning(grp,connection, username);
+                controller.startRunning(grp,connection, username,userID);
+                System.out.println(userID);
                 Scene groupList = new Scene(root);
 
                 Stage groupListWindow = new Stage();
@@ -111,6 +115,14 @@ public class LoginController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        Image doodleImage = new Image(ClientTest.class.getResourceAsStream("images/doodle.png"));
+        Image chatImage = new Image(ClientTest.class.getResourceAsStream("images/chat.png"));
+        Image fileImage = new Image(ClientTest.class.getResourceAsStream("images/attach.png"));
+        
+        doodleIcon.setImage(doodleImage);
+        chatIcon.setImage(chatImage);
+        fileIcon.setImage(fileImage);
+        
         serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
         startRunning();
     } 

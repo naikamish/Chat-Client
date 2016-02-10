@@ -35,7 +35,7 @@ public class Connection {
             output = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
             output.flush();
             input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-            //sendMessage(new Message("LOGIN","hello", "hello"));
+           // sendMessage(new Message("LOGIN","hello", "hello"));
         }
         catch(Exception e){System.out.println("Error Connection line 38");}
     }
@@ -53,14 +53,16 @@ public class Connection {
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("START")){
-                                    channelListController.sendGroupList(message.groupName, message.clientList);//groupName, groupList);
+                                    channelListController.sendGroupList(message.groupName, message.clientList, message.groupUserIDs);//groupName, groupList);
                                 }
                                 else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
-                                    channelListController.sendGroupList(message.groupName,client);
+                                    int[] clientID = {message.userID};
+                                    channelListController.sendGroupList(message.groupName,client, clientID);
                                 }
                                 else if(message.cmd.equals("REMOVE")){
-                                    channelListController.deleteFromList(message.groupName, message.clientName);
+                                    channelListController.deleteFromList(message.groupName, message.userID);
+                                    System.out.println(message.userID);
                                 }
                                 else if(message.cmd.equals("CREATE")){
                                     channelListController.addGroup(message.groupName);
@@ -71,7 +73,7 @@ public class Connection {
                             }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){
                                 System.out.println("login successful");
-                                login.successfullyLoggedIn(message.groupList);
+                                login.successfullyLoggedIn(message.groupList,message.userID);
                             }
                             else if(message.type.equals("LOGIN UNSUCCESSFUL")){
                                 login.unsuccessfulLogin(message.message);

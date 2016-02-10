@@ -101,7 +101,9 @@ public class Server extends JFrame{
     public static Group addToGroup(Connection c, String g){
         for(Group group:groups){
             if(group.getName().equals(g)){
-                group.sendMessage(new Message("CMD", "ADD", group.getName(),c.getName()));//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
+                Message message = new Message("CMD", "ADD", group.getName(),c.getName());
+                message.userID = c.getID();
+                group.sendMessage(message);//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
                 return group;
             }

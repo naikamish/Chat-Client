@@ -39,7 +39,9 @@ public class Group {
     
     public void removeFromGroup(Connection user){
         connections.remove(user);
-        sendMessage(new Message("CMD", "REMOVE", groupName, user.getName()));//{"CMD","RMOV",groupName,user.getName(),""});
+        Message message = new Message("CMD", "REMOVE", groupName, user.getName());
+        message.userID = user.getID();
+        sendMessage(message);//{"CMD","RMOV",groupName,user.getName(),""});
     }
     
     public String getName(){
@@ -56,5 +58,17 @@ public class Group {
             }
       //  }
         return groupList;
+    }
+    
+    public int[] getClientIDs(){
+        int[] groupIDs = new int[connections.size()];
+        int i = 0;
+      //  if(!connections.isEmpty()){
+            for(Connection socket:connections){
+                groupIDs[i]=socket.getID();
+                i++;
+            }
+      //  }
+        return groupIDs;
     }
 }

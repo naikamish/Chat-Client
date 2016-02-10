@@ -55,6 +55,7 @@ public class ChannelListController implements Initializable {
     private String[] data;
     private static DefaultListModel listModel = new DefaultListModel();
     private static Notification notifications;
+    private int userID;
     
     Connection connection;
     JButton connectButton, createGroupButton;
@@ -118,7 +119,7 @@ public class ChannelListController implements Initializable {
         Parent root = (Parent)fxmlLoader.load();
         ChatWindowController controller = fxmlLoader.<ChatWindowController>getController();
         String selectedGroup = getSelectedGroup();
-        controller.setValues(connection, selectedGroup, username);
+        controller.setValues(connection, selectedGroup, username, userID);
         chats.add(controller);
         Scene chatWindowScene = new Scene(root);
         controller.setScene(chatWindowScene);
@@ -129,7 +130,9 @@ public class ChannelListController implements Initializable {
         chatWindow.show();
         
         chatWindow.setOnCloseRequest(e -> {
-            controller.sendMessage(new Message("CMD", "EXIT", controller.groupName, controller.clientName));
+            Message message = new Message("CMD", "EXIT", controller.groupName, controller.clientName);
+            message.userID = this.userID;
+            controller.sendMessage(message);
             removeFromGroup(controller);
         });
         
@@ -146,11 +149,12 @@ public class ChannelListController implements Initializable {
     }
     
     
-    public void startRunning(String[] groupList, Connection connection, String username){
+    public void startRunning(String[] groupList, Connection connection, String username, int userID){
         try{
             //JOptionPane.showConfirmDialog(null,groupList[1]);
             this.username = username;
             this.connection = connection;
+            this.userID= userID;
             for(String s : groupList){
                 addGroup(s);
             }
@@ -158,10 +162,10 @@ public class ChannelListController implements Initializable {
         catch(Exception e){}
     }
     
-    public static void sendGroupList(String g, String[] list){
+    public static void sendGroupList(String g, String[] list, int[] idList){
         for(ChatWindowController chat:chats){
             if(chat.getGroup().equals(g)){
-                chat.setGroupList(list);
+                chat.setGroupList(list, idList);
             }
         }
     }
@@ -186,10 +190,10 @@ public class ChannelListController implements Initializable {
         chats.remove(c);
     }
     
-    public static void deleteFromList(String g, String user){
+    public static void deleteFromList(String g, int id){
         for(ChatWindowController chat:chats){
             if((chat.getGroup()).equals(g)){
-                chat.deleteFromList(user);
+                chat.deleteFromList(id);
             }
         }
     }   
@@ -197,6 +201,8 @@ public class ChannelListController implements Initializable {
     @FXML
     private void newGroupButton(ActionEvent event) {
         String newGroup = JOptionPane.showInputDialog("What is the name of the group you wish to create?");
-        connection.sendMessage(new Message("CMD","CREATE",newGroup));
+        Message message = new Message("CMD","CREATE",newGroup);
+        message.userID = this.userID;
+        connection.sendMessage(message);
     }
 }

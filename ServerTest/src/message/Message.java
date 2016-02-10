@@ -29,6 +29,8 @@ public class Message implements Serializable{
     public byte[] file;
     public String extension="", filename="";
     public char[] pass;
+    public int userID;
+    public int[] groupUserIDs;
     
     public Message(){
         
