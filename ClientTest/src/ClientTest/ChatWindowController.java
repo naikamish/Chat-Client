@@ -21,6 +21,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
@@ -38,7 +39,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -65,15 +69,15 @@ public class ChatWindowController implements Initializable {
     @FXML private VBox chatBox, usersBox;
     @FXML private ScrollPane chatBoxScrollPane;
     @FXML private ImageView attachIcon, doodleIcon;
-    
+    @FXML private HBox chatTextHBox;
     private String username="hello";
         private JTextField userText;
     private JTextPane chatWindow;
     private String message = ""; 
     private Connection connection;
     public String clientName;
-    public String groupName;
-    private int userID;
+   // public String groupName;
+    private int userID, groupID, creatorID;
     private DefaultListModel listModel = new DefaultListModel();
     
     private JList<String> clientList;
@@ -92,7 +96,6 @@ public class ChatWindowController implements Initializable {
               chatBoxScrollPane.setVvalue(chatBoxScrollPane.getVmax());
             }
         });
-        
         Image attachImage = new Image(ClientTest.class.getResourceAsStream("images/attach.png"));
         attachIcon.setImage(attachImage);
         
@@ -100,12 +103,12 @@ public class ChatWindowController implements Initializable {
         doodleIcon.setImage(doodleImage);
     }  
     
-    public void setValues(Connection connection, String groupName, String user, int userID){
+    public void setValues(Connection connection, String groupID, String user, int userID){
         this.connection = connection;
         clientName = user;
-        this.groupName = groupName;
+        this.groupID = Integer.parseInt(groupID);
         this.userID = userID;
-        Message message = new Message("CMD", "JOIN", groupName, clientName);
+        Message message = new Message("CMD", "JOIN", this.groupID, clientName);
         message.userID = this.userID;
         sendMessage(message);
     }
@@ -113,7 +116,7 @@ public class ChatWindowController implements Initializable {
     @FXML
     private void enterPressed(ActionEvent event) {
         TextField source = (TextField)event.getSource();
-        sendMessage(new Message("MSG", "SEND", groupName, clientName, source.getText()));//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+        sendMessage(new Message("MSG", "SEND", groupID, clientName, source.getText()));//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
         source.clear();
         
         //createMessage(source.getText());
@@ -149,15 +152,49 @@ public class ChatWindowController implements Initializable {
         ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
         icon.fitHeightProperty().set(55.0);
         icon.fitWidthProperty().set(53.0);
+        
+        TextFlow textFlow = new TextFlow();
+        textFlow.getStyleClass().add("chatListText");
+        textFlow.setPrefHeight(55.0);
+        textFlow.setPrefWidth(225.0);
+        textFlow.setTextAlignment(TextAlignment.CENTER);
+        
         Text text = new Text(username);
-        hbox.getChildren().addAll(icon,text);
+        text.getStyleClass().add("chatListTextObject");
+        textFlow.getChildren().add(text);
+        VBox vbox = new VBox();
+        
+        if(this.userID==this.creatorID){
+            ImageView banIcon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/ban.png")));
+            banIcon.setId(Integer.toString(id));
+            banIcon.setOnMouseClicked(new EventHandler<MouseEvent>(){
+ 
+                @Override
+                public void handle(MouseEvent e) {
+                    Message message = new Message();
+                    message.type="BAN";
+                    message.userID=Integer.parseInt(banIcon.getId());
+                    message.groupID=getGroupID();
+                    sendMessage(message);
+                }
+
+            });
+            
+            
+            banIcon.fitHeightProperty().set(30.0);
+            banIcon.fitWidthProperty().set(30.0);
+            vbox.getChildren().addAll(banIcon);
+        }
+        
+        hbox.getChildren().addAll(icon,textFlow,vbox);
         hbox.setId(Integer.toString(id));
         usersBox.getChildren().add(hbox);
     }
     
-    public String getGroup(){
-        return groupName;
+    public int getGroupID(){
+        return groupID;
     }
+
     
      public void sendMessage(Message message){
         connection.sendMessage(message);
@@ -168,7 +205,7 @@ public class ChatWindowController implements Initializable {
     }
     
     public void sendDoodle(LinkedList<DoodlePath> generalPath){
-        sendMessage(new Message("MSG", "DOODLE", groupName, clientName,generalPath));
+        sendMessage(new Message("MSG", "DOODLE", groupID, clientName,generalPath));
     }
     
     public void showDoodle(Message message){
@@ -205,14 +242,30 @@ public class ChatWindowController implements Initializable {
     }
     
     public void closeWindow(){
-        Message message = new Message("CMD", "EXIT", groupName, clientName);
-        message.userID=this.userID;
-        sendMessage(message);
-        ChannelListController.removeFromGroup(this);
+        
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                TextFlow text = new TextFlow();
+                text.getStyleClass().add("message");
+
+                Text activeUser=new Text("YOU HAVE BEEN BANNED FROM THIS CHAT");
+                activeUser.getStyleClass().add("activeUser");
+                text.getChildren().addAll(activeUser);
+
+                chatBox.getChildren().add(text);
+                Message message = new Message("CMD", "EXIT", getGroupID(), clientName);
+                message.userID = userID;
+                sendMessage(message);
+                chatTextHBox.setDisable(true);
+            }
+        });
+        System.out.println("hello");
+
     }
     
     public void startRunning(){
-        sendMessage(new Message("CMD", "JOIN", groupName, clientName));//CMD JOIN " + groupName+","+clientName);
+        sendMessage(new Message("CMD", "JOIN", groupID, clientName));//CMD JOIN " + groupName+","+clientName);
     }
     
     public void deleteFromList(int id){
@@ -228,7 +281,8 @@ public class ChatWindowController implements Initializable {
         });
     }
     
-    public void setGroupList(String[] list, int[] idList){
+    public void setGroupList(String[] list, int[] idList, int creatorID){
+        this.creatorID = creatorID;
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
@@ -282,7 +336,7 @@ public class ChatWindowController implements Initializable {
                 FileInputStream fin = new FileInputStream(file);
                 BufferedInputStream bin = new BufferedInputStream(fin);
                 bin.read(bytearray,0,bytearray.length);
-                sendMessage(new Message("MSG", "FILE", groupName, clientName, bytearray, extension));
+                sendMessage(new Message("MSG", "FILE", groupID, clientName, bytearray, extension));
             }
             catch(Exception ex){}
         }

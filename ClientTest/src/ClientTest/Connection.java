@@ -37,7 +37,7 @@ public class Connection {
             input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
            // sendMessage(new Message("LOGIN","hello", "hello"));
         }
-        catch(Exception e){System.out.println("Error Connection line 38");}
+        catch(Exception e){}
     }
     
     public void setChannelListController(ChannelListController controller){
@@ -53,34 +53,35 @@ public class Connection {
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("START")){
-                                    channelListController.sendGroupList(message.groupName, message.clientList, message.groupUserIDs);//groupName, groupList);
+                                    channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID);//groupName, groupList);
                                 }
                                 else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
                                     int[] clientID = {message.userID};
-                                    channelListController.sendGroupList(message.groupName,client, clientID);
+                                    channelListController.sendGroupList(message.groupID,client, clientID, message.creatorID);
                                 }
                                 else if(message.cmd.equals("REMOVE")){
-                                    channelListController.deleteFromList(message.groupName, message.userID);
-                                    System.out.println(message.userID);
+                                    channelListController.deleteFromList(message.groupID, message.userID);
                                 }
                                 else if(message.cmd.equals("CREATE")){
-                                    channelListController.addGroup(message.groupName);
+                                    channelListController.addGroup(message.groupName, message.groupID);
                                 }
                             }
                             else if(message.type.equals("MSG")){
                                 channelListController.showMessage(message);
                             }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){
-                                System.out.println("login successful");
-                                login.successfullyLoggedIn(message.groupList,message.userID);
+                                login.successfullyLoggedIn(message.groupList,message.userID, message.groupIDList);
                             }
                             else if(message.type.equals("LOGIN UNSUCCESSFUL")){
                                 login.unsuccessfulLogin(message.message);
                             }
+                            else if(message.type.equals("BAN")){
+                                channelListController.enforceBan(message.userID, message.groupID);
+                            }
                             //Client.showMessage(message);
                         }
-                        catch(Exception e){System.out.println(e.toString());}
+                        catch(Exception e){}
                     }
                 }
             });
@@ -92,6 +93,6 @@ public class Connection {
         output.writeObject(message);
         output.flush();
         }
-        catch(Exception e){System.out.println("Error Connection line 87");}
+        catch(Exception e){}
     }   
 }

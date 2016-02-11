@@ -71,10 +71,10 @@ public class Connection{
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("JOIN")){
-                                    addToGroup(message.groupName,message.clientName, message.userID);
+                                    addToGroup(message.groupID,message.clientName, message.userID);
                                 }
                                 else if(message.cmd.equals("EXIT")){
-                                    leaveGroup(message.groupName);
+                                    leaveGroup(message.groupID);
                                     Server.showMessage(Integer.toString(message.userID));
                                 }
                                 else if(message.cmd.equals("CREATE")){
@@ -156,6 +156,7 @@ public class Connection{
                                         Server.showMessage(Integer.toString(userID));
                                         Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
                                         userMessage.userID=userID;
+                                        userMessage.groupIDList=Server.getGroupID();
                                         sendMessage(userMessage);
                                         Server.showMessage("login successful\n");
                                     }
@@ -163,6 +164,17 @@ public class Connection{
                                 catch(Exception e){
                                     Server.showMessage(e.toString()+"line 120");
                                 }
+                            }
+                            
+                            else if(message.type.equals("BAN")){
+                                String query = "insert into bans(userID, groupID) values("+message.userID+","+message.groupID+");";
+                                try{
+                                    dbLib.insertQuery(query);
+                                }
+                                catch(Exception e){
+                                    Server.showMessage(e.toString());
+                                }
+                                Server.sendGroupMessage(message);
                             }
                             Server.showMessage(message.toString());
                         }
@@ -175,18 +187,20 @@ public class Connection{
         thread.start();
     }
     
-    public void leaveGroup(String g){
+    public void leaveGroup(int g){
         Server.removeFromGroup(this, g);
     }
     
-    public void addToGroup(String group, String user, int userID){
+    public void addToGroup(int groupID, String user, int userID){
         clientName = user;
         this.userID = userID;
-        Group g = Server.addToGroup(this, group);
+        Group g = Server.addToGroup(this, groupID);
         String[] clientList = g.getClientList();
         int[] clientListIDs = g.getClientIDs();
-        Message message = new Message("CMD", "START", g.getName(), clientList);
+        Message message = new Message("CMD", "START", g.getID(), clientList);
         message.groupUserIDs = clientListIDs;
+        message.creatorID = g.getCreatorID();
+        
        // if(!clientList.equals("")){
             sendMessage(message);//{"CMD", "STRT", g.getName(), "", clientList});
        // }

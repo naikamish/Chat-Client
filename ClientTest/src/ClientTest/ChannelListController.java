@@ -68,13 +68,13 @@ public class ChannelListController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }    
     
-    public void addGroup(String group){
+    public void addGroup(String group, int groupID){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
                 HBox hbox = new HBox();
                 hbox.getStyleClass().add("chatListHBox");
-                hbox.setId(group);
+                hbox.setId(Integer.toString(groupID));
 
                 ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
                 icon.fitHeightProperty().set(63.0);
@@ -130,7 +130,7 @@ public class ChannelListController implements Initializable {
         chatWindow.show();
         
         chatWindow.setOnCloseRequest(e -> {
-            Message message = new Message("CMD", "EXIT", controller.groupName, controller.clientName);
+            Message message = new Message("CMD", "EXIT", controller.getGroupID(), controller.clientName);
             message.userID = this.userID;
             controller.sendMessage(message);
             removeFromGroup(controller);
@@ -149,30 +149,33 @@ public class ChannelListController implements Initializable {
     }
     
     
-    public void startRunning(String[] groupList, Connection connection, String username, int userID){
+    public void startRunning(String[] groupList, Connection connection, String username, int userID, int[] groupIDList){
         try{
             //JOptionPane.showConfirmDialog(null,groupList[1]);
             this.username = username;
             this.connection = connection;
             this.userID= userID;
-            for(String s : groupList){
-                addGroup(s);
+            for(int i=0; i<groupList.length;i++){
+                addGroup(groupList[i],groupIDList[i]);
             }
+            /*for(String s : groupList){
+                addGroup(s);
+            }*/
         }
         catch(Exception e){}
     }
     
-    public static void sendGroupList(String g, String[] list, int[] idList){
+    public static void sendGroupList(int g, String[] list, int[] idList, int creatorID){
         for(ChatWindowController chat:chats){
-            if(chat.getGroup().equals(g)){
-                chat.setGroupList(list, idList);
+            if(chat.getGroupID()==g){
+                chat.setGroupList(list, idList, creatorID);
             }
         }
     }
     
     public static void showMessage(Message message){
         for(ChatWindowController chat:chats){
-            if(chat.getGroup().equals(message.groupName)){
+            if(chat.getGroupID()==message.groupID){
                 if(message.cmd.equals("SEND")){
                     chat.showMessage(message);
                 }
@@ -190,9 +193,9 @@ public class ChannelListController implements Initializable {
         chats.remove(c);
     }
     
-    public static void deleteFromList(String g, int id){
+    public static void deleteFromList(int g, int id){
         for(ChatWindowController chat:chats){
-            if((chat.getGroup()).equals(g)){
+            if(chat.getGroupID()==g){
                 chat.deleteFromList(id);
             }
         }
@@ -204,5 +207,15 @@ public class ChannelListController implements Initializable {
         Message message = new Message("CMD","CREATE",newGroup);
         message.userID = this.userID;
         connection.sendMessage(message);
+    }
+    
+    public void enforceBan(int userID, int groupID){
+        if(this.userID==userID){
+            for(ChatWindowController chat:chats){
+                if(chat.getGroupID()==groupID){
+                    chat.closeWindow();
+                }
+            }
+        }
     }
 }

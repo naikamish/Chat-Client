@@ -20,10 +20,13 @@ public class Group {
     private Thread t1;
     private ServerSocket server;
     private String groupName;
+    private int groupID, creatorID;
     
-    public Group(ServerSocket serv, String name){
+    public Group(ServerSocket serv, String name, int groupID, int creatorID){
         server=serv;
         groupName = name;
+        this.groupID = groupID;
+        this.creatorID = creatorID;
     }
     
     //Send message to client
@@ -39,13 +42,21 @@ public class Group {
     
     public void removeFromGroup(Connection user){
         connections.remove(user);
-        Message message = new Message("CMD", "REMOVE", groupName, user.getName());
+        Message message = new Message("CMD", "REMOVE", groupID, user.getName());
         message.userID = user.getID();
         sendMessage(message);//{"CMD","RMOV",groupName,user.getName(),""});
     }
     
     public String getName(){
         return groupName;
+    }
+    
+    public int getID(){
+        return groupID;
+    }
+    
+    public int getCreatorID(){
+        return creatorID;
     }
     
     public String[] getClientList(){

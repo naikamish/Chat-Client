@@ -62,12 +62,12 @@ public class Server extends JFrame{
     }
     
     private void createGroupList(){
-        String query = "select groupName from groups;";
+        String query = "select groupName, groupID, userID from groups;";
         
         try{
             ResultSet resultSet = dbLib.selectQuery(query);
             while (resultSet.next()) {
-                groups.add(new Group(server, resultSet.getString("groupName")));
+                groups.add(new Group(server, resultSet.getString("groupName"), resultSet.getInt("groupID"), resultSet.getInt("userID")));
                 System.out.println(resultSet.getString("groupName"));
             }
         }
@@ -76,7 +76,7 @@ public class Server extends JFrame{
     }
     
     public static void createGroup(String groupName){
-        groups.add(new Group(server,groupName));
+        groups.add(new Group(server,groupName,0,0));
         for(Connection connection:connections){
             connection.sendMessage(new Message("CMD", "CREATE", groupName));//{"CMD", "CRTE", groupName,"",""});
         }
@@ -98,10 +98,11 @@ public class Server extends JFrame{
         t1.start();    
     }
     
-    public static Group addToGroup(Connection c, String g){
+    public static Group addToGroup(Connection c, int g){
         for(Group group:groups){
-            if(group.getName().equals(g)){
-                Message message = new Message("CMD", "ADD", group.getName(),c.getName());
+            if(group.getID()==g){
+                Message message = new Message("CMD", "ADD", group.getID(),c.getName());
+                message.creatorID = group.getCreatorID();
                 message.userID = c.getID();
                 group.sendMessage(message);//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
@@ -113,7 +114,7 @@ public class Server extends JFrame{
     
     public static void sendGroupMessage(Message msg){
         for(Group group:groups){
-            if(group.getName().equals(msg.groupName)){
+            if(group.getID()==msg.groupID){
                 group.sendMessage(msg);
             }
         }
@@ -129,9 +130,19 @@ public class Server extends JFrame{
         return groupList;
     }
     
-    public static void removeFromGroup(Connection user, String g){
+    public static int[] getGroupID(){
+        int[] groupID = new int[groups.size()];
+        int i = 0;
         for(Group group:groups){
-            if(g.equals(group.getName())){
+            groupID[i]=group.getID();
+            i++;
+        }
+        return groupID;
+    }
+    
+    public static void removeFromGroup(Connection user, int g){
+        for(Group group:groups){
+            if(g==group.getID()){
                 group.removeFromGroup(user);
             }
         }

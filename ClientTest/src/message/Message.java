@@ -29,25 +29,25 @@ public class Message implements Serializable{
     public byte[] file;
     public String extension="", filename="";
     public char[] pass;
-    public int userID;
-    public int[] groupUserIDs;
+    public int userID, groupID, creatorID;
+    public int[] groupUserIDs, groupIDList;
     
     public Message(){
         
     }
     //Send client list to newly joined client
-    public Message(String type, String cmd, String groupName, String[] clientList){
+    public Message(String type, String cmd, int groupID, String[] clientList){
         this.type = type;
         this.cmd = cmd;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.clientList = clientList;
         fullMessage = "Send client list for group "+this.groupName+" to "+this.groupName;
     }
     //Send add message to a group when a new client joins or leaves
-    public Message(String type, String cmd, String groupName, String clientName){
+    public Message(String type, String cmd, int groupID, String clientName){
         this.type = type;
         this.cmd = cmd;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.clientName = clientName;
         if(cmd.equals("JOIN"))
             fullMessage = this.clientName + " joined group " + this.groupName;
@@ -55,10 +55,10 @@ public class Message implements Serializable{
             fullMessage = this.clientName + " left group " + this.groupName;
     }
     //Send message to a group of people
-    public Message(String type, String cmd, String groupName, String clientName, String msg){
+    public Message(String type, String cmd, int groupID, String clientName, String msg){
         this.type = type;
         this.cmd = cmd;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.clientName = clientName;
         this.message = msg;
         fullMessage = this.groupName + "- " + this.clientName + ": " + this.message;
@@ -111,19 +111,19 @@ public class Message implements Serializable{
     }
     
     //Send doodle
-    public Message(String type, String cmd, String groupName, String clientName, LinkedList<DoodlePath> doodle){
+    public Message(String type, String cmd, int groupID, String clientName, LinkedList<DoodlePath> doodle){
         this.type = type;
         this.cmd = cmd;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.clientName = clientName;
         this.doodle=doodle;
     }
     
     //Send File
-    public Message(String type, String cmd, String groupName, String clientName, byte[] file, String extension){
+    public Message(String type, String cmd, int groupID, String clientName, byte[] file, String extension){
         this.type = type;
         this.cmd = cmd;
-        this.groupName = groupName;
+        this.groupID = groupID;
         this.clientName = clientName;
         this.file=file;
         this.extension = extension;
