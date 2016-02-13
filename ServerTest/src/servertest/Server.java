@@ -148,6 +148,19 @@ public class Server extends JFrame{
         }
     }
     
+    public static void removeConnection(Connection user, int userID){
+        for(Group group:groups){
+            if(group.connections.contains(user)){
+                group.removeFromGroup(user);
+                Server.showMessage("removed user from group"+group.getName());
+            }
+        }
+        if(connections.contains(user)){
+            connections.remove(user);
+            Server.showMessage("removed user from server");
+        }        
+    }
+    
     public static void showMessage(final String text){
         SwingUtilities.invokeLater(
             new Runnable(){

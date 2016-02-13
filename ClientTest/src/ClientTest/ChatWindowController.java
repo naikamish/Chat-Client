@@ -103,14 +103,11 @@ public class ChatWindowController implements Initializable {
         doodleIcon.setImage(doodleImage);
     }  
     
-    public void setValues(Connection connection, String groupID, String user, int userID){
+    public void setValues(Connection connection, int groupID, String user, int userID){
         this.connection = connection;
         clientName = user;
-        this.groupID = Integer.parseInt(groupID);
+        this.groupID = groupID;
         this.userID = userID;
-        Message message = new Message("CMD", "JOIN", this.groupID, clientName);
-        message.userID = this.userID;
-        sendMessage(message);
     }
     
     @FXML

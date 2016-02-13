@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.sql.ResultSet;
 import java.util.Random;
 import message.Message;
@@ -71,7 +72,21 @@ public class Connection{
                             Message message = (Message) input.readObject();
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("JOIN")){
-                                    addToGroup(message.groupID,message.clientName, message.userID);
+                                    String query = "select groupID from bans where groupID="+message.groupID+" and userID="+message.userID+";";
+                                    try{
+                                        ResultSet resultSet = dbLib.selectQuery(query);
+                                        if (!resultSet.next() ) {
+                                            addToGroup(message.groupID,message.clientName, message.userID);
+                                        }
+                                        else{          
+                                            Message newMessage = new Message();
+                                            newMessage.type = "BANNED";
+                                            sendMessage(newMessage);                                            
+                                        }
+                                    }
+                                    catch(Exception e){Server.showMessage(e.toString());}
+                                    
+                                    
                                 }
                                 else if(message.cmd.equals("EXIT")){
                                     leaveGroup(message.groupID);
@@ -178,6 +193,9 @@ public class Connection{
                             }
                             Server.showMessage(message.toString());
                         }
+                        catch(SocketException e){
+                            removeConnection();
+                        }
                         catch(Exception e){
                             
                         }
@@ -185,6 +203,10 @@ public class Connection{
                 }
             });
         thread.start();
+    }
+    
+    private void removeConnection(){
+        Server.removeConnection(this, userID);
     }
     
     public void leaveGroup(int g){

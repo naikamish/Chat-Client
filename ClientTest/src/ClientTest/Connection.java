@@ -51,6 +51,7 @@ public class Connection {
                     while(true){
                         try{
                             Message message = (Message) input.readObject();
+                            System.out.println(message.type);
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("START")){
                                     channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID);//groupName, groupList);
@@ -58,7 +59,7 @@ public class Connection {
                                 else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
                                     int[] clientID = {message.userID};
-                                    channelListController.sendGroupList(message.groupID,client, clientID, message.creatorID);
+                                    channelListController.addGroupMember(message.groupID,client, clientID, message.creatorID);
                                 }
                                 else if(message.cmd.equals("REMOVE")){
                                     channelListController.deleteFromList(message.groupID, message.userID);
@@ -66,6 +67,9 @@ public class Connection {
                                 else if(message.cmd.equals("CREATE")){
                                     channelListController.addGroup(message.groupName, message.groupID);
                                 }
+                            }
+                            else if(message.type.equals("BANNED")){
+                                JOptionPane.showMessageDialog(null,"You have been banned from this group");
                             }
                             else if(message.type.equals("MSG")){
                                 channelListController.showMessage(message);

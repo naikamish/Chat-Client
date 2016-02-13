@@ -115,27 +115,16 @@ public class ChannelListController implements Initializable {
     
     @FXML
     private void connectButtonClick(ActionEvent event) throws Exception{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/ChatWindow.fxml"));
-        Parent root = (Parent)fxmlLoader.load();
-        ChatWindowController controller = fxmlLoader.<ChatWindowController>getController();
-        String selectedGroup = getSelectedGroup();
-        controller.setValues(connection, selectedGroup, username, userID);
-        chats.add(controller);
-        Scene chatWindowScene = new Scene(root);
-        controller.setScene(chatWindowScene);
-        Stage chatWindow = new Stage();
-        chatWindow.setScene(chatWindowScene);
-        chatWindow.minWidthProperty().set(600.0);
-        chatWindow.minHeightProperty().set(600.0);
-        chatWindow.show();
+        Message message = new Message("CMD", "JOIN", Integer.parseInt(getSelectedGroup()), username);
+        message.userID = this.userID;
+        sendMessage(message);
         
-        chatWindow.setOnCloseRequest(e -> {
-            Message message = new Message("CMD", "EXIT", controller.getGroupID(), controller.clientName);
-            message.userID = this.userID;
-            controller.sendMessage(message);
-            removeFromGroup(controller);
-        });
+
         
+    }
+    
+    public void sendMessage(Message message){
+        connection.sendMessage(message);
     }
     
     private String getSelectedGroup(){
@@ -165,7 +154,45 @@ public class ChannelListController implements Initializable {
         catch(Exception e){}
     }
     
-    public static void sendGroupList(int g, String[] list, int[] idList, int creatorID){
+    public void sendGroupList(int g, String[] list, int[] idList, int creatorID){
+       /* for(ChatWindowController chat:chats){
+            if(chat.getGroupID()==g){
+                chat.setGroupList(list, idList, creatorID);
+            }
+        }*/
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                try{ FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/ChatWindow.fxml"));
+                    Parent root = (Parent)fxmlLoader.load();
+                    ChatWindowController controller = fxmlLoader.<ChatWindowController>getController();
+                   // String selectedGroup = getSelectedGroup();
+                    controller.setValues(connection, g, username, userID);
+                    chats.add(controller);
+                    Scene chatWindowScene = new Scene(root);
+                    controller.setScene(chatWindowScene);
+                    Stage chatWindow = new Stage();
+                    chatWindow.setScene(chatWindowScene);
+                    chatWindow.minWidthProperty().set(600.0);
+                    chatWindow.minHeightProperty().set(600.0);
+                    chatWindow.show();
+                    
+                    controller.setGroupList(list, idList, creatorID);
+                    
+                    chatWindow.setOnCloseRequest(e -> {
+                        Message message = new Message("CMD", "EXIT", controller.getGroupID(), controller.clientName);
+                        message.userID = userID;
+                        controller.sendMessage(message);
+                        removeFromGroup(controller);
+                    });
+                   }
+                catch(Exception e){System.out.println(e.toString());}
+            }
+        });
+            
+    }
+    
+    public void addGroupMember(int g, String[] list, int[] idList, int creatorID){
         for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
                 chat.setGroupList(list, idList, creatorID);

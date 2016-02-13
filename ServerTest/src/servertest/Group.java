@@ -16,7 +16,7 @@ import message.Message;
  * @author Amish Naik
  */
 public class Group {
-    private ArrayList<Connection> connections = new ArrayList<Connection>();
+    public ArrayList<Connection> connections = new ArrayList<Connection>();
     private Thread t1;
     private ServerSocket server;
     private String groupName;
