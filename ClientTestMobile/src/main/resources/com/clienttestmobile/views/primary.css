@@ -1,0 +1,23 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.errorMessageLabel {
+    -fx-fill: #f00;
+}
+
+#AnchorPane{
+    -fx-background-image: url("/minimalist-wallpaper-blue.jpg");
+    -fx-background-repeat: stretch;
+    -fx-background-position: center center; 
+}
+
+.textLabel{
+    -fx-font: 20px Tahoma;
+    -fx-font-weight: bold;
+    -fx-fill: #000;
+}
+
+.imagesHBox{
+    -fx-spacing: 60;
+}
