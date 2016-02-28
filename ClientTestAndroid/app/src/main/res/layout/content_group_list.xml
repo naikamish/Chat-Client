@@ -12,4 +12,52 @@
     tools:context="com.example.amishnaik.clienttestandroid.GroupList"
     tools:showIn="@layout/activity_group_list">
 
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:rowCount="2"
+        android:columnCount="1">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="431dp"
+            android:id="@+id/scrollView"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:fillViewport="false"
+            android:onClick="chatListClick">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/chatListBox">
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Connect"
+                android:id="@+id/button"
+                android:onClick="connectButtonClick" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Group"
+                android:id="@+id/button2"
+                android:onClick="newGroupButton" />
+        </LinearLayout>
+
+    </GridLayout>
 </RelativeLayout>

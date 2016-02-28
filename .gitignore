@@ -46,3 +46,4 @@ Temporary Items
 /ClientTestMobile/src/android/gen/
 /ClientTestMobile/build/
 /ClientTestMobile/.nb-gradle/
+/ClientTest/dist/

@@ -7,6 +7,8 @@ import com.gluonhq.charm.glisten.layout.layer.FloatingActionButton;
 import com.gluonhq.charm.glisten.mvc.View;
 import com.gluonhq.charm.glisten.visual.MaterialDesignIcon;
 import com.clienttestmobile.ClientTestMobile;
+import java.util.ArrayList;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -20,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javax.swing.JOptionPane;
+import message.Message;
 
 public class SecondaryPresenter {
 
@@ -32,6 +35,7 @@ public class SecondaryPresenter {
     private String username = "";
     private Connection connection;
     private int userID;
+    private static ArrayList<ChatWindowController> chats = new ArrayList<ChatWindowController>();
 
     public void initialize() {
         secondary.setShowTransitionFactory(BounceInRightTransition::new);
@@ -64,18 +68,23 @@ public class SecondaryPresenter {
     
     @FXML
     private void connectButtonClick(ActionEvent event) throws Exception{
-
-        
-
-        
+        Message message = new Message("CMD", "JOIN", Integer.parseInt(getSelectedGroup()), username);
+        message.userID = this.userID;
+        sendMessage(message);
     }
     
-    @FXML
-    private void loginButtonClicked(ActionEvent event) throws Exception{
-
-        
-
-        
+    public void sendMessage(Message message){
+        connection.sendMessage(message);
+    }
+    
+    private String getSelectedGroup(){
+        String selectedGroup="";
+        for(Node node:chatListBox.getChildren()){
+            if(node.getStyleClass().contains("active")){
+                selectedGroup=node.getId();
+            }
+        }
+        return selectedGroup;
     }
     
     @FXML
@@ -96,7 +105,7 @@ public class SecondaryPresenter {
         catch(Exception e){System.out.println("secondarypresenter line 272");}
     }
     
-    private void addGroup(String group, int groupID){
+    public void addGroup(String group, int groupID){
         HBox hbox = new HBox();
         hbox.getStyleClass().add("chatListHBox");
         hbox.setId(Integer.toString(groupID));
@@ -124,5 +133,52 @@ public class SecondaryPresenter {
             }
         });
         chatListBox.getChildren().add(hbox);
+    }
+
+    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                ChatWindowView chatWindowView = new ChatWindowView(Integer.toString(groupID));
+                MobileApplication.getInstance().addViewFactory(Integer.toString(groupID), () -> chatWindowView.getView());
+                ChatWindowController controller = chatWindowView.getController();
+                controller.setValues(connection, groupID, username, userID);
+                controller.setGroupList(clientList, groupUserIDs, creatorID);
+                chats.add(controller);
+                MobileApplication.getInstance().switchView(Integer.toString(groupID));   
+            }
+        });
+    }
+
+    public void addGroupMember(int groupID, String[] client, int[] clientID, int creatorID) {
+        for(ChatWindowController chat:chats){
+            if(chat.getGroupID()==groupID){
+                chat.setGroupList(client, clientID, creatorID);
+            }
+        }
+    }
+
+    public void deleteFromList(int groupID, int userID) {
+        for(ChatWindowController chat:chats){
+            if(chat.getGroupID()==groupID){
+                chat.deleteFromList(userID);
+            }
+        }
+    }
+    
+    public static void showMessage(Message message){
+        for(ChatWindowController chat:chats){
+            if(chat.getGroupID()==message.groupID){
+                if(message.cmd.equals("SEND")){
+                    chat.showMessage(message);
+                }
+                else if(message.cmd.equals("DOODLE")){
+                    //chat.showDoodle(message);
+                }
+                else if(message.cmd.equals("FILE")){
+                    //chat.showFile(message);
+                }
+            }
+        }
     }
 }

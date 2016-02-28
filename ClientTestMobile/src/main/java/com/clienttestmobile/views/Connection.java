@@ -53,7 +53,7 @@ public class Connection {
                             Message message = (Message) input.readObject();
                             System.out.println(message.type);
                             if(message.type.equals("CMD")){
-                              /*  if(message.cmd.equals("START")){
+                                if(message.cmd.equals("START")){
                                     channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID);//groupName, groupList);
                                 }
                                 else if(message.cmd.equals("ADD")){
@@ -66,14 +66,14 @@ public class Connection {
                                 }
                                 else if(message.cmd.equals("CREATE")){
                                     channelListController.addGroup(message.groupName, message.groupID);
-                                }*/
+                                }
                             }
                           /*  else if(message.type.equals("BANNED")){
                                 JOptionPane.showMessageDialog(null,"You have been banned from this group");
-                            }
+                            }*/
                             else if(message.type.equals("MSG")){
                                 channelListController.showMessage(message);
-                            }*/
+                            }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){
                                 login.successfullyLoggedIn(message.groupList,message.userID, message.groupIDList);
                             }
@@ -85,7 +85,7 @@ public class Connection {
                             }*/
                             //Client.showMessage(message);
                         }
-                        catch(Exception e){System.out.println("connection line 88");}
+                        catch(Exception e){System.out.println(e.toString());}
                     }
                 }
             });

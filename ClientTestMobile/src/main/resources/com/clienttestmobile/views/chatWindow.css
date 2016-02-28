@@ -1,0 +1,67 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Feb 3, 2016, 4:54:27 PM
+    Author     : Amish Naik
+*/
+.root{
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scrollPane{
+    -fx-background-color:linear-gradient(#f04349, #c81e2b);
+    -fx-fit-to-width:true;
+    -fx-fit-to-height:true;
+}
+
+.vbox{
+    -fx-padding:20;
+    -fx-spacing:20;
+}
+
+.message{
+    -fx-padding:15px;
+    -fx-color:#fff;
+    -fx-background-color:#fff;
+    -fx-background-radius: 5;
+}
+
+.activeUser{
+    -fx-font-weight:bold;
+    -fx-fill:#f00;
+}
+
+.passiveUser{
+    -fx-font-weight:bold;
+    -fx-fill:#00f;
+}
+
+.messageText{
+    -fx-font-weight:normal;
+}
+
+.userList{
+    -fx-background-color:#fff;
+    -fx-padding: 20 10 20 10;
+    -fx-spacing:20;
+}
+
+.buttonImageView{
+    -fx-background-color: #000;
+    -fx-padding:30;
+    -fx-spacing:20;
+}
+
+.chatListText{
+    -fx-padding: 15 0 10 0;
+}
+
+.chatListTextObject{
+    -fx-font: 20px Tahoma;
+}

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="615.0" prefWidth="801.0" stylesheets="/chatWindow.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientTest.ChatWindowController">
+   <children>
+      <GridPane prefHeight="615.0" prefWidth="801.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="558.0" />
+          <ColumnConstraints hgrow="NEVER" minWidth="242.0" prefWidth="242.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="594.0" prefWidth="487.0">
+               <children>
+                  <GridPane prefHeight="600.0" prefWidth="558.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="559.0" vgrow="ALWAYS" />
+                      <RowConstraints minHeight="56.0" prefHeight="56.0" vgrow="NEVER" />
+                    </rowConstraints>
+                     <children>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                           <children>
+                              <ScrollPane fx:id="chatBoxScrollPane" layoutX="62.0" layoutY="28.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="559.0" prefWidth="559.0" styleClass="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                                 <content>
+                                    <VBox fx:id="chatBox" prefHeight="531.0" prefWidth="552.0" styleClass="vbox" />
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" GridPane.rowIndex="1" GridPane.vgrow="NEVER" SplitPane.resizableWithParent="false">
+                           <children>
+                              <HBox fx:id="chatTextHBox" prefHeight="65.0" prefWidth="559.0" styleClass="typeTextHBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <TextField fx:id="chatTextField" layoutY="-71.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#enterPressed" prefHeight="60.0" prefWidth="442.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="attachButton" mnemonicParsing="false" onAction="#openFileDialog" onMouseEntered="#changeCursorHand" onMouseExited="#changeCursorPointer" prefHeight="60.0" prefWidth="60.0">
+                                       <graphic>
+                                          <ImageView fx:id="attachIcon" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic></Button>
+                                    <Button fx:id="doodleButton" layoutX="524.0" layoutY="10.0" mnemonicParsing="false" onAction="#openDoodleFrame" onMouseEntered="#changeCursorHand" onMouseExited="#changeCursorPointer" prefHeight="60.0" prefWidth="60.0">
+                                       <graphic>
+                                          <ImageView fx:id="doodleIcon" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true" />
+                                       </graphic></Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </GridPane>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" GridPane.columnIndex="1" SplitPane.resizableWithParent="false">
+               <children>
+                  <VBox fx:id="usersBox" prefHeight="600.0" prefWidth="242.0" styleClass="userList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>

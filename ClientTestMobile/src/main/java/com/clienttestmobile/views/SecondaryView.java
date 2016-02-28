@@ -29,5 +29,6 @@ public class SecondaryView {
     
     public void setValues(String[] grp, Connection conn, String username, int userID, int[] groupIDList){
         controller.setValues(grp, conn, username, userID, groupIDList);
+        conn.setChannelListController(controller);
     }
 }
