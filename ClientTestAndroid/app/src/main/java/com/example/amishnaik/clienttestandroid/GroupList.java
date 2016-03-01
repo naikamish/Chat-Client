@@ -16,6 +16,8 @@ import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import message.Message;
+
 public class GroupList extends AppCompatActivity {
     private String username = "";
     private int userID;
@@ -41,6 +43,7 @@ public class GroupList extends AppCompatActivity {
             }
         }
         connectButton = (Button) findViewById(R.id.button);
+        Connection.setChannelListController(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +56,24 @@ public class GroupList extends AppCompatActivity {
     }
 
     public void connectButtonClick(View view) {
-        connectButton.setText(Integer.toString(connectButton.getId()));
+        if(Connection.checkExistingChatWindow(connectButton.getId())){
+            startChatActivity(connectButton.getId());
+        }
+        else {
+            Message message = new Message("CMD", "JOIN", connectButton.getId(), username);
+            message.userID = this.userID;
+            sendMessage(message);
+        }
+        //Intent intent = new Intent(this, ChatWindow.class);
+        //intent.putExtra("grp", grp);
+        //intent.putExtra("userID", userID);
+        //intent.putExtra("username", username);
+        //intent.putExtra("groupIDList", groupIDList);
+        //startActivity(intent);
+    }
+
+    public void sendMessage(Message message){
+        Connection.sendMessage(message);
     }
 
     public void addGroup(String group, int groupID){
@@ -68,7 +88,7 @@ public class GroupList extends AppCompatActivity {
 
             TextView textFlow = new TextView(this);
             //textFlow.getStyleClass().add("chatListText");
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
             textFlow.setLayoutParams(params);
             textFlow.setGravity(Gravity.CENTER);
             textFlow.setText(group);
@@ -93,16 +113,25 @@ public class GroupList extends AppCompatActivity {
         catch(Exception e){
             System.out.println(e.toString());
         }
+    }
 
-        //text.getStyleClass().add("chatListTextObject");
-      /*  hbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
+    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID) {
+        Chat chat = new Chat(groupID, clientList, groupUserIDs, creatorID, username, userID);
+        Connection.addChat(chat);
+        startChatActivity(groupID);
+       /* Intent intent = new Intent(this, ChatWindow.class);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("clientList", clientList);
+        intent.putExtra("groupUserIDs", groupUserIDs);
+        intent.putExtra("creatorID", creatorID);
+        intent.putExtra("username", username);
+        intent.putExtra("userID", userID);
+        startActivity(intent);*/
+    }
 
-            @Override
-            public void handle(MouseEvent t) {
-                //connectButton.setText(hbox.getId());
-                hbox.getStyleClass().add("active");
-            }
-        });
-        chatListBox.getChildren().add(hbox);*/
+    public void startChatActivity(int groupID){
+        Intent intent = new Intent(this, ChatWindow.class);
+        intent.putExtra("groupID", groupID);
+        startActivity(intent);
     }
 }

@@ -30,7 +30,17 @@
         <activity
             android:name=".GroupList"
             android:label="@string/title_activity_group_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ChatWindow"
+            android:label="@string/title_activity_chat_window"
+            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:parentActivityName=".GroupList"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.amishnaik.clienttestandroid.GroupList" />
+        </activity>
     </application>
 
 </manifest>
