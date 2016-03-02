@@ -3,6 +3,7 @@ package com.example.amishnaik.clienttestandroid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -177,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void run() {
                 try {
-                    connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000),getLoginActivity());
+                    connection = new Connection(new Socket(InetAddress.getByName(serverIP),5000),getLoginActivity(),getContext());
                     connection.setUpThread();
                 } catch (Exception e) {
                     final Exception error = e;
@@ -192,6 +193,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
         thread.start();
+    }
+
+    public Context getContext(){
+        return this.getApplicationContext();
     }
 
     private LoginActivity getLoginActivity(){

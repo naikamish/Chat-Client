@@ -78,6 +78,23 @@ public class GroupList extends AppCompatActivity {
         //startActivity(intent);
     }
 
+    public void connectButtonClick(int id) {
+        if(Connection.checkExistingChatWindow(id)){
+            startChatActivity(id);
+        }
+        else {
+            Message message = new Message("CMD", "JOIN", id, username);
+            message.userID = this.userID;
+            sendMessage(message);
+        }
+        //Intent intent = new Intent(this, ChatWindow.class);
+        //intent.putExtra("grp", grp);
+        //intent.putExtra("userID", userID);
+        //intent.putExtra("username", username);
+        //intent.putExtra("groupIDList", groupIDList);
+        //startActivity(intent);
+    }
+
     public void sendMessage(Message message){
         Connection.sendMessage(message);
     }
@@ -85,7 +102,8 @@ public class GroupList extends AppCompatActivity {
     public void addGroup(String group, int groupID){
         try {
             LinearLayout hbox = new LinearLayout(this);
-
+            hbox.setClickable(true);
+            hbox.setBackgroundResource(android.R.drawable.list_selector_background);
             //hbox.getStyleClass().add("chatListHBox");
             hbox.setId(groupID);
 
@@ -112,7 +130,7 @@ public class GroupList extends AppCompatActivity {
 
             hbox.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    connectButton.setId(v.getId());
+                    connectButtonClick(v.getId());
                 }
             });
         }

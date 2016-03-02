@@ -1,6 +1,12 @@
 package com.example.amishnaik.clienttestandroid;
 
+import android.app.ActivityManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -8,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 import message.Message;
 
@@ -26,8 +33,10 @@ public class Connection {
     private static ChatWindow activeChatWindow;
     public static String username;
     public static int userID;
+    private Context _CONTEXT;
 
-    public Connection(Socket socket, LoginActivity loginForm){
+    public Connection(Socket socket, LoginActivity loginForm, Context c){
+        this._CONTEXT = c;
         login = loginForm;
         connection = socket;
         try{
@@ -104,6 +113,46 @@ public class Connection {
         }
     }
 
+    private void showNotification(){
+        ActivityManager activityManager = (ActivityManager) _CONTEXT.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> services = activityManager
+                .getRunningTasks(Integer.MAX_VALUE);
+        boolean isActivityFound = false;
+
+        if (services.get(0).topActivity.getPackageName().toString()
+                .equalsIgnoreCase(_CONTEXT.getPackageName().toString())) {
+            isActivityFound = true;
+        }
+
+        if (isActivityFound) {
+        } else {
+            buildNotification();
+        }
+
+
+    }
+
+    private void buildNotification(){
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(_CONTEXT)
+                        .setSmallIcon(R.drawable.notification)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+        Intent resultIntent = new Intent(_CONTEXT, GroupList.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(_CONTEXT);
+        stackBuilder.addParentStack(GroupList.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) _CONTEXT.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(123, mBuilder.build());
+    }
+
     public void setUpThread(){
         thread= new Thread(
                 new Runnable(){
@@ -132,6 +181,7 @@ public class Connection {
                             }*/
                                 else if(message.type.equals("MSG")){
                                     showMessage(message);
+                                    showNotification();
                                 }
                                 else if(message.type.equals("LOGIN SUCCESSFUL")){
                                     createGroupList(message.groupList, message.groupIDList);

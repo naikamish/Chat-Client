@@ -166,6 +166,7 @@ public class Connection{
                                         int userID=0;
                                         //while(resultSet.next()){
                                         userID = resultSet.getInt("userID");
+                                        clientName = resultSet.getString("username");
                                             //resultSet.getInt("code")==message.code
                                             
                                         query = "select code from codesss where email='"+resultSet.getString("email")+"';";
