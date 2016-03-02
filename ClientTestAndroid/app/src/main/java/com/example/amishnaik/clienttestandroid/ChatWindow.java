@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -110,6 +111,14 @@ public class ChatWindow extends AppCompatActivity {
                 LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
                 chatMessagesBox.addView(messageBox);
 
+            }
+        });
+
+        final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
+        scroll.post(new Runnable() {
+            @Override
+            public void run() {
+                scroll.fullScroll(View.FOCUS_DOWN);
             }
         });
     }

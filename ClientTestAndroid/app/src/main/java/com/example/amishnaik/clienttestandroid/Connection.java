@@ -22,7 +22,10 @@ public class Connection {
     private static LoginActivity login;
     private static GroupList channelListController;
     private static ArrayList<Chat> chats = new ArrayList<Chat>();
+    public static ArrayList<Group> groups = new ArrayList<Group>();
     private static ChatWindow activeChatWindow;
+    public static String username;
+    public static int userID;
 
     public Connection(Socket socket, LoginActivity loginForm){
         login = loginForm;
@@ -85,6 +88,20 @@ public class Connection {
         return false;
     }
 
+    public static void setUsername(String name){
+        username = name;
+    }
+
+    public void setUserID(int id){
+        userID = id;
+    }
+
+    public void createGroupList(String[] groupNames, int[] groupIDs){
+        for(int i=1; i<groupNames.length; i++){
+            groups.add(new Group(groupNames[i], groupIDs[i]));
+        }
+    }
+
     public void setUpThread(){
         thread= new Thread(
                 new Runnable(){
@@ -116,7 +133,10 @@ public class Connection {
                                     showMessage(message);
                                 }
                                 else if(message.type.equals("LOGIN SUCCESSFUL")){
-                                    login.successfullyLoggedIn(message.groupList,message.userID, message.groupIDList);
+                                    createGroupList(message.groupList, message.groupIDList);
+                                    setUsername(message.username);
+                                    setUserID(message.userID);
+                                    login.successfullyLoggedIn();
                                 }
                                 else if(message.type.equals("LOGIN UNSUCCESSFUL")){
                                     login.unsuccessfulLogin(message.message);

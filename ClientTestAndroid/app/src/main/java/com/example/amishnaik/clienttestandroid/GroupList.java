@@ -30,7 +30,7 @@ public class GroupList extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Intent iin= getIntent();
+      /*  Intent iin= getIntent();
         Bundle b = iin.getExtras();
 
         if(b!=null){
@@ -41,7 +41,13 @@ public class GroupList extends AppCompatActivity {
             for(int i=0; i<grp.length;i++){
                 addGroup(grp[i],groupIDList[i]);
             }
+        }*/
+        username = Connection.username;
+        userID = Connection.userID;
+        for(Group group:Connection.groups){
+            addGroup(group.groupName, group.groupID);
         }
+
         connectButton = (Button) findViewById(R.id.button);
         Connection.setChannelListController(this);
 

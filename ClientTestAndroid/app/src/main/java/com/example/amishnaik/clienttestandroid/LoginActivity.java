@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        serverIP = "73.69.133.137";
+        serverIP = "24.151.55.165";
         //serverIP = "localhost";
         startRunning();
 
@@ -126,6 +126,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             message.password=mPasswordView.getText().toString();
             message.fullMessage ="Login" + mUsernameView.getText() + mPasswordView.getText();
             Connection.sendMessage(message);
+            Connection.setUsername(message.username);
         }
     }
 
@@ -159,12 +160,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return false;
     }
 
-    public void successfullyLoggedIn(String[] grp, int userID, int[] groupIDList){
+    public void successfullyLoggedIn(){
         Intent intent = new Intent(this, GroupList.class);
-        intent.putExtra("grp", grp);
+      /*  intent.putExtra("grp", grp);
         intent.putExtra("userID", userID);
         intent.putExtra("username", username);
-        intent.putExtra("groupIDList", groupIDList);
+        intent.putExtra("groupIDList", groupIDList);*/
         startActivity(intent);
     }
 
