@@ -155,7 +155,7 @@ public class Connection{
                             
                             else if(message.type.equals("LOGIN")){
                                 String pass = message.password;
-                                String query = "select username, userID from users where username='"+message.username+"' and password='"+pass+"';";
+                                String query = "select username, userID, email from users where username='"+message.username+"' and password='"+pass+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
@@ -165,15 +165,27 @@ public class Connection{
                                     else{
                                         int userID=0;
                                         //while(resultSet.next()){
-                                            userID = resultSet.getInt("userID");
+                                        userID = resultSet.getInt("userID");
                                             //resultSet.getInt("code")==message.code
-                                        //}
+                                            
+                                        query = "select code from codesss where email='"+resultSet.getString("email")+"';";
+                                        resultSet = dbLib.selectQuery(query);
+                                        resultSet.next();
+                                        if(!resultSet.getString("code").matches("1"))
+                                        {
+                                            sendMessage(new Message("LOGIN UNSUCCESSFUL","Account activation pending"));
+                                            Server.showMessage("login unsuccessful\n");
+                                        }
+                                        else
+                                        {
                                         Server.showMessage(Integer.toString(userID));
                                         Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
                                         userMessage.userID=userID;
+                                        userMessage.username = clientName;
                                         userMessage.groupIDList=Server.getGroupID();
                                         sendMessage(userMessage);
                                         Server.showMessage("login successful\n");
+                                        }
                                     }
                                 }
                                 catch(Exception e){

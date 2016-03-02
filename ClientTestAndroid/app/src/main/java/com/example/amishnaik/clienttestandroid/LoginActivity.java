@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private String serverIP;
     static Connection connection;
-    static String username = "";
+    private String username = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +126,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             message.password=mPasswordView.getText().toString();
             message.fullMessage ="Login" + mUsernameView.getText() + mPasswordView.getText();
             Connection.sendMessage(message);
-            Connection.setUsername(message.username);
         }
     }
 

@@ -117,7 +117,6 @@ public class GroupList extends AppCompatActivity {
             });
         }
         catch(Exception e){
-            System.out.println(e.toString());
         }
     }
 

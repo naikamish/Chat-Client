@@ -36,7 +36,7 @@ public class Connection {
             input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
             // sendMessage(new Message("LOGIN","hello", "hello"));
         }
-        catch(Exception e){System.out.println("connection line 40");}
+        catch(Exception e){}
     }
 
     public static void setChannelListController(GroupList controller){
@@ -90,10 +90,12 @@ public class Connection {
 
     public static void setUsername(String name){
         username = name;
+
     }
 
     public void setUserID(int id){
         userID = id;
+        System.out.println("abc"+userID+"conn");
     }
 
     public void createGroupList(String[] groupNames, int[] groupIDs){
@@ -108,7 +110,6 @@ public class Connection {
                     public void run(){
                         while(true){
                             try{
-                                System.out.println(chats.size());
                                 Message message = (Message) input.readObject();
                                 if(message.type.equals("CMD")){
                                     if(message.cmd.equals("START")){
@@ -146,7 +147,7 @@ public class Connection {
                             }*/
                                 //Client.showMessage(message);
                             }
-                            catch(Exception e){System.out.println(e.toString());}
+                            catch(Exception e){}
                         }
                     }
                 });
@@ -158,6 +159,6 @@ public class Connection {
             output.writeObject(message);
             output.flush();
         }
-        catch(Exception e){System.out.println("connection line 100");}
+        catch(Exception e){}
     }
 }
