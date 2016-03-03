@@ -232,9 +232,11 @@ public class Connection{
         Group g = Server.addToGroup(this, groupID);
         String[] clientList = g.getClientList();
         int[] clientListIDs = g.getClientIDs();
+        String groupName = g.getName();
         Message message = new Message("CMD", "START", g.getID(), clientList);
         message.groupUserIDs = clientListIDs;
         message.creatorID = g.getCreatorID();
+        message.groupName = groupName;
         
        // if(!clientList.equals("")){
             sendMessage(message);//{"CMD", "STRT", g.getName(), "", clientList});

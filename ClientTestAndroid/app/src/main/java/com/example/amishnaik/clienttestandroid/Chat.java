@@ -9,7 +9,7 @@ import message.Message;
  */
 public class Chat {
     public int groupID, creatorID, userID;
-    public String username;
+    public String username, groupName;
     public ArrayList<Message> messages;
 
     public Chat(){
@@ -17,14 +17,16 @@ public class Chat {
         creatorID=0;
         username="";
         userID=0;
+        groupName = "";
         messages = new ArrayList<Message>();
     }
 
-    public Chat(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String username, int userID) {
+    public Chat(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String username, int userID, String groupName) {
         this.groupID = groupID;
         this.creatorID = creatorID;
         this.username = username;
         this.userID = userID;
+        this.groupName = groupName;
         messages = new ArrayList<Message>();
     }
 }

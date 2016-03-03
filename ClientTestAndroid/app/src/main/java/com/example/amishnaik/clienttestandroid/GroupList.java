@@ -138,18 +138,10 @@ public class GroupList extends AppCompatActivity {
         }
     }
 
-    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID) {
-        Chat chat = new Chat(groupID, clientList, groupUserIDs, creatorID, username, userID);
+    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String groupName) {
+        Chat chat = new Chat(groupID, clientList, groupUserIDs, creatorID, username, userID, groupName);
         Connection.addChat(chat);
         startChatActivity(groupID);
-       /* Intent intent = new Intent(this, ChatWindow.class);
-        intent.putExtra("groupID", groupID);
-        intent.putExtra("clientList", clientList);
-        intent.putExtra("groupUserIDs", groupUserIDs);
-        intent.putExtra("creatorID", creatorID);
-        intent.putExtra("username", username);
-        intent.putExtra("userID", userID);
-        startActivity(intent);*/
     }
 
     public void startChatActivity(int groupID){

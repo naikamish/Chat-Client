@@ -37,7 +37,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight= "true"
             android:scaleType="fitCenter"
-            android:id="@+id/attachButton" />
+            android:id="@+id/attachButton"
+            android:onClick="attachButtonClick" />
 
     </RelativeLayout>
 

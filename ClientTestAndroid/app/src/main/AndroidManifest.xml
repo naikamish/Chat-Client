@@ -34,13 +34,14 @@
         <activity
             android:name=".ChatWindow"
             android:label="@string/title_activity_chat_window"
-            android:windowSoftInputMode="adjustResize|stateVisible"
             android:parentActivityName=".GroupList"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize|stateVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.amishnaik.clienttestandroid.GroupList" />
         </activity>
+        <activity android:name=".UploadFile"></activity>
     </application>
 
 </manifest>

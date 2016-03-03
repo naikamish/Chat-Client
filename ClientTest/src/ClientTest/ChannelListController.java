@@ -154,7 +154,7 @@ public class ChannelListController implements Initializable {
         catch(Exception e){}
     }
     
-    public void sendGroupList(int g, String[] list, int[] idList, int creatorID){
+    public void sendGroupList(int g, String[] list, int[] idList, int creatorID, String groupName){
        /* for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
                 chat.setGroupList(list, idList, creatorID);
@@ -167,7 +167,7 @@ public class ChannelListController implements Initializable {
                     Parent root = (Parent)fxmlLoader.load();
                     ChatWindowController controller = fxmlLoader.<ChatWindowController>getController();
                    // String selectedGroup = getSelectedGroup();
-                    controller.setValues(connection, g, username, userID);
+                    controller.setValues(connection, g, username, userID, groupName);
                     chats.add(controller);
                     Scene chatWindowScene = new Scene(root);
                     controller.setScene(chatWindowScene);

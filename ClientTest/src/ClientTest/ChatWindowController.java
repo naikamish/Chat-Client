@@ -70,7 +70,7 @@ public class ChatWindowController implements Initializable {
     @FXML private ScrollPane chatBoxScrollPane;
     @FXML private ImageView attachIcon, doodleIcon;
     @FXML private HBox chatTextHBox;
-    private String username="hello";
+    private String username, groupName;
         private JTextField userText;
     private JTextPane chatWindow;
     private String message = ""; 
@@ -103,20 +103,28 @@ public class ChatWindowController implements Initializable {
         doodleIcon.setImage(doodleImage);
     }  
     
-    public void setValues(Connection connection, int groupID, String user, int userID){
+    public void setValues(Connection connection, int groupID, String user, int userID, String groupName){
         this.connection = connection;
         clientName = user;
         this.groupID = groupID;
         this.userID = userID;
+        this.groupName = groupName;
+        System.out.println(groupName+"hello");
     }
     
     @FXML
     private void enterPressed(ActionEvent event) {
         TextField source = (TextField)event.getSource();
-        sendMessage(new Message("MSG", "SEND", groupID, clientName, source.getText()));//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+        Message message = new Message("MSG", "SEND", groupID, clientName, source.getText());
+        message.groupName = getGroupName();
+        sendMessage(message);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
         source.clear();
         
         //createMessage(source.getText());
+    }
+    
+    public String getGroupName(){
+        return groupName;
     }
     
     public void showMessage(Message message){

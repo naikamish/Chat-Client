@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -31,6 +32,7 @@ public class ChatWindow extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Connection.clearNotifications();
         //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         setContentView(R.layout.activity_chat_window);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -58,7 +60,9 @@ public class ChatWindow extends AppCompatActivity {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    sendMessage(new Message("MSG", "SEND", groupID, chat.username, sendMessageBox.getText().toString()));//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+                    Message newMessage = new Message("MSG", "SEND", groupID, chat.username, sendMessageBox.getText().toString());
+                    newMessage.groupName = chat.groupName;
+                    sendMessage(newMessage);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
                     sendMessageBox.clearFocus();
                     sendMessageBox.setText("");
                     return true;
@@ -121,5 +125,29 @@ public class ChatWindow extends AppCompatActivity {
                 scroll.fullScroll(View.FOCUS_DOWN);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent=new Intent(this,GroupList.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void attachButtonClick(View view) {
+        Intent intent = new Intent(this, UploadFile.class);
+        startActivity(intent);
     }
 }

@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -34,9 +35,12 @@ public class Connection {
     public static String username;
     public static int userID;
     private Context _CONTEXT;
+    private static int notificationCount, notificationGroupID;
 
     public Connection(Socket socket, LoginActivity loginForm, Context c){
         this._CONTEXT = c;
+        notificationCount = 0;
+        notificationGroupID = 0;
         login = loginForm;
         connection = socket;
         try{
@@ -113,7 +117,7 @@ public class Connection {
         }
     }
 
-    private void showNotification(){
+    private void showNotification(String message, String groupName, int groupID){
         ActivityManager activityManager = (ActivityManager) _CONTEXT.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> services = activityManager
                 .getRunningTasks(Integer.MAX_VALUE);
@@ -126,19 +130,44 @@ public class Connection {
 
         if (isActivityFound) {
         } else {
-            buildNotification();
+            buildNotification(message, groupName, groupID);
         }
 
 
     }
 
-    private void buildNotification(){
+    private void buildNotification(String message, String groupName, int groupID){
+        String notificationMessage;
+        String notificationTitle;
+        notificationCount++;
+        if(notificationGroupID==0){
+            notificationGroupID=groupID;
+            notificationTitle = groupName;
+        }
+        else if(groupID!=notificationGroupID){
+            notificationTitle = groupName + " and other groups";
+        }
+        else{
+            notificationTitle = groupName;
+        }
+        if(notificationCount==1){
+            notificationMessage=message;
+        }
+        else{
+            notificationMessage=Integer.toString(notificationCount) + " new messages";
+        }
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(_CONTEXT)
                         .setSmallIcon(R.drawable.notification)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-        Intent resultIntent = new Intent(_CONTEXT, GroupList.class);
+                        .setContentTitle(notificationTitle)
+                        .setContentText(notificationMessage);
+        mBuilder.setVibrate(new long[] { 1000, 1000 });
+
+        //LED
+        mBuilder.setLights(Color.GREEN, 3000, 3000);
+        mBuilder.setAutoCancel(true);
+        Intent resultIntent = new Intent(_CONTEXT, ChatWindow.class);
+        resultIntent.putExtra("groupID", groupID);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(_CONTEXT);
         stackBuilder.addParentStack(GroupList.class);
         stackBuilder.addNextIntent(resultIntent);
@@ -153,6 +182,11 @@ public class Connection {
         mNotificationManager.notify(123, mBuilder.build());
     }
 
+    public static void clearNotifications(){
+        notificationCount=0;
+        notificationGroupID=0;
+    }
+
     public void setUpThread(){
         thread= new Thread(
                 new Runnable(){
@@ -162,7 +196,7 @@ public class Connection {
                                 Message message = (Message) input.readObject();
                                 if(message.type.equals("CMD")){
                                     if(message.cmd.equals("START")){
-                                        channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID);//groupName, groupList);
+                                        channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName);//groupName, groupList);
                                     }
                                     else if(message.cmd.equals("ADD")){
                                         String[] client = {message.clientName};
@@ -181,7 +215,7 @@ public class Connection {
                             }*/
                                 else if(message.type.equals("MSG")){
                                     showMessage(message);
-                                    showNotification();
+                                    showNotification(message.message, message.groupName, message.groupID);
                                 }
                                 else if(message.type.equals("LOGIN SUCCESSFUL")){
                                     createGroupList(message.groupList, message.groupIDList);
