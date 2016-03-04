@@ -82,7 +82,10 @@ public class Connection {
                     //chat.showDoodle(message);
                 }
                 else if(message.cmd.equals("FILE")){
-                    //chat.showFile(message);
+                    chat.messages.add(message);
+                    if(activeChatWindow.getGroupID()==message.groupID){
+                        activeChatWindow.showMessage(message);
+                    }
                 }
             }
         }

@@ -1,7 +1,12 @@
 package com.example.amishnaik.clienttestandroid;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,13 +21,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import ar.com.daidalos.afiledialog.FileChooserDialog;
 import message.Message;
 
 public class ChatWindow extends AppCompatActivity {
@@ -99,6 +111,7 @@ public class ChatWindow extends AppCompatActivity {
     public void showMessage(final Message message) {
         final TextView text = new TextView(this);
         final TextView clientMessage = new TextView(this);
+        final ImageView clientImage = new ImageView(this);
         final LinearLayout messageBox = new LinearLayout(this);
 
         runOnUiThread(new Runnable() {
@@ -106,25 +119,64 @@ public class ChatWindow extends AppCompatActivity {
             public void run() {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                 Date date = new Date();
-                String clientInfo = message.clientName+" ("+dateFormat.format(date)+"):\n";
+                String clientInfo = message.clientName + " (" + dateFormat.format(date) + "):\n";
                 text.setText(clientInfo);
-                clientMessage.setText(message.message);
                 messageBox.addView(text);
-                messageBox.addView(clientMessage);
+
+                if (message.cmd.equals("SEND")) {
+                    clientMessage.setText(message.message);
+                    messageBox.addView(clientMessage);
+                } else if (message.cmd.equals("FILE")) {
+                    LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(500, 500);
+                    clientImage.setLayoutParams(imgParams);
+
+                    byte[] bytearray = message.file;
+                    try {
+                        String baseFolder;
+                        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                            baseFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
+                            System.out.println("1111111111111");
+                        } else {
+                            baseFolder = getContext().getFilesDir().getAbsolutePath();
+                        }
+
+                        File file = new File(baseFolder + "/ChatClient");
+
+                        if (!file.exists()) {
+                            file.mkdir();
+                        }
+
+                        FileOutputStream fos = new FileOutputStream(file + "/" + message.filename);
+                        fos.write(bytearray);
+                        fos.close();
+
+                        Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
+                        clientImage.setImageBitmap(bMap);
+                    } catch (Exception e) {
+                        System.out.println(e.toString());
+                    }
+
+                    messageBox.addView(clientImage);
+                }
+
 
                 LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
                 chatMessagesBox.addView(messageBox);
 
-            }
-        });
+                final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
+                scroll.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scroll.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
 
-        final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
-        scroll.post(new Runnable() {
-            @Override
-            public void run() {
-                scroll.fullScroll(View.FOCUS_DOWN);
             }
         });
+    }
+
+    public Context getContext(){
+        return this;
     }
 
     @Override
@@ -147,7 +199,37 @@ public class ChatWindow extends AppCompatActivity {
     }
 
     public void attachButtonClick(View view) {
-        Intent intent = new Intent(this, UploadFile.class);
-        startActivity(intent);
+        FileChooserDialog dialog = new FileChooserDialog(this);
+        dialog.show();
+
+        dialog.addListener(new FileChooserDialog.OnFileSelectedListener() {
+            public void onFileSelected(Dialog source, File file) {
+                source.hide();
+                sendFile(file);
+            }
+
+            public void onFileSelected(Dialog source, File folder, String name) {
+                source.hide();
+            }
+        });
+    }
+
+    private void sendFile(File file){
+        byte [] bytearray  = new byte [(int)file.length()];
+        String extension = "";
+
+        int i = file.getPath().lastIndexOf('.');
+        int p = Math.max(file.getPath().lastIndexOf('/'), file.getPath().lastIndexOf('\\'));
+
+        if (i > p) {
+            extension = file.getPath().substring(i+1);
+        }
+        try{
+            FileInputStream fin = new FileInputStream(file);
+            BufferedInputStream bin = new BufferedInputStream(fin);
+            bin.read(bytearray,0,bytearray.length);
+            sendMessage(new Message("MSG", "FILE", groupID, chat.username, bytearray, extension));
+        }
+        catch(Exception ex){}
     }
 }
