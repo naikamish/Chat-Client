@@ -30,7 +30,8 @@
             android:layout_alignParentRight= "true"
             android:scaleType="fitCenter"
             android:id="@+id/doodleButton"
-            android:layout_marginRight="45dp" />
+            android:layout_marginRight="45dp"
+            android:onClick="doodleButtonClick" />
 
         <ImageButton
             android:layout_width="45dp"

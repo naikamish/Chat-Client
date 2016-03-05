@@ -27,6 +27,7 @@ import org.w3c.dom.Text;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -135,7 +136,6 @@ public class ChatWindow extends AppCompatActivity {
                         String baseFolder;
                         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                             baseFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
-                            System.out.println("1111111111111");
                         } else {
                             baseFolder = getContext().getFilesDir().getAbsolutePath();
                         }
@@ -150,8 +150,15 @@ public class ChatWindow extends AppCompatActivity {
                         fos.write(bytearray);
                         fos.close();
 
-                        Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
+                        final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
                         clientImage.setImageBitmap(bMap);
+
+                        clientImage.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
+                                doodleButtonClick(bMap);
+                            }
+                        });
+
                     } catch (Exception e) {
                         System.out.println(e.toString());
                     }
@@ -196,6 +203,24 @@ public class ChatWindow extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void doodleButtonClick(View view){
+        Intent intent = new Intent(this, DoodleActivity.class);
+        intent.putExtra("groupID", groupID);
+        startActivity(intent);
+    }
+
+    public void doodleButtonClick(Bitmap bitmap){
+        Intent intent = new Intent(this, DoodleActivity.class);
+        intent.putExtra("groupID", groupID);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] bytes = stream.toByteArray();
+        intent.putExtra("bitmap",bytes);
+
+        startActivity(intent);
     }
 
     public void attachButtonClick(View view) {
