@@ -5,11 +5,15 @@
  */
 package ClientTest;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,19 +24,25 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -43,6 +53,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -142,15 +153,63 @@ public class ChatWindowController implements Initializable {
                 String styleType = message.clientName.equals(clientName) ? "activeUser":"passiveUser";
                 activeUser.getStyleClass().add(styleType);
 
+                text.getChildren().add(activeUser);
+                
+                if(message.cmd.equals("SEND")){
                 Text messageText=new Text(message.message);
                 messageText.getStyleClass().add("messageText");
-
-                text.getChildren().addAll(activeUser, messageText);
+                text.getChildren().add(messageText);
+                }
+                
+                else if(message.cmd.equals("FILE")){
+                    try{
+                        saveFile(message);
+                        
+                        WritableImage writableImage;
+                        writableImage = showImage(message.file);
+                        ImageView imageView = new ImageView(writableImage);
+                        imageView.setFitWidth(500);
+                        imageView.setPreserveRatio(true);
+                        text.getChildren().add(imageView);
+                    }
+                    catch(Exception e){                        
+                    }                    
+                }
 
                 chatBox.getChildren().add(text);
             }
         });
     } 
+    
+    private void saveFile(Message message){
+        byte [] bytearray  = message.file;
+        try{
+            FileOutputStream fos = new FileOutputStream(message.filename);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            bos.write(bytearray, 0 , bytearray.length);
+            bos.flush();
+            bos.close();
+        }
+        catch(Exception e)
+        {
+            //JOptionPane.showMessageDialog(this,e.toString());
+        }
+    }
+    
+    private WritableImage showImage(byte[] byteArray) throws IOException{
+        BufferedImage bf = ImageIO.read(new ByteArrayInputStream(byteArray));
+
+        WritableImage wr = null;
+        wr = new WritableImage(bf.getWidth(), bf.getHeight());
+        PixelWriter pw = wr.getPixelWriter();
+        for (int x = 0; x < bf.getWidth(); x++) {
+            for (int y = 0; y < bf.getHeight(); y++) {
+                pw.setArgb(x, y, bf.getRGB(x, y));
+            }
+        }
+        
+        return wr;
+    }
     
     private void addUser(String username, int id){
         HBox hbox = new HBox();
@@ -213,6 +272,17 @@ public class ChatWindowController implements Initializable {
         sendMessage(new Message("MSG", "DOODLE", groupID, clientName,generalPath));
     }
     
+    public void sendDoodle(Canvas canvas){
+        try{
+            WritableImage image = canvas.snapshot(null, null);
+            ByteArrayOutputStream  byteOutput = new ByteArrayOutputStream();
+            ImageIO.write( SwingFXUtils.fromFXImage( image, null ), "png", byteOutput );
+            byte[] bytearray = byteOutput.toByteArray();
+            sendMessage(new Message("MSG", "FILE", groupID, clientName, bytearray, "png"));
+        }
+        catch(Exception e){}
+    }
+    
     public void showDoodle(Message message){
         if(!clientName.equals(message.clientName)){
             DoodleFrame doodleFrame;
@@ -237,6 +307,18 @@ public class ChatWindowController implements Initializable {
                     bos.flush();
                     bos.close();
                     JOptionPane.showMessageDialog(null,"Download Complete");
+                    BufferedImage bf = ImageIO.read(new ByteArrayInputStream(bytearray));
+                    
+                    WritableImage wr = null;
+                    wr = new WritableImage(bf.getWidth(), bf.getHeight());
+                    PixelWriter pw = wr.getPixelWriter();
+                    for (int x = 0; x < bf.getWidth(); x++) {
+                        for (int y = 0; y < bf.getHeight(); y++) {
+                            pw.setArgb(x, y, bf.getRGB(x, y));
+                        }
+                    }
+
+                    ImageView imView = new ImageView(wr);
                 }
                 catch(Exception e)
                 {
@@ -317,8 +399,21 @@ public class ChatWindowController implements Initializable {
     
     @FXML
     private void openDoodleFrame(ActionEvent event) {
-        DoodleFrame doodleFrame;
-        doodleFrame = new DoodleFrame(this);
+        try{ 
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/Doodle.fxml"));
+            Parent root = (Parent)fxmlLoader.load();
+            DoodleController controller = fxmlLoader.<DoodleController>getController();
+            Scene doodleScene = new Scene(root);
+            controller.setChatWindow(getChatWindow());
+            Stage doodleWindow = new Stage();
+            doodleWindow.setScene(doodleScene);
+            doodleWindow.show();
+           }
+        catch(Exception e){e.printStackTrace();}
+    }
+    
+    private ChatWindowController getChatWindow(){
+        return this;
     }
     
     @FXML

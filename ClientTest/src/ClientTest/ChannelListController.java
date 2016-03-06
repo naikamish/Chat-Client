@@ -173,7 +173,7 @@ public class ChannelListController implements Initializable {
                     controller.setScene(chatWindowScene);
                     Stage chatWindow = new Stage();
                     chatWindow.setScene(chatWindowScene);
-                    chatWindow.minWidthProperty().set(600.0);
+                    chatWindow.minWidthProperty().set(800.0);
                     chatWindow.minHeightProperty().set(600.0);
                     chatWindow.show();
                     
@@ -210,7 +210,7 @@ public class ChannelListController implements Initializable {
                     chat.showDoodle(message);
                 }
                 else if(message.cmd.equals("FILE")){
-                    chat.showFile(message);
+                    chat.showMessage(message);
                 }
             }
         }

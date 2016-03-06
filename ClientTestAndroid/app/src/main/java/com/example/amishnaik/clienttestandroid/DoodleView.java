@@ -44,10 +44,12 @@ public class DoodleView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if(canvasBitmap!=null){
-            //bitmap = Bitmap.createBitmap(bitmap,0,0,w,h);
+        if(bitmap!=null){
+           // bitmap = Bitmap.createBitmap(bitmap,0,0,w,h);
+            bitmap = Bitmap.createScaledBitmap(bitmap,w,h,false);
+            canvasBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
             drawCanvas = new Canvas(canvasBitmap);
-            System.out.println("hello");
+            System.out.println(w+"w"+h+"h");
         }
         else {
             canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
@@ -114,9 +116,7 @@ public class DoodleView extends View {
     }
 
     public void setBitmap(Bitmap bitmap){
-        //drawCanvas = new Canvas(bitmap);
-        //this.canvasBitmap=bitmap;
-        canvasBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        this.bitmap = bitmap;
     }
 
     public Bitmap getBitmap(){

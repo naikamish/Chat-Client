@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="618.0" prefWidth="404.0" styleClass="mainFxmlClass" stylesheets="/doodle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ClientTest.DoodleController">
+   <children>
+      <Button fx:id="changeColorButton" layoutX="55.0" layoutY="565.0" mnemonicParsing="false" text="Change Color" />
+      <TextField fx:id="sizeTextField" layoutX="260.0" layoutY="565.0" onKeyTyped="#setStrokeWidth" prefHeight="39.0" prefWidth="66.0" />
+      <Canvas fx:id="doodleCanvas" height="485.0" layoutX="2.0" layoutY="67.0" onMouseDragged="#mouseDragged" onMousePressed="#mouseDown" onMouseReleased="#mouseUp" width="400.0" />
+      <Button fx:id="sendButton" layoutX="164.0" layoutY="14.0" mnemonicParsing="false" onAction="#sendDoodle" text="Send" />
+   </children>
+</AnchorPane>
