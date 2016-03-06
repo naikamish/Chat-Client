@@ -1,7 +1,19 @@
 [
     {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\add.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\add.png"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\document.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\document.png"
+    },
+    {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\document.png",
         "source": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\document.png"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\document_gray.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\document_gray.png"
     },
     {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\add.png",
@@ -16,8 +28,20 @@
         "source": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\ic_launcher.png"
     },
     {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\tick.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\tick.png"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\folder.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\folder.png"
+    },
+    {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\tick.png",
         "source": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\tick.png"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\ic_launcher.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\ic_launcher.png"
     },
     {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\folder.png",
@@ -26,5 +50,9 @@
     {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\no.png",
         "source": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\no.png"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\no.png",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\no.png"
     }
 ]
