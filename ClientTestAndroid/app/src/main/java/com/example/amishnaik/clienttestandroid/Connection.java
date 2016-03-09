@@ -72,20 +72,9 @@ public class Connection {
     private void showMessage(Message message){
         for(Chat chat:chats){
             if(chat.groupID==message.groupID){
-                if(message.cmd.equals("SEND")){
-                    chat.messages.add(message);
-                    if(activeChatWindow.getGroupID()==message.groupID){
-                        activeChatWindow.showMessage(message);
-                    }
-                }
-                else if(message.cmd.equals("DOODLE")){
-                    //chat.showDoodle(message);
-                }
-                else if(message.cmd.equals("FILE")){
-                    chat.messages.add(message);
-                    if(activeChatWindow.getGroupID()==message.groupID){
-                        activeChatWindow.showMessage(message);
-                    }
+                chat.messages.add(message);
+                if(activeChatWindow.getGroupID()==message.groupID){
+                    activeChatWindow.showMessage(message);
                 }
             }
         }

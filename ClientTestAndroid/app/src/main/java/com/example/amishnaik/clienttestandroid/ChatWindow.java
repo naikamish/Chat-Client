@@ -114,6 +114,7 @@ public class ChatWindow extends AppCompatActivity {
         final TextView clientMessage = new TextView(this);
         final ImageView clientImage = new ImageView(this);
         final LinearLayout messageBox = new LinearLayout(this);
+        messageBox.setOrientation(LinearLayout.VERTICAL);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -127,7 +128,7 @@ public class ChatWindow extends AppCompatActivity {
                 if (message.cmd.equals("SEND")) {
                     clientMessage.setText(message.message);
                     messageBox.addView(clientMessage);
-                } else if (message.cmd.equals("FILE")) {
+                } else if (message.cmd.equals("FILE")||message.cmd.equals("DOODLE")) {
                     LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(500, 500);
                     clientImage.setLayoutParams(imgParams);
 
@@ -152,12 +153,13 @@ public class ChatWindow extends AppCompatActivity {
 
                         final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
                         clientImage.setImageBitmap(bMap);
-
-                        clientImage.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                doodleButtonClick(bMap);
-                            }
-                        });
+                        if(message.cmd.equals("DOODLE")) {
+                            clientImage.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+                                    doodleButtonClick(bMap);
+                                }
+                            });
+                        }
 
                     } catch (Exception e) {
                         System.out.println(e.toString());

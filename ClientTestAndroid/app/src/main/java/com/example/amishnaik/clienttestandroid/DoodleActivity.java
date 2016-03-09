@@ -76,7 +76,7 @@ public class DoodleActivity extends AppCompatActivity {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        Connection.sendMessage(new Message("MSG", "FILE", groupID, Connection.username, byteArray, "png"));
+        Connection.sendMessage(new Message("MSG", "DOODLE", groupID, Connection.username, byteArray, "png"));
         finish();
     }
 

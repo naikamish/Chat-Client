@@ -105,7 +105,7 @@ public class Connection{
                                 }
                             }
                             else if(message.type.equals("MSG")){
-                                if(message.cmd.equals("FILE")){
+                                if(message.cmd.equals("FILE")||message.cmd.equals("DOODLE")){
                                     byte [] bytearray  = message.file;
                                     Random rand = new Random();
                                     int  n = rand.nextInt(2000000);

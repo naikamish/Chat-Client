@@ -13,13 +13,16 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javax.swing.JColorChooser;
 
 /**
  * FXML Controller class
@@ -80,19 +83,12 @@ public class DoodleController implements Initializable {
     private void initDraw(GraphicsContext gc){
         double canvasWidth = gc.getCanvas().getWidth();
         double canvasHeight = gc.getCanvas().getHeight();
-         
-        gc.setFill(Color.LIGHTGRAY);
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(5);
+        System.out.println(canvasWidth+"w"+canvasHeight+"h");
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0,0,canvasWidth,canvasHeight); 
+        
+        gc.setFill(Color.WHITE);
  
-        gc.fill();
-        gc.strokeRect(
-                0,              //x of the upper left corner
-                0,              //y of the upper left corner
-                canvasWidth,    //width of the rectangle
-                canvasHeight);  //height of the rectangle
-         
-        gc.setFill(Color.RED);
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(1);
          
@@ -103,5 +99,25 @@ public class DoodleController implements Initializable {
         chatWindowController.sendDoodle(doodleCanvas);
         Stage stage = (Stage) sendButton.getScene().getWindow();
         stage.close();
+    }
+    
+    @FXML
+    private void changeColorButtonClick(ActionEvent event) {
+        java.awt.Color color = JColorChooser.showDialog(null, null, java.awt.Color.BLACK);
+        setActiveColor(color);
+    }
+    
+    private void setActiveColor(java.awt.Color color){
+        int r = color.getRed();
+        int g = color.getGreen();
+        int b = color.getBlue();
+        int a = color.getAlpha();
+        double opacity = a / 255.0 ;
+        javafx.scene.paint.Color fxColor = javafx.scene.paint.Color.rgb(r, g, b, opacity);
+        graphicsContext.setStroke(fxColor);
+    }
+    
+    public void setDoodle(WritableImage writableImage){
+        graphicsContext.drawImage(writableImage, 0, 0,graphicsContext.getCanvas().getWidth(),graphicsContext.getCanvas().getHeight());
     }
 }

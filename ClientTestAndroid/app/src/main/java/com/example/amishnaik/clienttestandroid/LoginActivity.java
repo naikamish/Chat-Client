@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         //serverIP = "24.151.55.165";
         //serverIP = "localhost";
-        serverIP = "73.69.133.137";
+        serverIP = "32.208.103.211";
         startRunning();
 
         Button mLoginButton = (Button) findViewById(R.id.loginButton);

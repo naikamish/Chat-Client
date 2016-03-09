@@ -47,3 +47,6 @@ Temporary Items
 /ClientTestMobile/build/
 /ClientTestMobile/.nb-gradle/
 /ClientTest/dist/
+/PanelTest/nbproject/private/
+/PanelTest/build/
+/PanelTest/dist/

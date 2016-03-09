@@ -203,15 +203,7 @@ public class ChannelListController implements Initializable {
     public static void showMessage(Message message){
         for(ChatWindowController chat:chats){
             if(chat.getGroupID()==message.groupID){
-                if(message.cmd.equals("SEND")){
-                    chat.showMessage(message);
-                }
-                else if(message.cmd.equals("DOODLE")){
-                    chat.showDoodle(message);
-                }
-                else if(message.cmd.equals("FILE")){
-                    chat.showMessage(message);
-                }
+                chat.showMessage(message);
             }
         }
     }

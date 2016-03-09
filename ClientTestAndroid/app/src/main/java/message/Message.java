@@ -5,18 +5,10 @@
  */
 package message;
 
-/**
- *
- * @author Amish Naik
- */
-//import java.awt.geom.GeneralPath;
+
 import java.io.Serializable;
 import java.util.LinkedList;
 
-/**
- *
- * @author Amish Naik
- */
 public class Message implements Serializable{
     private static final long serialVersionUID = 5950169519310163575L;
     public String type="", cmd="", groupName="", clientName="", message="";
@@ -25,7 +17,6 @@ public class Message implements Serializable{
     public int code;
     public String password;
     public String[] groupList, clientList;
-    public LinkedList<DoodlePath> doodle;
     public byte[] file;
     public String extension="", filename="";
     public char[] pass;
@@ -108,15 +99,6 @@ public class Message implements Serializable{
     public Message(String type, String message){
         this.type = type;
         this.message = message;
-    }
-
-    //Send doodle
-    public Message(String type, String cmd, int groupID, String clientName, LinkedList<DoodlePath> doodle){
-        this.type = type;
-        this.cmd = cmd;
-        this.groupID = groupID;
-        this.clientName = clientName;
-        this.doodle=doodle;
     }
 
     //Send File

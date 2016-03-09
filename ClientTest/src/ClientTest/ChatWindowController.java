@@ -5,6 +5,7 @@
  */
 package ClientTest;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -24,12 +25,14 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -61,14 +64,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLDocument;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.StyleSheet;
-import message.DoodlePath;
 import message.Message;
 
 /**
@@ -81,9 +76,8 @@ public class ChatWindowController implements Initializable {
     @FXML private ScrollPane chatBoxScrollPane;
     @FXML private ImageView attachIcon, doodleIcon;
     @FXML private HBox chatTextHBox;
+    @FXML private Button doodleButton;
     private String username, groupName;
-        private JTextField userText;
-    private JTextPane chatWindow;
     private String message = ""; 
     private Connection connection;
     public String clientName;
@@ -99,19 +93,18 @@ public class ChatWindowController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        DoubleProperty hProperty = new SimpleDoubleProperty();
-        hProperty.bind(chatBox.heightProperty());
-        hProperty.addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue ov, Object t, Object t1) {
-              chatBoxScrollPane.setVvalue(chatBoxScrollPane.getVmax());
-            }
-        });
+        chatBox.getChildren().addListener(
+                (ListChangeListener<Node>) ((change) -> {
+                    chatBox.layout();
+                    chatBoxScrollPane.layout();
+                    chatBoxScrollPane.setVvalue(1.0f);
+                }));
         Image attachImage = new Image(ClientTest.class.getResourceAsStream("images/attach.png"));
         attachIcon.setImage(attachImage);
         
         Image doodleImage = new Image(ClientTest.class.getResourceAsStream("images/doodle.png"));
         doodleIcon.setImage(doodleImage);
+        chatBox.getChildren().clear();
     }  
     
     public void setValues(Connection connection, int groupID, String user, int userID, String groupName){
@@ -130,8 +123,6 @@ public class ChatWindowController implements Initializable {
         message.groupName = getGroupName();
         sendMessage(message);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
         source.clear();
-        
-        //createMessage(source.getText());
     }
     
     public String getGroupName(){
@@ -161,22 +152,34 @@ public class ChatWindowController implements Initializable {
                 text.getChildren().add(messageText);
                 }
                 
-                else if(message.cmd.equals("FILE")){
+                else if(message.cmd.equals("FILE")||message.cmd.equals("DOODLE")){
                     try{
                         saveFile(message);
                         
                         WritableImage writableImage;
                         writableImage = showImage(message.file);
+                        //writableImage = new WritableImage(writableImage.getPixelReader(), 0,0,(int) writableImage.getWidth(),500);
+                        Rectangle2D r = new Rectangle2D(0,0,400,400);
                         ImageView imageView = new ImageView(writableImage);
-                        imageView.setFitWidth(500);
+                        imageView.setFitWidth(450);
+                        imageView.setSmooth(true);
                         imageView.setPreserveRatio(true);
+                        imageView.getStyleClass().add("imageView");
                         text.getChildren().add(imageView);
+                        
+                        if(message.cmd.equals("DOODLE")){
+                            imageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                @Override
+                                public void handle(MouseEvent t) {
+                                    showDoodle(writableImage);
+                                }
+                            });
+                        }
                     }
                     catch(Exception e){                        
                     }                    
                 }
-
-                chatBox.getChildren().add(text);
+                chatBox.getChildren().add(text); 
             }
         });
     } 
@@ -268,64 +271,15 @@ public class ChatWindowController implements Initializable {
         return this;
     }
     
-    public void sendDoodle(LinkedList<DoodlePath> generalPath){
-        sendMessage(new Message("MSG", "DOODLE", groupID, clientName,generalPath));
-    }
-    
     public void sendDoodle(Canvas canvas){
         try{
             WritableImage image = canvas.snapshot(null, null);
             ByteArrayOutputStream  byteOutput = new ByteArrayOutputStream();
             ImageIO.write( SwingFXUtils.fromFXImage( image, null ), "png", byteOutput );
             byte[] bytearray = byteOutput.toByteArray();
-            sendMessage(new Message("MSG", "FILE", groupID, clientName, bytearray, "png"));
+            sendMessage(new Message("MSG", "DOODLE", groupID, clientName, bytearray, "png"));
         }
         catch(Exception e){}
-    }
-    
-    public void showDoodle(Message message){
-        if(!clientName.equals(message.clientName)){
-            DoodleFrame doodleFrame;
-            doodleFrame = new DoodleFrame(this);
-            doodleFrame.setDoodle(message.doodle);
-        }
-    }
-    
-    public void showFile(Message message){
-        if(!clientName.equals(message.clientName)){
-            /*JButton l=new JButton(message.message);
-            chatWindow.insertComponent(l);*/
-            String dialogMessage = message.clientName+" has sent you a file.\n"+message.filename+"\nWould you like to download this file?";
-            String dialogTitle = "Download File";
-            int reply = JOptionPane.showConfirmDialog(null, dialogMessage, dialogTitle, JOptionPane.YES_NO_OPTION);
-            if(reply==JOptionPane.YES_OPTION){
-                byte [] bytearray  = message.file;
-                try{
-                    FileOutputStream fos = new FileOutputStream(message.filename);
-                    BufferedOutputStream bos = new BufferedOutputStream(fos);
-                    bos.write(bytearray, 0 , bytearray.length);
-                    bos.flush();
-                    bos.close();
-                    JOptionPane.showMessageDialog(null,"Download Complete");
-                    BufferedImage bf = ImageIO.read(new ByteArrayInputStream(bytearray));
-                    
-                    WritableImage wr = null;
-                    wr = new WritableImage(bf.getWidth(), bf.getHeight());
-                    PixelWriter pw = wr.getPixelWriter();
-                    for (int x = 0; x < bf.getWidth(); x++) {
-                        for (int y = 0; y < bf.getHeight(); y++) {
-                            pw.setArgb(x, y, bf.getRGB(x, y));
-                        }
-                    }
-
-                    ImageView imView = new ImageView(wr);
-                }
-                catch(Exception e)
-                {
-                    //JOptionPane.showMessageDialog(this,e.toString());
-                }
-            }
-        }
     }
     
     public void closeWindow(){
@@ -399,12 +353,19 @@ public class ChatWindowController implements Initializable {
     
     @FXML
     private void openDoodleFrame(ActionEvent event) {
+        showDoodle(null);
+    }
+    
+    private void showDoodle(WritableImage writableImage){
         try{ 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("fxml/Doodle.fxml"));
             Parent root = (Parent)fxmlLoader.load();
             DoodleController controller = fxmlLoader.<DoodleController>getController();
             Scene doodleScene = new Scene(root);
             controller.setChatWindow(getChatWindow());
+            if(writableImage!=null){
+                controller.setDoodle(writableImage);
+            }
             Stage doodleWindow = new Stage();
             doodleWindow.setScene(doodleScene);
             doodleWindow.show();

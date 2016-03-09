@@ -31,7 +31,10 @@
                            <children>
                               <ScrollPane fx:id="chatBoxScrollPane" layoutX="62.0" layoutY="28.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="559.0" prefWidth="559.0" styleClass="scrollPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                                  <content>
-                                    <VBox fx:id="chatBox" prefHeight="531.0" prefWidth="552.0" styleClass="vbox" />
+                                    <VBox fx:id="chatBox" prefHeight="531.0" prefWidth="552.0" styleClass="vbox">
+                                       <children>
+                                          <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                                       </children></VBox>
                                  </content>
                               </ScrollPane>
                            </children>
