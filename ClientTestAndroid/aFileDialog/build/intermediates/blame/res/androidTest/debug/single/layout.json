@@ -1,5 +1,13 @@
 [
     {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\daidalos_file_chooser.xml",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\layout\\daidalos_file_chooser.xml"
+    },
+    {
+        "merged": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\daidalos_file_item.xml",
+        "source": "C:\\Users\\madhur\\Desktop\\CS670 docs\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\layout\\daidalos_file_item.xml"
+    },
+    {
         "merged": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\daidalos_file_item.xml",
         "source": "E:\\Homework\\Projects\\Chat-Client\\ClientTestAndroid\\aFileDialog\\build\\intermediates\\bundles\\debug\\res\\layout\\daidalos_file_item.xml"
     },
