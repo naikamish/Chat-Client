@@ -17,7 +17,7 @@ import message.Message;
 public class DoodleActivity extends AppCompatActivity {
     private DoodleView doodleView;
     private ImageButton currPaint;
-    private int groupID;
+    private int groupID, userID;
     private Bitmap bitmap;
 
     @Override
@@ -35,6 +35,7 @@ public class DoodleActivity extends AppCompatActivity {
 
         if(b!=null){
             groupID = (int) b.get("groupID");
+            userID = (int) b.get("userID");
             if (b.containsKey("bitmap")) {
                 byte[] bytes = (byte[]) b.get("bitmap");
                 System.out.println(bytes.length+"howlong");
@@ -76,7 +77,9 @@ public class DoodleActivity extends AppCompatActivity {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
-        Connection.sendMessage(new Message("MSG", "DOODLE", groupID, Connection.username, byteArray, "png"));
+        Message message = new Message("MSG", "DOODLE", groupID, Connection.username, byteArray, "png");
+        message.userID = this.userID;
+        Connection.sendMessage(message);
         finish();
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
@@ -75,6 +76,7 @@ public class ChatWindow extends AppCompatActivity {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
                     Message newMessage = new Message("MSG", "SEND", groupID, chat.username, sendMessageBox.getText().toString());
                     newMessage.groupName = chat.groupName;
+                    newMessage.userID = chat.userID;
                     sendMessage(newMessage);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
                     sendMessageBox.clearFocus();
                     sendMessageBox.setText("");
@@ -111,10 +113,15 @@ public class ChatWindow extends AppCompatActivity {
 
     public void showMessage(final Message message) {
         final TextView text = new TextView(this);
+        int styleType = message.userID==chat.userID ? R.style.ChatMessageSenderYou:R.style.ChatMessageSenderOther;
+        text.setTextAppearance(this,styleType);
+
         final TextView clientMessage = new TextView(this);
         final ImageView clientImage = new ImageView(this);
         final LinearLayout messageBox = new LinearLayout(this);
         messageBox.setOrientation(LinearLayout.VERTICAL);
+        messageBox.setBackgroundColor(Color.WHITE);
+        messageBox.setPadding(20, 20, 0, 20);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -128,7 +135,7 @@ public class ChatWindow extends AppCompatActivity {
                 if (message.cmd.equals("SEND")) {
                     clientMessage.setText(message.message);
                     messageBox.addView(clientMessage);
-                } else if (message.cmd.equals("FILE")||message.cmd.equals("DOODLE")) {
+                } else if (message.cmd.equals("FILE") || message.cmd.equals("DOODLE")) {
                     LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(500, 500);
                     clientImage.setLayoutParams(imgParams);
 
@@ -153,7 +160,7 @@ public class ChatWindow extends AppCompatActivity {
 
                         final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
                         clientImage.setImageBitmap(bMap);
-                        if(message.cmd.equals("DOODLE")) {
+                        if (message.cmd.equals("DOODLE")) {
                             clientImage.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
                                     doodleButtonClick(bMap);
@@ -168,9 +175,10 @@ public class ChatWindow extends AppCompatActivity {
                     messageBox.addView(clientImage);
                 }
 
-
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
+                param.setMargins(30,30,30,10);
                 LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
-                chatMessagesBox.addView(messageBox);
+                chatMessagesBox.addView(messageBox,param);
 
                 final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
                 scroll.post(new Runnable() {
@@ -210,6 +218,7 @@ public class ChatWindow extends AppCompatActivity {
     public void doodleButtonClick(View view){
         Intent intent = new Intent(this, DoodleActivity.class);
         intent.putExtra("groupID", groupID);
+        intent.putExtra("userID", chat.userID);
         startActivity(intent);
     }
 
@@ -254,8 +263,10 @@ public class ChatWindow extends AppCompatActivity {
         try{
             FileInputStream fin = new FileInputStream(file);
             BufferedInputStream bin = new BufferedInputStream(fin);
-            bin.read(bytearray,0,bytearray.length);
-            sendMessage(new Message("MSG", "FILE", groupID, chat.username, bytearray, extension));
+            bin.read(bytearray, 0, bytearray.length);
+            Message newMessage = new Message("MSG", "FILE", groupID, chat.username, bytearray, extension);
+            newMessage.userID = chat.userID;
+            sendMessage(newMessage);
         }
         catch(Exception ex){}
     }

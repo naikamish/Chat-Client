@@ -121,6 +121,7 @@ public class ChatWindowController implements Initializable {
         TextField source = (TextField)event.getSource();
         Message message = new Message("MSG", "SEND", groupID, clientName, source.getText());
         message.groupName = getGroupName();
+        message.userID = this.userID;
         sendMessage(message);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
         source.clear();
     }
