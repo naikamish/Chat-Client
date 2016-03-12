@@ -6,13 +6,18 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -46,12 +51,11 @@ public class ChatWindow extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Connection.clearNotifications();
-        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         setContentView(R.layout.activity_chat_window);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Connection.clearNotifications();
         ImageView attachButton = (ImageView) findViewById(R.id.attachButton);
         ImageView doodleButton = (ImageView) findViewById(R.id.doodleButton);
         attachButton.setImageResource(R.drawable.attach);
@@ -94,13 +98,40 @@ public class ChatWindow extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });*/
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setActionBar(chat.groupName);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void setActionBar(String heading) {
+        // TODO Auto-generated method stub
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
+        actionBar.setTitle(heading);
+        actionBar.show();
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.chat_window_menu, menu);
+        return true;
     }
 
     private void recreateMessages(){
         for(Message message:chat.messages){
             showMessage(message);
         }
+    }
+
+    public void showGroupInfo(MenuItem item){
+        Intent intent = new Intent(this, GroupInformation.class);
+        intent.putExtra("groupID", groupID);
+        intent.putExtra("userID", chat.userID);
+        startActivity(intent);
     }
 
     public void sendMessage(Message message){
@@ -225,6 +256,7 @@ public class ChatWindow extends AppCompatActivity {
     public void doodleButtonClick(Bitmap bitmap){
         Intent intent = new Intent(this, DoodleActivity.class);
         intent.putExtra("groupID", groupID);
+        intent.putExtra("userID", chat.userID);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -269,5 +301,34 @@ public class ChatWindow extends AppCompatActivity {
             sendMessage(newMessage);
         }
         catch(Exception ex){}
+    }
+
+    public Chat getChat(){
+        return chat;
+    }
+
+    public void enforceBan(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Context context = Connection._CONTEXT;
+                final TextView text = new TextView(context);
+                text.setTextAppearance(context,R.style.ChatMessageSenderYou);
+                text.setText("YOU HAVE BEEN BANNED FROM THIS CHAT");
+                final LinearLayout messageBox = new LinearLayout(context);
+                messageBox.setOrientation(LinearLayout.VERTICAL);
+                messageBox.setBackgroundColor(Color.WHITE);
+                messageBox.setPadding(20, 20, 0, 20);
+                messageBox.addView(text);
+                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
+                param.setMargins(30, 30, 30, 10);
+                LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
+                chatMessagesBox.addView(messageBox,param);
+                EditText sendMessageBox = (EditText) findViewById(R.id.sendMessageBox);
+                sendMessageBox.setEnabled(false);
+            }
+        });
+
+
     }
 }

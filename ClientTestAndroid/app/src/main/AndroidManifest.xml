@@ -40,9 +40,10 @@
                 android:value="com.example.amishnaik.clienttestandroid.GroupList" />
         </activity>
         <activity android:name="ar.com.daidalos.afiledialog.FileChooserActivity" />
-        <activity android:name=".DoodleActivity"
-            android:screenOrientation="portrait">
-        </activity>
+        <activity
+            android:name=".DoodleActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".GroupInformation"></activity>
     </application>
 
 </manifest>

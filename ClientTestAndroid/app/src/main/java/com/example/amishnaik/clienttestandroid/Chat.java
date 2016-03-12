@@ -11,6 +11,7 @@ public class Chat {
     public int groupID, creatorID, userID;
     public String username, groupName;
     public ArrayList<Message> messages;
+    public ArrayList<User> users = new ArrayList<User>();
 
     public Chat(){
         groupID=0;
@@ -27,6 +28,21 @@ public class Chat {
         this.username = username;
         this.userID = userID;
         this.groupName = groupName;
+        for(int i=0; i<groupUserIDs.length; i++){
+            users.add(new User(clientList[i],groupUserIDs[i]));
+        }
         messages = new ArrayList<Message>();
+    }
+
+    public void addUser(User user){
+        users.add(user);
+    }
+
+    public void removeUser(int userID){
+        for(User user:users){
+            if(user.userID==userID){
+                users.remove(user);
+            }
+        }
     }
 }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -34,7 +35,7 @@ public class Connection {
     private static ChatWindow activeChatWindow;
     public static String username;
     public static int userID;
-    private Context _CONTEXT;
+    public static Context _CONTEXT;
     private static int notificationCount, notificationGroupID;
 
     public Connection(Socket socket, LoginActivity loginForm, Context c){
@@ -84,6 +85,10 @@ public class Connection {
         activeChatWindow = chatWindow;
     }
 
+    public static ChatWindow getActiveChat(){
+        return activeChatWindow;
+    }
+
     public static boolean checkExistingChatWindow(int selectedGroupID){
         for(Chat chat:chats){
             if(chat.groupID==selectedGroupID){
@@ -106,6 +111,35 @@ public class Connection {
     public void createGroupList(String[] groupNames, int[] groupIDs){
         for(int i=1; i<groupNames.length; i++){
             groups.add(new Group(groupNames[i], groupIDs[i]));
+        }
+    }
+
+    private void addGroupMember(Message message){
+        for(Chat chat:chats){
+            if(chat.groupID==message.groupID){
+                chat.addUser(new User(message.clientName, message.userID));
+            }
+        }
+    }
+
+    private void removeGroupMember(int groupID, int userID){
+        for(Chat chat:chats){
+            if(chat.groupID==groupID){
+                chat.removeUser(userID);
+            }
+        }
+    }
+
+    private void enforceBan(int userID, int groupID){
+        if(this.userID==userID){
+            for(Chat chat:chats){
+                if(chat.groupID==groupID){
+                    chats.remove(chat);
+                }
+                if(activeChatWindow.getGroupID()==groupID){
+                    activeChatWindow.enforceBan();
+                }
+            }
         }
     }
 
@@ -193,18 +227,20 @@ public class Connection {
                                     else if(message.cmd.equals("ADD")){
                                         String[] client = {message.clientName};
                                         int[] clientID = {message.userID};
-                                        //channelListController.addGroupMember(message.groupID, client, clientID, message.creatorID);
+                                        addGroupMember(message);
+                                        //addGroupMember(message.groupID, client, clientID, message.creatorID);
                                     }
                                     else if(message.cmd.equals("REMOVE")){
+                                        removeGroupMember(message.groupID, message.userID);
                                         //channelListController.deleteFromList(message.groupID, message.userID);
                                     }
                                     else if(message.cmd.equals("CREATE")){
                                         //channelListController.addGroup(message.groupName, message.groupID);
                                     }
                                 }
-                          /*  else if(message.type.equals("BANNED")){
-                                JOptionPane.showMessageDialog(null,"You have been banned from this group");
-                            }*/
+                                else if(message.type.equals("BANNED")){
+                                    channelListController.enforceBan();
+                                }
                                 else if(message.type.equals("MSG")){
                                     showMessage(message);
                                     showNotification(message.message, message.groupName, message.groupID);
@@ -218,9 +254,9 @@ public class Connection {
                                 else if(message.type.equals("LOGIN UNSUCCESSFUL")){
                                     login.unsuccessfulLogin(message.message);
                                 }
-                          /*  else if(message.type.equals("BAN")){
-                                channelListController.enforceBan(message.userID, message.groupID);
-                            }*/
+                                else if(message.type.equals("BAN")){
+                                    enforceBan(message.userID, message.groupID);
+                                }
                                 //Client.showMessage(message);
                             }
                             catch(Exception e){}

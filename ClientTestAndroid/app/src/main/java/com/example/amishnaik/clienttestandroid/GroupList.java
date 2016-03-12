@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import message.Message;
 
@@ -148,5 +149,19 @@ public class GroupList extends AppCompatActivity {
         Intent intent = new Intent(this, ChatWindow.class);
         intent.putExtra("groupID", groupID);
         startActivity(intent);
+    }
+
+    public void enforceBan() {
+        final GroupList activity = this;
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast toast = Toast.makeText(activity, "You have been banned from this chat.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+        }
+        catch(Exception e){System.out.println(e.toString());}
     }
 }
