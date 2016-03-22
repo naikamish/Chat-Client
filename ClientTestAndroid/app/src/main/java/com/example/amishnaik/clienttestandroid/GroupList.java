@@ -164,4 +164,10 @@ public class GroupList extends AppCompatActivity {
         }
         catch(Exception e){System.out.println(e.toString());}
     }
+
+    public void newGroupButton(View view) {
+        Intent intent = new Intent(this, NewGroup.class);
+        //intent.putExtra("grp", grp);
+        startActivity(intent);
+    }
 }

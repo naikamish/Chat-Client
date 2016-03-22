@@ -25,4 +25,8 @@
     <string name="erase">Erase</string>
     <string name="send">Send</string>
     <string name="paint">Paint</string>
+
+    <string name="groupName">Group Name</string>
+    <string name="attachFileButton">Group Image</string>
+    <string name="createGroupButton">Create Group</string>
 </resources>

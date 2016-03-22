@@ -42,8 +42,9 @@
         <activity android:name="ar.com.daidalos.afiledialog.FileChooserActivity" />
         <activity
             android:name=".DoodleActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".GroupInformation"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".GroupInformation" />
+        <activity android:name=".NewGroup"></activity>
     </application>
 
 </manifest>
