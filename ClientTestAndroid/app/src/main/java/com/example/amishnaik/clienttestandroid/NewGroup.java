@@ -4,12 +4,15 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -17,6 +20,8 @@ import ar.com.daidalos.afiledialog.FileChooserDialog;
 import message.Message;
 
 public class NewGroup extends AppCompatActivity {
+
+    byte[] resizedByteArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +63,38 @@ public class NewGroup extends AppCompatActivity {
             final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
             ImageView imageView = (ImageView) findViewById(R.id.imageView);
             imageView.setImageBitmap(bMap);
+            Bitmap resizedImage = getResizedBitmap(bMap, 100,100);
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            resizedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            resizedByteArray = stream.toByteArray();
+
         }
         catch(Exception ex){}
+    }
+
+    public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleWidth, scaleHeight);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
+
+    public void createGroupButtonClick(View view){
+        AutoCompleteTextView groupNameView = (AutoCompleteTextView) findViewById(R.id.groupName);
+        String groupName = groupNameView.getText().toString();
+        groupName = groupName.replaceAll("'", "");
+        groupName = groupName.replaceAll("\"","");
+        Message message = new Message();
+        message.type = "CMD";
+        message.cmd = "CREATE";
+        message.groupName = groupName;
+        message.userID = Connection.userID;
+        Connection.sendMessage(message);
+        finish();
     }
 }

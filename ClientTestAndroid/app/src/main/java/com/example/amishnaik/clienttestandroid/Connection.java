@@ -114,6 +114,10 @@ public class Connection {
         }
     }
 
+    public void addGroup(String groupName, int groupID){
+        groups.add(new Group(groupName, groupID));
+    }
+
     private void addGroupMember(Message message){
         for(Chat chat:chats){
             if(chat.groupID==message.groupID){
@@ -235,7 +239,7 @@ public class Connection {
                                         //channelListController.deleteFromList(message.groupID, message.userID);
                                     }
                                     else if(message.cmd.equals("CREATE")){
-                                        //channelListController.addGroup(message.groupName, message.groupID);
+                                        addGroup(message.groupName, message.groupID);
                                     }
                                 }
                                 else if(message.type.equals("BANNED")){
