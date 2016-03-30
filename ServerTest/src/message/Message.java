@@ -30,6 +30,7 @@ public class Message implements Serializable{
     public char[] pass;
     public int userID, groupID, creatorID;
     public int[] groupUserIDs, groupIDList;
+    public byte[][] groupImages;
     
     public Message(){
         

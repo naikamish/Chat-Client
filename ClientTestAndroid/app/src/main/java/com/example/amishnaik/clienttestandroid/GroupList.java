@@ -1,12 +1,15 @@
 package com.example.amishnaik.clienttestandroid;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +49,7 @@ public class GroupList extends AppCompatActivity {
         username = Connection.username;
         userID = Connection.userID;
         for(Group group:Connection.groups){
-            addGroup(group.groupName, group.groupID);
+            addGroup(group.groupName, group.groupID, group.groupImage);
         }
 
         connectButton = (Button) findViewById(R.id.button);
@@ -100,7 +103,7 @@ public class GroupList extends AppCompatActivity {
         Connection.sendMessage(message);
     }
 
-    public void addGroup(String group, int groupID){
+    public void addGroup(String group, int groupID, byte[] groupImage){
         try {
             LinearLayout hbox = new LinearLayout(this);
             hbox.setClickable(true);
@@ -109,7 +112,20 @@ public class GroupList extends AppCompatActivity {
             hbox.setId(groupID);
 
             ImageView icon = new ImageView(this);
-            icon.setImageResource(R.drawable.anon);
+            if(groupImage.length!=0) {
+                Bitmap bm = BitmapFactory.decodeByteArray(groupImage, 0, groupImage.length);
+                DisplayMetrics dm = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+                icon.setMinimumHeight(dm.heightPixels);
+                icon.setMinimumWidth(dm.widthPixels);
+                icon.setImageBitmap(bm);
+            }
+
+
+            else{
+                icon.setImageResource(R.drawable.anon);
+            }
 
             TextView textFlow = new TextView(this);
             //textFlow.getStyleClass().add("chatListText");

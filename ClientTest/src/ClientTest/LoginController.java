@@ -71,7 +71,7 @@ public class LoginController implements Initializable {
         this.stage = stage;
     }
     
-    public void successfullyLoggedIn(String[] grp, int userID, int[] groupIDList) throws Exception{
+    public void successfullyLoggedIn(String[] grp, int userID, int[] groupIDList, byte[][] groupImages) throws Exception{
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
@@ -80,7 +80,7 @@ public class LoginController implements Initializable {
                 Parent root = (Parent)fxmlLoader.load();
                 ChannelListController controller = fxmlLoader.<ChannelListController>getController();
                 connection.setChannelListController(controller);
-                controller.startRunning(grp,connection, username,userID, groupIDList);
+                controller.startRunning(grp,connection, username,userID, groupIDList, groupImages);
                 Scene groupList = new Scene(root);
 
                 Stage groupListWindow = new Stage();

@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        //serverIP = "24.151.55.165";
+        //serverIP = "73.69.133.137";
         //serverIP = "localhost";
         serverIP = "32.208.103.211";
         startRunning();

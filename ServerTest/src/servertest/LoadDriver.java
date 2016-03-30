@@ -8,6 +8,7 @@ package servertest;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -60,13 +61,19 @@ public class LoadDriver {
         }
     }
     
-    public int insertQueryReturnKey(String query){
+    public int insertQueryReturnKey(String query, String groupName, int groupID, String fileName){
         try{
-            stmt = conn.createStatement();
-            stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement pstmt = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+            pstmt.setString(1, groupName);
+            pstmt.setInt(2, groupID);
+            pstmt.setString(3, fileName);
+            pstmt.execute();
+            
+            //stmt = conn.createStatement();
+            //stmt.executeUpdate(query,Statement.RETURN_GENERATED_KEYS);
             int autoIncKey=0;
 
-            rs = stmt.getGeneratedKeys();
+            rs = pstmt.getGeneratedKeys();
 
             if (rs.next()) {
                 autoIncKey = rs.getInt(1);

@@ -65,7 +65,7 @@ public class Connection {
                                     channelListController.deleteFromList(message.groupID, message.userID);
                                 }
                                 else if(message.cmd.equals("CREATE")){
-                                    channelListController.addGroup(message.groupName, message.groupID);
+                                    channelListController.addGroup(message.groupName, message.groupID, message.file);
                                 }
                             }
                             else if(message.type.equals("BANNED")){
@@ -75,7 +75,7 @@ public class Connection {
                                 channelListController.showMessage(message);
                             }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){
-                                login.successfullyLoggedIn(message.groupList,message.userID, message.groupIDList);
+                                login.successfullyLoggedIn(message.groupList,message.userID, message.groupIDList, message.groupImages);
                             }
                             else if(message.type.equals("LOGIN UNSUCCESSFUL")){
                                 login.unsuccessfulLogin(message.message);

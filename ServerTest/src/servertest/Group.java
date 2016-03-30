@@ -22,12 +22,14 @@ public class Group {
     private ServerSocket server;
     private String groupName;
     private int groupID, creatorID;
+    private byte[] groupImage;
     
-    public Group(ServerSocket serv, String name, int groupID, int creatorID){
+    public Group(ServerSocket serv, String name, int groupID, int creatorID, byte[] groupImage){
         server=serv;
         groupName = name;
         this.groupID = groupID;
         this.creatorID = creatorID;
+        this.groupImage = groupImage;
     }
     
     //Send message to client
@@ -54,6 +56,10 @@ public class Group {
     
     public int getID(){
         return groupID;
+    }
+    
+    public byte[] getImage(){
+        return groupImage;
     }
     
     public int getCreatorID(){

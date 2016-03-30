@@ -50,7 +50,7 @@ public class Connection {
             input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
             // sendMessage(new Message("LOGIN","hello", "hello"));
         }
-        catch(Exception e){}
+        catch(Exception e){e.toString();}
     }
 
     public static void setChannelListController(GroupList controller){
@@ -106,6 +106,17 @@ public class Connection {
     public void setUserID(int id){
         userID = id;
         System.out.println("abc"+userID+"conn");
+    }
+
+    public void createGroupList(String[] groupNames, int[] groupIDs, byte[][] groupImages){
+        for(int i=0; i<groupNames.length; i++){
+            groups.add(new Group(groupNames[i], groupIDs[i], groupImages[i]));
+            System.out.println(groupImages[i].length);
+        }
+    }
+
+    public void addGroup(String groupName, int groupID, byte[] groupImage){
+        groups.add(new Group(groupName, groupID, groupImage));
     }
 
     public void createGroupList(String[] groupNames, int[] groupIDs){
@@ -239,7 +250,8 @@ public class Connection {
                                         //channelListController.deleteFromList(message.groupID, message.userID);
                                     }
                                     else if(message.cmd.equals("CREATE")){
-                                        addGroup(message.groupName, message.groupID);
+                                        //addGroup(message.groupName, message.groupID);
+                                        addGroup(message.groupName, message.groupID, message.file);
                                     }
                                 }
                                 else if(message.type.equals("BANNED")){
@@ -250,7 +262,8 @@ public class Connection {
                                     showNotification(message.message, message.groupName, message.groupID);
                                 }
                                 else if(message.type.equals("LOGIN SUCCESSFUL")){
-                                    createGroupList(message.groupList, message.groupIDList);
+                                    //createGroupList(message.groupList, message.groupIDList);
+                                    createGroupList(message.groupList, message.groupIDList, message.groupImages);
                                     setUsername(message.username);
                                     setUserID(message.userID);
                                     login.successfullyLoggedIn();
@@ -263,7 +276,7 @@ public class Connection {
                                 }
                                 //Client.showMessage(message);
                             }
-                            catch(Exception e){}
+                            catch(Exception e){e.toString();}
                         }
                     }
                 });
@@ -275,6 +288,6 @@ public class Connection {
             output.writeObject(message);
             output.flush();
         }
-        catch(Exception e){}
+        catch(Exception e){e.toString();}
     }
 }

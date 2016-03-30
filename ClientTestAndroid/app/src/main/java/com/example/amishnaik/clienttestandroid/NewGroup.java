@@ -61,9 +61,12 @@ public class NewGroup extends AppCompatActivity {
             BufferedInputStream bin = new BufferedInputStream(fin);
             bin.read(bytearray, 0, bytearray.length);
             final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
+
+            Bitmap resizedImage = getResizedBitmap(bMap, 100, 100);
+
             ImageView imageView = (ImageView) findViewById(R.id.imageView);
-            imageView.setImageBitmap(bMap);
-            Bitmap resizedImage = getResizedBitmap(bMap, 100,100);
+            imageView.setImageBitmap(resizedImage);
+
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             resizedImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
             resizedByteArray = stream.toByteArray();
@@ -80,7 +83,8 @@ public class NewGroup extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap resizedBitmap = Bitmap.createBitmap(bm, 0, 0, width, height, matrix, false);
-        bm.recycle();
+
+
         return resizedBitmap;
     }
 
@@ -94,7 +98,13 @@ public class NewGroup extends AppCompatActivity {
         message.cmd = "CREATE";
         message.groupName = groupName;
         message.userID = Connection.userID;
+        if(resizedByteArray==null) {
+            resizedByteArray=new byte[0];
+        }
+
+        message.file = resizedByteArray;
         Connection.sendMessage(message);
+
         finish();
     }
 }

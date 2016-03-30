@@ -41,7 +41,7 @@ public class Connection{
             output.flush();
             input = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         }
-        catch(Exception e){//Server.showMessage("\nline32 connection\n");
+        catch(Exception e){Server.showMessage("conn line 44" + e.toString());
         }
         setUpThread();
         
@@ -49,7 +49,7 @@ public class Connection{
             this.dbLib=dbLib;
             //this.dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
         }
-        catch(Exception e){
+        catch(Exception e){Server.showMessage("conn line 52" + e.toString());
             //Server.showMessage(e.toString());
         }
     }
@@ -59,7 +59,7 @@ public class Connection{
         output.writeObject(message);
         output.flush();
         }
-        catch(Exception e){//Server.showMessage("\nline40 connection\n");
+        catch(Exception e){Server.showMessage("conn line 62" + e.toString());
         }
     }
     
@@ -84,7 +84,7 @@ public class Connection{
                                             sendMessage(newMessage);                                            
                                         }
                                     }
-                                    catch(Exception e){Server.showMessage(e.toString());}
+                                    catch(Exception e){Server.showMessage("conn line 87" + e.toString());}
                                     
                                     
                                 }
@@ -93,13 +93,31 @@ public class Connection{
                                     Server.showMessage(Integer.toString(message.userID));
                                 }
                                 else if(message.cmd.equals("CREATE")){
-                                    String query = "insert into groups(groupName, userID) values('"+message.groupName+"',"+message.userID+");";
+                                    byte [] bytearray  = message.file;
+                                    String filename;
+                                    
+                                    if(bytearray.length>0){
+                                        Random rand = new Random();
+                                        int  n = rand.nextInt(2000000);
+                                        filename = n+"."+"png";
+                                        message.filename = filename;
+                                        FileOutputStream fos = new FileOutputStream(filename);
+                                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                                        bos.write(bytearray, 0 , bytearray.length);
+                                        bos.flush();
+                                        bos.close();
+                                    }
+                                    else{ filename = "x.png";}
+                                    Server.showMessage(filename);
+                                    
+                                    String query = "insert into groups(groupName, userID, groupImage) values(?,?,?);";
+                    
                                     try{
-                                        int groupID=dbLib.insertQueryReturnKey(query);
-                                        Server.createGroup(message.groupName, groupID, message.userID);
+                                        int groupID=dbLib.insertQueryReturnKey(query, message.groupName, message.userID, filename);
+                                        Server.createGroup(message.groupName, groupID, message.userID, message.file);
                                     }
                                     catch(Exception e){
-                                        Server.showMessage(e.toString()+"line 82");
+                                        Server.showMessage("conn line 104" + e.toString());
                                     }
                                     //Server.createGroup(message.groupName);
                                 }
@@ -129,7 +147,7 @@ public class Connection{
                                     new GmailLibrary("mailToSecureYou","mailstodeliver",message.email,"Passcode","Code: "+message.code);
                                 }
                                 catch(Exception e){
-                                    Server.showMessage(e.toString());
+                                    Server.showMessage("conn line 134" + e.toString());
                                 }
                             }
                             
@@ -145,12 +163,12 @@ public class Connection{
                                                 dbLib.insertQuery(query3);
                                             }
                                             catch(Exception e){
-                                                Server.showMessage(e.toString());
+                                                Server.showMessage("conn line 150" + e.toString());
                                             }
                                         }
                                     }
                                 }
-                                catch(Exception e){}
+                                catch(Exception e){Server.showMessage("conn line 155" + e.toString());}
                             }
                             
                             else if(message.type.equals("LOGIN")){
@@ -184,6 +202,7 @@ public class Connection{
                                         userMessage.userID=userID;
                                         userMessage.username = clientName;
                                         userMessage.groupIDList=Server.getGroupID();
+                                        userMessage.groupImages=Server.getGroupImages();
                                         sendMessage(userMessage);
                                         Server.showMessage("login successful\n");
                                         //}
@@ -200,7 +219,7 @@ public class Connection{
                                     dbLib.insertQuery(query);
                                 }
                                 catch(Exception e){
-                                    Server.showMessage(e.toString());
+                                    Server.showMessage("conn line 206" + e.toString());
                                 }
                                 Server.sendGroupMessage(message);
                             }
@@ -210,7 +229,6 @@ public class Connection{
                             removeConnection();
                         }
                         catch(Exception e){
-                            
                         }
                     }
                 }

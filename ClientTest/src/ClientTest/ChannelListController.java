@@ -5,6 +5,8 @@
  */
 package ClientTest;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
@@ -22,6 +24,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,6 +33,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JList;
@@ -68,7 +73,7 @@ public class ChannelListController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }    
     
-    public void addGroup(String group, int groupID){
+    public void addGroup(String group, int groupID, byte[] groupImage){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
@@ -76,7 +81,33 @@ public class ChannelListController implements Initializable {
                 hbox.getStyleClass().add("chatListHBox");
                 hbox.setId(Integer.toString(groupID));
 
-                ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
+                ImageView icon = new ImageView();
+                
+                if(groupImage.length>0){
+                    try{
+                        ByteArrayInputStream bais = new ByteArrayInputStream(groupImage);
+                        BufferedImage bf = ImageIO.read(bais);
+
+                        WritableImage wr = null;
+                        if (bf != null) {
+                            wr = new WritableImage(bf.getWidth(), bf.getHeight());
+                            PixelWriter pw = wr.getPixelWriter();
+                            for (int x = 0; x < bf.getWidth(); x++) {
+                                for (int y = 0; y < bf.getHeight(); y++) {
+                                    pw.setArgb(x, y, bf.getRGB(x, y));
+                                }
+                            }
+                        }
+
+                        icon = new ImageView(wr);
+                    }
+                    catch(Exception e){
+                        
+                    }
+                }
+                else{
+                    icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
+                }
                 icon.fitHeightProperty().set(63.0);
                 icon.fitWidthProperty().set(62.0);
 
@@ -138,14 +169,14 @@ public class ChannelListController implements Initializable {
     }
     
     
-    public void startRunning(String[] groupList, Connection connection, String username, int userID, int[] groupIDList){
+    public void startRunning(String[] groupList, Connection connection, String username, int userID, int[] groupIDList, byte[][] groupImages){
         try{
             //JOptionPane.showConfirmDialog(null,groupList[1]);
             this.username = username;
             this.connection = connection;
             this.userID= userID;
             for(int i=0; i<groupList.length;i++){
-                addGroup(groupList[i],groupIDList[i]);
+                addGroup(groupList[i],groupIDList[i], groupImages[i]);
             }
             /*for(String s : groupList){
                 addGroup(s);

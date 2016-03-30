@@ -8,6 +8,13 @@ import java.util.ArrayList;
 public class Group {
     String groupName;
     int groupID;
+    byte[] groupImage;
+
+    public Group(String groupName, int groupID, byte[] groupImage){
+        this.groupName = groupName;
+        this.groupID = groupID;
+        this.groupImage = groupImage;
+    }
 
     public Group(String groupName, int groupID){
         this.groupName = groupName;

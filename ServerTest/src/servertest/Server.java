@@ -12,6 +12,8 @@ package servertest;
 import databaselibrary.DatabaseLibrary;
 import java.io.*;
 import java.net.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.*;
@@ -46,7 +48,7 @@ public class Server extends JFrame{
             dbLib = new LoadDriver("jdbc:mysql://localhost:3306/chat","root","password");
         }
         catch(Exception e){
-            //Server.showMessage(e.toString());
+            Server.showMessage("server line 49" + e.toString());
         }
     }
     
@@ -58,29 +60,39 @@ public class Server extends JFrame{
             waitForConnection();
         }
         
-        catch(Exception e){}
+        catch(Exception e){Server.showMessage("server line 61" + e.toString());}
     }
     
     private void createGroupList(){
-        String query = "select groupName, groupID, userID from groups;";
+        String query = "select groupName, groupID, userID, groupImage from groups;";
         
         try{
             ResultSet resultSet = dbLib.selectQuery(query);
             while (resultSet.next()) {
-                groups.add(new Group(server, resultSet.getString("groupName"), resultSet.getInt("groupID"), resultSet.getInt("userID")));
-                System.out.println(resultSet.getString("groupName"));
+                byte[] file;
+                String groupImage = resultSet.getString("groupImage");
+                try{
+                    Path imagePath = Paths.get(groupImage);
+                    file = java.nio.file.Files.readAllBytes(imagePath);
+                }
+                catch(Exception e){
+                    file=new byte[0];
+                }
+                groups.add(new Group(server, resultSet.getString("groupName"), resultSet.getInt("groupID"), resultSet.getInt("userID"), file));
+                //System.out.println(resultSet.getString("groupName"));
             }
         }
-        catch(Exception e){}
+        catch(Exception e){Server.showMessage("server line 74" + e.toString());}
         // The name of the file to open.
     }
     
-    public static void createGroup(String groupName, int groupID, int creatorID){
-        groups.add(new Group(server,groupName,groupID,creatorID));
+    public static void createGroup(String groupName, int groupID, int creatorID, byte[] file){
+        groups.add(new Group(server,groupName,groupID,creatorID, file));
         for(Connection connection:connections){
             Message message = new Message("CMD", "CREATE", groupName);
             message.groupID = groupID;
             message.creatorID = creatorID;
+            message.file = file;
             connection.sendMessage(message);//{"CMD", "CRTE", groupName,"",""});
         }
     }
@@ -94,7 +106,7 @@ public class Server extends JFrame{
                         Connection tempConn = new Connection(server.accept(),dbLib);
                         connections.add(tempConn);
                     }
-                    catch(Exception e){}
+                    catch(Exception e){Server.showMessage("server line 98" + e.toString());}
                 }
                 }
             });
@@ -141,6 +153,16 @@ public class Server extends JFrame{
             i++;
         }
         return groupID;
+    }
+    
+    public static byte[][] getGroupImages(){
+        byte[][] groupImages = new byte[groups.size()][];
+        int i=0;
+        for(Group group:groups){
+            groupImages[i]=group.getImage();
+            i++;
+        }
+        return groupImages;
     }
     
     public static void removeFromGroup(Connection user, int g){

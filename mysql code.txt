@@ -8,7 +8,7 @@ mysql> create table registrationCodes(codeID integer auto_increment primary key,
 mysql> create table users(userID integer auto_increment primary key, name varchar(50),
 	username varchar(50), password varchar(50), email varchar(50), salt varchar(50000));
 
-create table groups(groupID integer auto_increment primary key, groupName varchar(50), userID integer);
+create table groups(groupID integer auto_increment primary key, groupName varchar(50), userID integer, groupImage varchar(100));
 
 create table bans(banID integer auto_increment primary key, groupID integer, userID integer);
 create user 'amish'@'myip' identified by 'password';
