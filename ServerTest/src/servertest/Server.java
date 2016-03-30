@@ -27,7 +27,7 @@ public class Server extends JFrame{
     private static ArrayList<Group> groups = new ArrayList<Group>();
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
     private static String fullText = "";
-    private DatabaseLibrary dbLib;
+    private LoadDriver dbLib;
 
     private Thread t1;
     
@@ -43,7 +43,7 @@ public class Server extends JFrame{
         setVisible(true);
         
         try{
-            dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
+            dbLib = new LoadDriver("jdbc:mysql://localhost:3306/chat","root","password");
         }
         catch(Exception e){
             //Server.showMessage(e.toString());
@@ -75,10 +75,13 @@ public class Server extends JFrame{
         // The name of the file to open.
     }
     
-    public static void createGroup(String groupName){
-        groups.add(new Group(server,groupName,0,0));
+    public static void createGroup(String groupName, int groupID, int creatorID){
+        groups.add(new Group(server,groupName,groupID,creatorID));
         for(Connection connection:connections){
-            connection.sendMessage(new Message("CMD", "CREATE", groupName));//{"CMD", "CRTE", groupName,"",""});
+            Message message = new Message("CMD", "CREATE", groupName);
+            message.groupID = groupID;
+            message.creatorID = creatorID;
+            connection.sendMessage(message);//{"CMD", "CRTE", groupName,"",""});
         }
     }
     

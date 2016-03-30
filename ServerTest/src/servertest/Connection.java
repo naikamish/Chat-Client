@@ -30,10 +30,10 @@ public class Connection{
     private Thread thread;
     private Group group;
     private String clientName;
-    private DatabaseLibrary dbLib;
+    private LoadDriver dbLib;
     private int userID;
     
-    public Connection(Socket socket, DatabaseLibrary dbLib){
+    public Connection(Socket socket, LoadDriver dbLib){
         connection = socket;
         Server.showMessage("\nNow connected to "+connection.getInetAddress().getHostName()+"\n");
         try{
@@ -95,8 +95,8 @@ public class Connection{
                                 else if(message.cmd.equals("CREATE")){
                                     String query = "insert into groups(groupName, userID) values('"+message.groupName+"',"+message.userID+");";
                                     try{
-                                        dbLib.insertQuery(query);
-                                        Server.createGroup(message.groupName);
+                                        int groupID=dbLib.insertQueryReturnKey(query);
+                                        Server.createGroup(message.groupName, groupID, message.userID);
                                     }
                                     catch(Exception e){
                                         Server.showMessage(e.toString()+"line 82");

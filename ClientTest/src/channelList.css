@@ -13,7 +13,7 @@ and open the template in the editor.
 }
 
 .chatListTextObject{
-    -fx-font: 20px Tahoma;
+    -fx-font: 15px Tahoma;
 }
 
 .chatListHBox{

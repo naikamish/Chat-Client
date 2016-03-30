@@ -87,9 +87,9 @@ public class LoginController implements Initializable {
                 groupListWindow.setOnCloseRequest(e -> {Platform.exit(); System.exit(0);});
                 groupListWindow.setScene(groupList);
                 groupListWindow.minWidthProperty().set(330.0);
-                groupListWindow.minHeightProperty().set(440.0);
+                groupListWindow.minHeightProperty().set(600.0);
                 groupListWindow.maxWidthProperty().set(330.0);
-                groupListWindow.maxHeightProperty().set(440.0);
+                groupListWindow.maxHeightProperty().set(600.0);
                 //groupListWindow.setResizable(false);
                 groupListWindow.show();
                 

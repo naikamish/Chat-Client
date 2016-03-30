@@ -1,0 +1,29 @@
+create database chat;
+use chat;
+create table users(username varchar(50) primary key, password varchar(50));
+
+mysql> create table registrationCodes(codeID integer auto_increment primary key, 
+	email varchar(50) not null, code integer);
+
+mysql> create table users(userID integer auto_increment primary key, name varchar(50),
+	username varchar(50), password varchar(50), email varchar(50), salt varchar(50000));
+
+create table groups(groupID integer auto_increment primary key, groupName varchar(50), userID integer);
+
+create table bans(banID integer auto_increment primary key, groupID integer, userID integer);
+create user 'amish'@'myip' identified by 'password';
+grant all privileges on *.* to 'amish'@'ip' with grant option;
+
+Log in to Mysql:
+mysql -ppassword -u root
+
+Export Database:
+C:\Program Files\MySQL\MySQL Server 5.6\bin
+Open Cmd prompt as admin
+mysqldump -u root -p chat > filename.sql
+
+Import Database:
+mysql -u <user> -ppassword chat < file.sql
+
+Run JAR File:
+cd home/pi/downloads java -jar ServerTest.jar;
