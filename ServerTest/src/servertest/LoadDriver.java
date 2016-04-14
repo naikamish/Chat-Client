@@ -61,6 +61,19 @@ public class LoadDriver {
         }
     }
     
+    public void prepareMessageQuery(String query, int groupID, int userID, String message){
+        try{
+            PreparedStatement pstmt = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, groupID);
+            pstmt.setInt(2, userID);
+            pstmt.setString(3, message);
+            pstmt.execute();
+        }
+        catch(Exception e){
+            System.out.println(e.toString());
+        }
+    }
+    
     public int insertQueryReturnKey(String query, String groupName, int groupID, String fileName){
         try{
             PreparedStatement pstmt = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);

@@ -11,6 +11,12 @@ mysql> create table users(userID integer auto_increment primary key, name varcha
 create table groups(groupID integer auto_increment primary key, groupName varchar(50), userID integer, groupImage varchar(100));
 
 create table bans(banID integer auto_increment primary key, groupID integer, userID integer);
+
+create table groupJoins(joinID integer auto_increment primary key, groupID integer, userID integer, changeTime timestamp, status tinyint(1));
+
+create table messages(messageID integer auto_increment primary key, groupID integer, userID integer, postTime timestamp default now(), message varchar(200));
+
+
 create user 'amish'@'myip' identified by 'password';
 grant all privileges on *.* to 'amish'@'ip' with grant option;
 

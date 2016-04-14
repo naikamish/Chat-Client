@@ -137,7 +137,15 @@ public class Connection{
                                     Server.sendGroupMessage(message);
                                 }
                                 else{
-                                    Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]});                           
+                                    Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]}); 
+                                    String query = "insert into messages(groupID, userID, message) values(?,?,?);";
+                                    try{
+                                        dbLib.prepareMessageQuery(query, message.groupID, message.userID, message.message);
+                                        Server.showMessage(query);
+                                    }
+                                    catch(Exception e){
+                                        Server.showMessage("conn line 146"+e.toString());
+                                    }
                                 }
                             }
                             else if(message.type.equals("SEND CODE")){
