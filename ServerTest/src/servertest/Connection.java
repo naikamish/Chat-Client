@@ -32,6 +32,7 @@ public class Connection{
     private String clientName;
     private LoadDriver dbLib;
     private int userID;
+    private static boolean closed=false;
     
     public Connection(Socket socket, LoadDriver dbLib){
         connection = socket;
@@ -77,6 +78,14 @@ public class Connection{
                                         ResultSet resultSet = dbLib.selectQuery(query);
                                         if (!resultSet.next() ) {
                                             addToGroup(message.groupID,message.clientName, message.userID);
+                                            String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
+                                            try{
+                                                dbLib.prepareJoinExitQuery(insertQuery, message.groupID, message.userID, 1);
+                                                //Server.showMessage(query);
+                                            }
+                                            catch(Exception e){
+                                                Server.showMessage("conn line 86"+e.toString());
+                                            }
                                         }
                                         else{          
                                             Message newMessage = new Message();
@@ -89,6 +98,14 @@ public class Connection{
                                     
                                 }
                                 else if(message.cmd.equals("EXIT")){
+                                    String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
+                                    try{
+                                        dbLib.prepareJoinExitQuery(insertQuery, message.groupID, message.userID, 0);
+                                        //Server.showMessage(query);
+                                    }
+                                    catch(Exception e){
+                                        Server.showMessage("conn line 106"+e.toString());
+                                    }
                                     leaveGroup(message.groupID);
                                     Server.showMessage(Integer.toString(message.userID));
                                 }
@@ -233,10 +250,12 @@ public class Connection{
                             }
                             Server.showMessage(message.toString());
                         }
-                        catch(SocketException e){
-                            removeConnection();
-                        }
                         catch(Exception e){
+                            Server.showMessage(e.toString());
+                            if(!closed){
+                                closed = true;
+                                removeConnection();                         
+                            }
                         }
                     }
                 }
@@ -245,7 +264,7 @@ public class Connection{
     }
     
     private void removeConnection(){
-        Server.removeConnection(this, userID);
+        Server.removeConnection(userID);
     }
     
     public void leaveGroup(int g){

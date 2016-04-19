@@ -16,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.*;
 import message.Message;
 
@@ -29,7 +30,7 @@ public class Server extends JFrame{
     private static ArrayList<Group> groups = new ArrayList<Group>();
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
     private static String fullText = "";
-    private LoadDriver dbLib;
+    private static LoadDriver dbLib;
 
     private Thread t1;
     
@@ -173,17 +174,36 @@ public class Server extends JFrame{
         }
     }
     
-    public static void removeConnection(Connection user, int userID){
+    public static void removeConnection(int userID){
         for(Group group:groups){
-            if(group.connections.contains(user)){
-                group.removeFromGroup(user);
-                Server.showMessage("removed user from group"+group.getName());
+            Iterator<Connection> iter = group.connections.iterator();
+            while (iter.hasNext()) {
+                Connection conn = iter.next();
+
+                if (conn.getID()==userID){
+                    iter.remove();
+                    Server.showMessage("removed user from group"+group.getName());
+                    String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
+                    try{
+                        dbLib.prepareJoinExitQuery(insertQuery, group.getID(), userID, 0);
+                        //Server.showMessage(query);
+                    }
+                    catch(Exception e){
+                        Server.showMessage("conn line 106"+e.toString());
+                    }
+                }
             }
         }
-        if(connections.contains(user)){
-            connections.remove(user);
-            Server.showMessage("removed user from server");
-        }        
+        
+        Iterator<Connection> iterConn = connections.iterator();
+
+        while (iterConn.hasNext()) {
+            Connection conn = iterConn.next();
+
+            if (conn.getID()==userID)
+                iterConn.remove();
+                Server.showMessage("removed user from server");
+        }      
     }
     
     public static void showMessage(final String text){
