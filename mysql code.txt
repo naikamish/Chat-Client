@@ -2,17 +2,17 @@ create database chat;
 use chat;
 create table users(username varchar(50) primary key, password varchar(50));
 
-mysql> create table registrationCodes(codeID integer auto_increment primary key, 
-	email varchar(50) not null, code integer);
+create table registrationCodes(codeID integer auto_increment primary key, email varchar(50) not null, code integer);
 
-mysql> create table users(userID integer auto_increment primary key, name varchar(50),
-	username varchar(50), password varchar(50), email varchar(50), salt varchar(50000));
+create table codesss(email varchar(50) not null, code integer);
+
+create table users(userID integer auto_increment primary key, name varchar(50), username varchar(50), password varchar(50), email varchar(50), salt varchar(500));
 
 create table groups(groupID integer auto_increment primary key, groupName varchar(50), userID integer, groupImage varchar(100));
 
 create table bans(banID integer auto_increment primary key, groupID integer, userID integer);
 
-create table groupJoins(joinID integer auto_increment primary key, groupID integer, userID integer, changeTime timestamp, status tinyint(1));
+create table groupJoins(joinID integer auto_increment primary key, groupID integer, userID integer, changeTime timestamp default now(), status tinyint(1));
 
 create table messages(messageID integer auto_increment primary key, groupID integer, userID integer, postTime timestamp default now(), message varchar(200));
 

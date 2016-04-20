@@ -256,6 +256,7 @@ public class ChannelListController implements Initializable {
         String newGroup = JOptionPane.showInputDialog("What is the name of the group you wish to create?");
         Message message = new Message("CMD","CREATE",newGroup);
         message.userID = this.userID;
+        message.file = new byte[0];
         connection.sendMessage(message);
     }
     

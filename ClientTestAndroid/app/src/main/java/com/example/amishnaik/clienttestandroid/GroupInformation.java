@@ -1,6 +1,7 @@
 package com.example.amishnaik.clienttestandroid;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +23,16 @@ public class GroupInformation extends AppCompatActivity {
         for(User user: chat.users){
             addUser(user.userID, user.userName);
         }
+        setActionBar(chat.groupName);
+    }
+
+    public void setActionBar(String heading) {
+        // TODO Auto-generated method stub
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.chat_window_background));
+        actionBar.setTitle(heading);
+        actionBar.show();
+
     }
 
     private void addUser(int userID, String userName){

@@ -174,36 +174,27 @@ public class Server extends JFrame{
         }
     }
     
-    public static void removeConnection(int userID){
+    public static void removeConnection(Connection connection){
         for(Group group:groups){
-            Iterator<Connection> iter = group.connections.iterator();
-            while (iter.hasNext()) {
-                Connection conn = iter.next();
-
-                if (conn.getID()==userID){
-                    iter.remove();
-                    Server.showMessage("removed user from group"+group.getName());
-                    String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
-                    try{
-                        dbLib.prepareJoinExitQuery(insertQuery, group.getID(), userID, 0);
-                        //Server.showMessage(query);
-                    }
-                    catch(Exception e){
-                        Server.showMessage("conn line 106"+e.toString());
-                    }
+            if(group.connections.contains(connection)){
+                group.removeFromGroup(connection);
+                //group.connections.remove(connection);
+                Server.showMessage("removed user from group"+group.getName());
+                String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
+                try{
+                    dbLib.prepareJoinExitQuery(insertQuery, group.getID(), connection.getID(), 0);
+                    //Server.showMessage(query);
+                }
+                catch(Exception e){
+                    Server.showMessage("conn line 106"+e.toString());
                 }
             }
         }
-        
-        Iterator<Connection> iterConn = connections.iterator();
-
-        while (iterConn.hasNext()) {
-            Connection conn = iterConn.next();
-
-            if (conn.getID()==userID)
-                iterConn.remove();
-                Server.showMessage("removed user from server");
-        }      
+        Server.showMessage("hello");
+        if(connections.contains(connection)){
+            connections.remove(connection);
+            Server.showMessage("removed user from server");
+        }     
     }
     
     public static void showMessage(final String text){

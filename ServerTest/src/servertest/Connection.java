@@ -51,7 +51,6 @@ public class Connection{
             //this.dbLib = new DatabaseLibrary("jdbc:mysql://localhost:3306/chat","root","password");
         }
         catch(Exception e){Server.showMessage("conn line 52" + e.toString());
-            //Server.showMessage(e.toString());
         }
     }
     
@@ -212,7 +211,7 @@ public class Connection{
                                         clientName = resultSet.getString("username");
                                             //resultSet.getInt("code")==message.code
                                             
-                                        /*query = "select code from codesss where email='"+resultSet.getString("email")+"';";
+                                        query = "select code from codesss where email='"+resultSet.getString("email")+"';";
                                         resultSet = dbLib.selectQuery(query);
                                         resultSet.next();
                                         if(!resultSet.getString("code").matches("1"))
@@ -221,7 +220,7 @@ public class Connection{
                                             Server.showMessage("login unsuccessful\n");
                                         }
                                         else
-                                        {*/
+                                        {
                                         Server.showMessage(Integer.toString(userID));
                                         Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
                                         userMessage.userID=userID;
@@ -230,7 +229,7 @@ public class Connection{
                                         userMessage.groupImages=Server.getGroupImages();
                                         sendMessage(userMessage);
                                         Server.showMessage("login successful\n");
-                                        //}
+                                        }
                                     }
                                 }
                                 catch(Exception e){
@@ -251,10 +250,16 @@ public class Connection{
                             Server.showMessage(message.toString());
                         }
                         catch(Exception e){
-                            Server.showMessage(e.toString());
-                            if(!closed){
-                                closed = true;
-                                removeConnection();                         
+                            Server.showMessage("conn line 252"+e.toString());
+                            try{
+                            input.close();
+                            connection.close();
+                            closed = true;
+                            removeConnection();
+                            break;
+                            }
+                            catch(Exception ex){
+                                Server.showMessage("conn261"+ex.toString());
                             }
                         }
                     }
@@ -264,7 +269,7 @@ public class Connection{
     }
     
     private void removeConnection(){
-        Server.removeConnection(userID);
+        Server.removeConnection(this);
     }
     
     public void leaveGroup(int g){

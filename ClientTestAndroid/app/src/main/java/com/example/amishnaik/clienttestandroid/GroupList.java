@@ -34,18 +34,6 @@ public class GroupList extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-      /*  Intent iin= getIntent();
-        Bundle b = iin.getExtras();
-
-        if(b!=null){
-            username =(String) b.get("username");
-            userID = (int) b.get("userID");
-            String[] grp = (String[]) b.get("grp");
-            int[] groupIDList = (int[]) b.get("groupIDList");
-            for(int i=0; i<grp.length;i++){
-                addGroup(grp[i],groupIDList[i]);
-            }
-        }*/
         username = Connection.username;
         userID = Connection.userID;
         for(Group group:Connection.groups){
@@ -54,15 +42,6 @@ public class GroupList extends AppCompatActivity {
 
         connectButton = (Button) findViewById(R.id.button);
         Connection.setChannelListController(this);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     public void connectButtonClick(View view) {
@@ -74,12 +53,6 @@ public class GroupList extends AppCompatActivity {
             message.userID = this.userID;
             sendMessage(message);
         }
-        //Intent intent = new Intent(this, ChatWindow.class);
-        //intent.putExtra("grp", grp);
-        //intent.putExtra("userID", userID);
-        //intent.putExtra("username", username);
-        //intent.putExtra("groupIDList", groupIDList);
-        //startActivity(intent);
     }
 
     public void connectButtonClick(int id) {
@@ -91,12 +64,6 @@ public class GroupList extends AppCompatActivity {
             message.userID = this.userID;
             sendMessage(message);
         }
-        //Intent intent = new Intent(this, ChatWindow.class);
-        //intent.putExtra("grp", grp);
-        //intent.putExtra("userID", userID);
-        //intent.putExtra("username", username);
-        //intent.putExtra("groupIDList", groupIDList);
-        //startActivity(intent);
     }
 
     public void sendMessage(Message message){

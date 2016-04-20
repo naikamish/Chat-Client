@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ClientTestAndroid</string>
+    <string name="app_name">Babble On</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Username</string>
