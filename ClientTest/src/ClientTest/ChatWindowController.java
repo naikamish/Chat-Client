@@ -156,25 +156,31 @@ public class ChatWindowController implements Initializable {
                 else if(message.cmd.equals("FILE")||message.cmd.equals("DOODLE")){
                     try{
                         saveFile(message);
-                        
-                        WritableImage writableImage;
-                        writableImage = showImage(message.file);
-                        //writableImage = new WritableImage(writableImage.getPixelReader(), 0,0,(int) writableImage.getWidth(),500);
-                        Rectangle2D r = new Rectangle2D(0,0,400,400);
-                        ImageView imageView = new ImageView(writableImage);
-                        imageView.setFitWidth(450);
-                        imageView.setSmooth(true);
-                        imageView.setPreserveRatio(true);
-                        imageView.getStyleClass().add("imageView");
-                        text.getChildren().add(imageView);
-                        
-                        if(message.cmd.equals("DOODLE")){
-                            imageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                @Override
-                                public void handle(MouseEvent t) {
-                                    showDoodle(writableImage);
-                                }
-                            });
+                        String ext = message.extension.substring(message.extension.indexOf('.')+1).toLowerCase();
+                        if(ext.equals("png")||ext.equals("jpg")||ext.equals("bmp")||ext.equals("ico")||ext.equals("jpeg")||ext.equals("gif")) {
+                            WritableImage writableImage;
+                            writableImage = showImage(message.file);
+                            //writableImage = new WritableImage(writableImage.getPixelReader(), 0,0,(int) writableImage.getWidth(),500);
+                            Rectangle2D r = new Rectangle2D(0,0,400,400);
+                            ImageView imageView = new ImageView(writableImage);
+                            imageView.setFitWidth(450);
+                            imageView.setSmooth(true);
+                            imageView.setPreserveRatio(true);
+                            imageView.getStyleClass().add("imageView");
+                            text.getChildren().add(imageView);
+
+                            if(message.cmd.equals("DOODLE")){
+                                imageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                    @Override
+                                    public void handle(MouseEvent t) {
+                                        showDoodle(writableImage);
+                                    }
+                                });
+                            }
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, message.filename + " has been saved to your device");
+                            return;
                         }
                     }
                     catch(Exception e){                        

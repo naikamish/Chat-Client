@@ -153,7 +153,7 @@ public class ChatWindow extends AppCompatActivity {
         messageBox.setOrientation(LinearLayout.VERTICAL);
         messageBox.setBackgroundColor(Color.WHITE);
         messageBox.setPadding(20, 20, 0, 20);
-
+        final ChatWindow activity = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -185,38 +185,42 @@ public class ChatWindow extends AppCompatActivity {
                         if (!file.exists()) {
                             file.mkdir();
                         }
+                        String ext = message.extension.substring(message.extension.indexOf('.')+1).toLowerCase();
+                        System.out.println("ext");
+                        if(ext.equals("png")||ext.equals("jpg")||ext.equals("bmp")||ext.equals("ico")||ext.equals("jpeg")||ext.equals("gif")) {
+                            FileOutputStream fos = new FileOutputStream(file + "/" + message.filename);
+                            fos.write(bytearray);
+                            fos.close();
 
-                        FileOutputStream fos = new FileOutputStream(file + "/" + message.filename);
-                        fos.write(bytearray);
-                        fos.close();
+                            final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
+                            clientImage.setImageBitmap(bMap);
+                            if (message.cmd.equals("DOODLE")) {
+                                clientImage.setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View v) {
+                                        doodleButtonClick(bMap);
+                                    }
+                                });
+                            }
 
-                        final Bitmap bMap = BitmapFactory.decodeByteArray(bytearray, 0, bytearray.length);
-                        clientImage.setImageBitmap(bMap);
-                        if (message.cmd.equals("DOODLE")) {
-                            clientImage.setOnClickListener(new View.OnClickListener() {
-                                public void onClick(View v) {
-                                    doodleButtonClick(bMap);
-                                }
-                            });
+                            messageBox.addView(clientImage);
+                        }
+                        else{
+                            Toast toast = Toast.makeText(activity, message.filename + " has been saved to your device", Toast.LENGTH_LONG);
+                            toast.show();
+                            return;
                         }
 
                     } catch (Exception e) {
                         System.out.println(e.toString());
                     }
 
-                    messageBox.addView(clientImage);
-                }
-                else if(message.cmd.equals("ADD")){
-                    showSpecialMessage(message.clientName+" has joined the chat");
-                }
-                else if(message.cmd.equals("REMOVE")){
-                    showSpecialMessage(message.clientName+" has left the chat");
+
                 }
 
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
                 param.setMargins(30,30,30,10);
                 LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
-                chatMessagesBox.addView(messageBox,param);
+                chatMessagesBox.addView(messageBox, param);
 
                 final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
                 scroll.post(new Runnable() {
@@ -226,6 +230,27 @@ public class ChatWindow extends AppCompatActivity {
                     }
                 });
 
+            }
+        });
+    }
+
+    public void showJoinLeave(final Message message){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+            if(message.cmd.equals("ADD")){
+                showSpecialMessage(message.clientName+" has joined the chat");
+            }
+            else if(message.cmd.equals("REMOVE")){
+                showSpecialMessage(message.clientName+" has left the chat");
+            }
+                final ScrollView scroll = (ScrollView) findViewById(R.id.chatScrollView);
+                scroll.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scroll.fullScroll(View.FOCUS_DOWN);
+                    }
+                });
             }
         });
     }
@@ -323,8 +348,6 @@ public class ChatWindow extends AppCompatActivity {
                 sendMessageBox.setEnabled(false);
             }
         });
-
-
     }
 
     public void showSpecialMessage(String message){

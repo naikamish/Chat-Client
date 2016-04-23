@@ -81,6 +81,17 @@ public class Connection {
         }
     }
 
+    private void showJoinLeave(Message message){
+        for(Chat chat:chats){
+            if(chat.groupID==message.groupID){
+                chat.messages.add(message);
+                if(activeChatWindow.getGroupID()==message.groupID){
+                    activeChatWindow.showJoinLeave(message);
+                }
+            }
+        }
+    }
+
     public static void setActiveChat(ChatWindow chatWindow){
         activeChatWindow = chatWindow;
     }
@@ -243,12 +254,12 @@ public class Connection {
                                         String[] client = {message.clientName};
                                         int[] clientID = {message.userID};
                                         addGroupMember(message);
-                                        showMessage(message);
+                                        showJoinLeave(message);
                                         //addGroupMember(message.groupID, client, clientID, message.creatorID);
                                     }
                                     else if(message.cmd.equals("REMOVE")){
                                         removeGroupMember(message.groupID, message.userID);
-                                        showMessage(message);
+                                        showJoinLeave(message);
                                         //channelListController.deleteFromList(message.groupID, message.userID);
                                     }
                                     else if(message.cmd.equals("CREATE")){

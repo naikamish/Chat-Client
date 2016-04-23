@@ -124,8 +124,8 @@ public class LoginController implements Initializable {
         chatIcon.setImage(chatImage);
         fileIcon.setImage(fileImage);
         
-        serverIP = "localhost";
-        //serverIP = "32.208.103.211";
+        //serverIP = "localhost";
+        serverIP = "32.208.103.211";
         //serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
         startRunning();
     } 
