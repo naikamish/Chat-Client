@@ -243,10 +243,12 @@ public class Connection {
                                         String[] client = {message.clientName};
                                         int[] clientID = {message.userID};
                                         addGroupMember(message);
+                                        showMessage(message);
                                         //addGroupMember(message.groupID, client, clientID, message.creatorID);
                                     }
                                     else if(message.cmd.equals("REMOVE")){
                                         removeGroupMember(message.groupID, message.userID);
+                                        showMessage(message);
                                         //channelListController.deleteFromList(message.groupID, message.userID);
                                     }
                                     else if(message.cmd.equals("CREATE")){

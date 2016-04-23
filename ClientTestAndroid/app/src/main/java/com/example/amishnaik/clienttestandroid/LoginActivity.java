@@ -196,6 +196,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         thread.start();
     }
 
+
     public Context getContext(){
         return this.getApplicationContext();
     }
@@ -458,4 +459,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

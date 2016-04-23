@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,7 +34,8 @@ import message.Message;
  * @author Amish Naik
  */
 public class LoginController implements Initializable {
-    @FXML private TextField UsernameTextField, PasswordTextField;
+    @FXML private TextField UsernameTextField;
+    @FXML private PasswordField PasswordTextField;
     @FXML private Text errorMessageLabel;
     @FXML private Button loginButton;
     @FXML private ImageView chatIcon, doodleIcon, fileIcon;
@@ -122,7 +124,9 @@ public class LoginController implements Initializable {
         chatIcon.setImage(chatImage);
         fileIcon.setImage(fileImage);
         
-        serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
+        serverIP = "localhost";
+        //serverIP = "32.208.103.211";
+        //serverIP = JOptionPane.showInputDialog(this,"Enter IP you wish to connect to");
         startRunning();
     } 
 }

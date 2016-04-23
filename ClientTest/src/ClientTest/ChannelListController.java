@@ -223,10 +223,10 @@ public class ChannelListController implements Initializable {
             
     }
     
-    public void addGroupMember(int g, String[] list, int[] idList, int creatorID){
+    public void addGroupMember(int g, String[] list, int[] idList){
         for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
-                chat.setGroupList(list, idList, creatorID);
+                chat.addGroupMember(list, idList);
             }
         }
     }
@@ -243,10 +243,10 @@ public class ChannelListController implements Initializable {
         chats.remove(c);
     }
     
-    public static void deleteFromList(int g, int id){
+    public static void deleteFromList(int g, int id, String name){
         for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
-                chat.deleteFromList(id);
+                chat.deleteFromList(id, name);
             }
         }
     }   

@@ -283,40 +283,31 @@ public class ChatWindowController implements Initializable {
         catch(Exception e){}
     }
     
-    public void closeWindow(){
-        
+    public void closeWindow(){      
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
-                TextFlow text = new TextFlow();
-                text.getStyleClass().add("message");
-
-                Text activeUser=new Text("YOU HAVE BEEN BANNED FROM THIS CHAT");
-                activeUser.getStyleClass().add("activeUser");
-                text.getChildren().addAll(activeUser);
-
-                chatBox.getChildren().add(text);
+                showSpecialMessage("YOU HAVE BEEN BANNED FROM THIS CHAT");
                 Message message = new Message("CMD", "EXIT", getGroupID(), clientName);
                 message.userID = userID;
                 sendMessage(message);
                 chatTextHBox.setDisable(true);
             }
         });
-        System.out.println("hello");
-
     }
     
     public void startRunning(){
         sendMessage(new Message("CMD", "JOIN", groupID, clientName));//CMD JOIN " + groupName+","+clientName);
     }
     
-    public void deleteFromList(int id){
+    public void deleteFromList(int id, String name){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
                 for(Node node:usersBox.getChildren()){
                     if(node.getId().equals(Integer.toString(id))){
                         usersBox.getChildren().remove(node);
+                        showSpecialMessage(name+" has left the chat");
                     }
                 }
             }
@@ -331,12 +322,37 @@ public class ChatWindowController implements Initializable {
                 for(int i=0; i<list.length; i++){
                     addUser(list[i],idList[i]);
                 }
-                /*for(String s : list){
-                    addUser(s);
-                }*/
             }
         });
     } 
+    
+    public void addGroupMember(String[] list, int[] idList){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                for(int i=0; i<list.length; i++){
+                    addUser(list[i],idList[i]);
+                    showSpecialMessage(list[i]+" has joined the chat");
+                }
+            }
+        });
+    } 
+    
+    public void showSpecialMessage(String message){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run(){
+                TextFlow text = new TextFlow();
+                text.getStyleClass().add("message");
+
+                Text activeUser=new Text(message);
+                activeUser.getStyleClass().add("activeUser");
+                text.getChildren().addAll(activeUser);
+
+                chatBox.getChildren().add(text);
+            }
+        });
+    }
     
     @FXML
     private void changeCursorHand(MouseEvent event) {

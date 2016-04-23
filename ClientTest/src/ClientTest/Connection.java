@@ -59,10 +59,10 @@ public class Connection {
                                 else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
                                     int[] clientID = {message.userID};
-                                    channelListController.addGroupMember(message.groupID,client, clientID, message.creatorID);
+                                    channelListController.addGroupMember(message.groupID,client, clientID);
                                 }
                                 else if(message.cmd.equals("REMOVE")){
-                                    channelListController.deleteFromList(message.groupID, message.userID);
+                                    channelListController.deleteFromList(message.groupID, message.userID, message.clientName);
                                 }
                                 else if(message.cmd.equals("CREATE")){
                                     channelListController.addGroup(message.groupName, message.groupID, message.file);

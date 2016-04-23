@@ -166,7 +166,8 @@ public class ChatWindow extends AppCompatActivity {
                 if (message.cmd.equals("SEND")) {
                     clientMessage.setText(message.message);
                     messageBox.addView(clientMessage);
-                } else if (message.cmd.equals("FILE") || message.cmd.equals("DOODLE")) {
+                }
+                else if (message.cmd.equals("FILE") || message.cmd.equals("DOODLE")) {
                     LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(500, 500);
                     clientImage.setLayoutParams(imgParams);
 
@@ -204,6 +205,12 @@ public class ChatWindow extends AppCompatActivity {
                     }
 
                     messageBox.addView(clientImage);
+                }
+                else if(message.cmd.equals("ADD")){
+                    showSpecialMessage(message.clientName+" has joined the chat");
+                }
+                else if(message.cmd.equals("REMOVE")){
+                    showSpecialMessage(message.clientName+" has left the chat");
                 }
 
                 LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
@@ -311,24 +318,28 @@ public class ChatWindow extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Context context = Connection._CONTEXT;
-                final TextView text = new TextView(context);
-                text.setTextAppearance(context,R.style.ChatMessageSenderYou);
-                text.setText("YOU HAVE BEEN BANNED FROM THIS CHAT");
-                final LinearLayout messageBox = new LinearLayout(context);
-                messageBox.setOrientation(LinearLayout.VERTICAL);
-                messageBox.setBackgroundColor(Color.WHITE);
-                messageBox.setPadding(20, 20, 0, 20);
-                messageBox.addView(text);
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
-                param.setMargins(30, 30, 30, 10);
-                LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
-                chatMessagesBox.addView(messageBox,param);
+                showSpecialMessage("YOU HAVE BEEN BANNED FROM THIS CHAT");
                 EditText sendMessageBox = (EditText) findViewById(R.id.sendMessageBox);
                 sendMessageBox.setEnabled(false);
             }
         });
 
 
+    }
+
+    public void showSpecialMessage(String message){
+        Context context = Connection._CONTEXT;
+        final TextView text = new TextView(context);
+        text.setTextAppearance(context,R.style.ChatMessageSenderYou);
+        text.setText(message);
+        final LinearLayout messageBox = new LinearLayout(context);
+        messageBox.setOrientation(LinearLayout.VERTICAL);
+        messageBox.setBackgroundColor(Color.WHITE);
+        messageBox.setPadding(20, 20, 0, 20);
+        messageBox.addView(text);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(1000,LinearLayout.LayoutParams.WRAP_CONTENT, .75f);
+        param.setMargins(30, 30, 30, 10);
+        LinearLayout chatMessagesBox = (LinearLayout) findViewById(R.id.chatMessagesBox);
+        chatMessagesBox.addView(messageBox,param);
     }
 }
