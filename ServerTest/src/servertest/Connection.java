@@ -15,6 +15,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.util.Random;
 import message.Message;
@@ -33,6 +35,7 @@ public class Connection{
     private LoadDriver dbLib;
     private int userID;
     private static boolean closed=false;
+    private byte[] profileImage;
     
     public Connection(Socket socket, LoadDriver dbLib){
         connection = socket;
@@ -197,7 +200,7 @@ public class Connection{
                             
                             else if(message.type.equals("LOGIN")){
                                 String pass = message.password;
-                                String query = "select username, userID, email from users where username='"+message.username+"' and password='"+pass+"';";
+                                String query = "select username, userID, email, imgName from users where username='"+message.username+"' and password='"+pass+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
@@ -210,7 +213,9 @@ public class Connection{
                                         userID = resultSet.getInt("userID");
                                         clientName = resultSet.getString("username");
                                             //resultSet.getInt("code")==message.code
-                                            
+                                        String profileImageFilename = resultSet.getString("imgName");
+                                        
+                                        
                                         query = "select code from codesss where email='"+resultSet.getString("email")+"';";
                                         resultSet = dbLib.selectQuery(query);
                                         resultSet.next();
@@ -219,16 +224,24 @@ public class Connection{
                                             sendMessage(new Message("LOGIN UNSUCCESSFUL","Account activation pending"));
                                             Server.showMessage("login unsuccessful\n");
                                         }
-                                        else
-                                        {
-                                        Server.showMessage(Integer.toString(userID));
-                                        Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
-                                        userMessage.userID=userID;
-                                        userMessage.username = clientName;
-                                        userMessage.groupIDList=Server.getGroupID();
-                                        userMessage.groupImages=Server.getGroupImages();
-                                        sendMessage(userMessage);
-                                        Server.showMessage("login successful\n");
+                                        else{
+                                            try{
+                                                Path imagePath = Paths.get("/var/www/html/chatRegistration/uploads/" + profileImageFilename);
+                                                profileImage = java.nio.file.Files.readAllBytes(imagePath);
+                                                Server.showMessage("successful user image size" + profileImage.length);
+                                            }
+                                            catch(Exception e){
+                                                profileImage=new byte[0];
+                                                Server.showMessage("unsuccessful image" + e.toString());
+                                            }
+                                            Server.showMessage(Integer.toString(userID));
+                                            Message userMessage = new Message("LOGIN SUCCESSFUL","LIST",Server.getGroupList());
+                                            userMessage.userID=userID;
+                                            userMessage.username = clientName;
+                                            userMessage.groupIDList=Server.getGroupID();
+                                            userMessage.groupImages=Server.getGroupImages();
+                                            sendMessage(userMessage);
+                                            Server.showMessage("login successful\n");
                                         }
                                     }
                                 }
@@ -282,11 +295,14 @@ public class Connection{
         Group g = Server.addToGroup(this, groupID);
         String[] clientList = g.getClientList();
         int[] clientListIDs = g.getClientIDs();
+        byte[][] groupImages = g.getGroupImages();        
+        
         String groupName = g.getName();
         Message message = new Message("CMD", "START", g.getID(), clientList);
         message.groupUserIDs = clientListIDs;
         message.creatorID = g.getCreatorID();
         message.groupName = groupName;
+        message.groupImages = groupImages;
         
        // if(!clientList.equals("")){
             sendMessage(message);//{"CMD", "STRT", g.getName(), "", clientList});
@@ -299,5 +315,9 @@ public class Connection{
     
     public int getID(){
         return userID;
+    }
+    
+    public byte[] getImage(){
+        return profileImage;
     }
 }

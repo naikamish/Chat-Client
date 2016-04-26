@@ -54,12 +54,12 @@ public class Connection {
                             System.out.println(message.type);
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("START")){
-                                    channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName);//groupName, groupList);
+                                    channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName, message.groupImages);//groupName, groupList);
                                 }
                                 else if(message.cmd.equals("ADD")){
                                     String[] client = {message.clientName};
                                     int[] clientID = {message.userID};
-                                    channelListController.addGroupMember(message.groupID,client, clientID);
+                                    channelListController.addGroupMember(message.groupID,client, clientID, message.file);
                                 }
                                 else if(message.cmd.equals("REMOVE")){
                                     channelListController.deleteFromList(message.groupID, message.userID, message.clientName);

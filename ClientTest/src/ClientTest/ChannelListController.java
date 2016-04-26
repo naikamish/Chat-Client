@@ -185,7 +185,7 @@ public class ChannelListController implements Initializable {
         catch(Exception e){}
     }
     
-    public void sendGroupList(int g, String[] list, int[] idList, int creatorID, String groupName){
+    public void sendGroupList(int g, String[] list, int[] idList, int creatorID, String groupName,byte[][] profileImages){
        /* for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
                 chat.setGroupList(list, idList, creatorID);
@@ -208,7 +208,7 @@ public class ChannelListController implements Initializable {
                     chatWindow.minHeightProperty().set(600.0);
                     chatWindow.show();
                     
-                    controller.setGroupList(list, idList, creatorID);
+                    controller.setGroupList(list, idList, creatorID, profileImages);
                     
                     chatWindow.setOnCloseRequest(e -> {
                         Message message = new Message("CMD", "EXIT", controller.getGroupID(), controller.clientName);
@@ -223,10 +223,10 @@ public class ChannelListController implements Initializable {
             
     }
     
-    public void addGroupMember(int g, String[] list, int[] idList){
+    public void addGroupMember(int g, String[] list, int[] idList, byte[] profileImage){
         for(ChatWindowController chat:chats){
             if(chat.getGroupID()==g){
-                chat.addGroupMember(list, idList);
+                chat.addGroupMember(list, idList, profileImage);
             }
         }
     }

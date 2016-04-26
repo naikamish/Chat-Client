@@ -22,14 +22,14 @@ public class Chat {
         messages = new ArrayList<Message>();
     }
 
-    public Chat(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String username, int userID, String groupName) {
+    public Chat(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String username, int userID, String groupName, byte[][] profileImages) {
         this.groupID = groupID;
         this.creatorID = creatorID;
         this.username = username;
         this.userID = userID;
         this.groupName = groupName;
         for(int i=0; i<groupUserIDs.length; i++){
-            users.add(new User(clientList[i],groupUserIDs[i]));
+            users.add(new User(clientList[i],groupUserIDs[i], profileImages[i]));
         }
         messages = new ArrayList<Message>();
     }

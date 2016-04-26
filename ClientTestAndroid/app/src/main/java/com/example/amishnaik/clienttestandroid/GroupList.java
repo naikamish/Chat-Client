@@ -122,8 +122,8 @@ public class GroupList extends AppCompatActivity {
         }
     }
 
-    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String groupName) {
-        Chat chat = new Chat(groupID, clientList, groupUserIDs, creatorID, username, userID, groupName);
+    public void sendGroupList(int groupID, String[] clientList, int[] groupUserIDs, int creatorID, String groupName, byte[][] profileImages) {
+        Chat chat = new Chat(groupID, clientList, groupUserIDs, creatorID, username, userID, groupName, profileImages);
         Connection.addChat(chat);
         startChatActivity(groupID);
     }

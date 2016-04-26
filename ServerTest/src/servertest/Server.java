@@ -120,6 +120,7 @@ public class Server extends JFrame{
                 Message message = new Message("CMD", "ADD", group.getID(),c.getName());
                 message.creatorID = group.getCreatorID();
                 message.userID = c.getID();
+                message.file = c.getImage();
                 group.sendMessage(message);//[]{"CMD", "ADDS", group.getName(), "", c.getName()});//CMD ADDS "+group.getName()+" "+c.getName());
                 group.addConnection(c);
                 return group;

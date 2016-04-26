@@ -1,0 +1,32 @@
+.simpletext {
+	color:#d3d3d3;
+}
+
+.simpletext:hover {
+	color:#ffffff;
+}
+
+.navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover {
+	background-color:#000000;
+	color:#ffffff;
+}
+
+.error {
+	color:red;
+}
+
+.heading {
+	color: white;
+}
+
+.jumbotron {
+	background: #a9a9a9;
+}
+
+.carousel {
+  background: lightgray;
+}
+
+.carousel-caption {
+	background-color: rgba(0,0,0,0.5);
+}

@@ -6,9 +6,11 @@ package com.example.amishnaik.clienttestandroid;
 public class User {
     int userID;
     String userName;
+    byte[] profileImage;
 
-    public User(String userName, int userID){
+    public User(String userName, int userID, byte[] profileImage){
         this.userName = userName;
         this.userID = userID;
+        this.profileImage = profileImage;
     }
 }

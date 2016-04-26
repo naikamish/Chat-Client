@@ -143,7 +143,7 @@ public class Connection {
     private void addGroupMember(Message message){
         for(Chat chat:chats){
             if(chat.groupID==message.groupID){
-                chat.addUser(new User(message.clientName, message.userID));
+                chat.addUser(new User(message.clientName, message.userID, message.file));
             }
         }
     }
@@ -248,7 +248,7 @@ public class Connection {
                                 Message message = (Message) input.readObject();
                                 if(message.type.equals("CMD")){
                                     if(message.cmd.equals("START")){
-                                        channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName);//groupName, groupList);
+                                        channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName, message.groupImages);//groupName, groupList);
                                     }
                                     else if(message.cmd.equals("ADD")){
                                         String[] client = {message.clientName};

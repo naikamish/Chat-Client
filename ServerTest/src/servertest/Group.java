@@ -89,4 +89,14 @@ public class Group {
       //  }
         return groupIDs;
     }
+    
+    public byte[][] getGroupImages(){
+        byte[][] groupImages = new byte[connections.size()][];
+        int i=0;
+        for(Connection connection: connections){
+            groupImages[i]=connection.getImage();
+            i++;
+        }
+        return groupImages;
+    }
 }

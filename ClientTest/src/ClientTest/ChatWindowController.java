@@ -221,9 +221,36 @@ public class ChatWindowController implements Initializable {
         return wr;
     }
     
-    private void addUser(String username, int id){
+    private void addUser(String username, int id, byte[] profileImage){
         HBox hbox = new HBox();
-        ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
+        ImageView icon = new ImageView();
+        if(profileImage.length>0){
+            try{
+                ByteArrayInputStream bais = new ByteArrayInputStream(profileImage);
+                BufferedImage bf = ImageIO.read(bais);
+
+                WritableImage wr = null;
+                if (bf != null) {
+                    wr = new WritableImage(bf.getWidth(), bf.getHeight());
+                    PixelWriter pw = wr.getPixelWriter();
+                    for (int x = 0; x < bf.getWidth(); x++) {
+                        for (int y = 0; y < bf.getHeight(); y++) {
+                            pw.setArgb(x, y, bf.getRGB(x, y));
+                        }
+                    }
+                }
+
+                icon = new ImageView(wr);
+            }
+            catch(Exception e){
+
+            }
+        }
+        else{
+            icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
+        }
+        
+        //ImageView icon = new ImageView(new Image(ClientTest.class.getResourceAsStream("images/anon.jpg")));
         icon.fitHeightProperty().set(55.0);
         icon.fitWidthProperty().set(53.0);
         
@@ -320,24 +347,24 @@ public class ChatWindowController implements Initializable {
         });
     }
     
-    public void setGroupList(String[] list, int[] idList, int creatorID){
+    public void setGroupList(String[] list, int[] idList, int creatorID, byte[][] profileImages){
         this.creatorID = creatorID;
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
                 for(int i=0; i<list.length; i++){
-                    addUser(list[i],idList[i]);
+                    addUser(list[i],idList[i], profileImages[i]);
                 }
             }
         });
     } 
     
-    public void addGroupMember(String[] list, int[] idList){
+    public void addGroupMember(String[] list, int[] idList, byte[] profileImage){
         Platform.runLater(new Runnable() {
             @Override
             public void run(){
                 for(int i=0; i<list.length; i++){
-                    addUser(list[i],idList[i]);
+                    addUser(list[i],idList[i], profileImage);
                     showSpecialMessage(list[i]+" has joined the chat");
                 }
             }
