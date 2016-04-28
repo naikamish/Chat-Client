@@ -200,7 +200,7 @@ public class Connection{
                             
                             else if(message.type.equals("LOGIN")){
                                 String pass = message.password;
-                                String query = "select username, userID, email, imgName from users where username='"+message.username+"' and password='"+pass+"';";
+                                String query = "select username, userID, email, imgName, activated from users where username='"+message.username+"' and password='"+pass+"';";
                                 try{
                                     ResultSet resultSet = dbLib.selectQuery(query);
                                     if (!resultSet.next() ) {
@@ -216,16 +216,15 @@ public class Connection{
                                         String profileImageFilename = resultSet.getString("imgName");
                                         
                                         
-                                        query = "select code from codesss where email='"+resultSet.getString("email")+"';";
-                                        resultSet = dbLib.selectQuery(query);
-                                        resultSet.next();
-                                        if(!resultSet.getString("code").matches("1"))
+                                        if(resultSet.getInt("activated")!=1)
                                         {
                                             sendMessage(new Message("LOGIN UNSUCCESSFUL","Account activation pending"));
                                             Server.showMessage("login unsuccessful\n");
                                         }
                                         else{
                                             try{
+                                                String updateQuery = "update users set lastLoginTime=now() where userID="+userID+";";
+                                                dbLib.insertQuery(updateQuery);
                                                 Path imagePath = Paths.get("/var/www/html/chatRegistration/uploads/" + profileImageFilename);
                                                 profileImage = java.nio.file.Files.readAllBytes(imagePath);
                                                 Server.showMessage("successful user image size" + profileImage.length);
