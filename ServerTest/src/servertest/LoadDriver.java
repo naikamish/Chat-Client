@@ -61,12 +61,13 @@ public class LoadDriver {
         }
     }
     
-    public void prepareMessageQuery(String query, int groupID, int userID, String message){
+    public void prepareMessageQuery(String query, int groupID, int userID, String message, int emotion){
         try{
             PreparedStatement pstmt = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
             pstmt.setInt(1, groupID);
             pstmt.setInt(2, userID);
             pstmt.setString(3, message);
+            pstmt.setInt(4, emotion);
             pstmt.execute();
         }
         catch(Exception e){

@@ -55,6 +55,10 @@ public class GroupList extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
     public void connectButtonClick(int id) {
         if(Connection.checkExistingChatWindow(id)){
             startChatActivity(id);
@@ -88,8 +92,6 @@ public class GroupList extends AppCompatActivity {
                 icon.setMinimumWidth(dm.widthPixels);
                 icon.setImageBitmap(bm);
             }
-
-
             else{
                 icon.setImageResource(R.drawable.anon);
             }

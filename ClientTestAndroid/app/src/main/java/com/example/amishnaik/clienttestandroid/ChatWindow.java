@@ -166,6 +166,27 @@ public class ChatWindow extends AppCompatActivity {
                 if (message.cmd.equals("SEND")) {
                     clientMessage.setText(message.message);
                     messageBox.addView(clientMessage);
+                    int emotion = message.emotion;
+                    if(emotion<0){
+                        int r = 255;
+                        int g = 255-Math.min(25*Math.abs(emotion),255);
+                        int b = 255-Math.min(25*Math.abs(emotion),255);
+                        messageBox.setBackgroundColor(Color.rgb(r,g,b));
+                        text.setTextColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                        clientMessage.setTextColor(Color.rgb(255-r, 255-g, 255-b));
+                        text.setHighlightColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                        clientMessage.setHighlightColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                    }
+                    else{
+                        int r = 255-Math.min(25*emotion,255);
+                        int g = 255;
+                        int b = 255-Math.min(25*emotion,255);
+                        messageBox.setBackgroundColor(Color.rgb(r, 255, b));
+                        text.setTextColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                        clientMessage.setTextColor(Color.rgb(255-r, 255-g, 255-b));
+                        text.setHighlightColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                        clientMessage.setHighlightColor(Color.rgb(255 - r, 255 - g, 255 - b));
+                    }
                 }
                 else if (message.cmd.equals("FILE") || message.cmd.equals("DOODLE")) {
                     LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(500, 500);

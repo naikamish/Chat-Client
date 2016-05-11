@@ -63,6 +63,15 @@ public class Connection{
         output.flush();
         }
         catch(Exception e){Server.showMessage("conn line 62" + e.toString());
+            try{
+                input.close();
+                connection.close();
+                closed = true;
+                removeConnection();
+            }
+            catch(Exception ex){
+                System.out.println("conn line 73"+ex.toString());
+            }
         }
     }
     
@@ -83,7 +92,25 @@ public class Connection{
                                             String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
                                             try{
                                                 dbLib.prepareJoinExitQuery(insertQuery, message.groupID, message.userID, 1);
-                                                //Server.showMessage(query);
+                                                String selectQuery = "select b.* from (select u.username as username, m.userID as userID, m.message as message, m.messageID from messages m inner join users u on m.userID=u.userID where m.groupID="+message.groupID+" order by messageID desc LIMIT 20) b order by b.messageID asc;";
+                                                try{
+                                                Server.showMessage(selectQuery);
+                                                ResultSet resultSet2 = dbLib.selectQuery(selectQuery);
+                                                while(resultSet2.next()){
+                                                    Message message2 = new Message();
+                                                    message2.type="MSG";
+                                                    message2.cmd="SEND";
+                                                    message2.userID=resultSet2.getInt("userID");
+                                                    message2.clientName = resultSet2.getString("username");
+                                                    message2.groupID=message.groupID;
+                                                    message2.message=resultSet2.getString("message");
+                                                    sendMessage(message2);
+                                                    Server.showMessage(message2.message);
+                                                }
+                                                }
+                                                catch(Exception e){
+                                                    Server.showMessage("conn line 112"+e.toString());
+                                                }
                                             }
                                             catch(Exception e){
                                                 Server.showMessage("conn line 86"+e.toString());
@@ -156,10 +183,12 @@ public class Connection{
                                     Server.sendGroupMessage(message);
                                 }
                                 else{
+                                    int emotion = Server.calculateEmotion(message.message);
+                                    message.emotion = emotion;
                                     Server.sendGroupMessage(message);//MSG", "SEND", message[2],message[3],message[4]}); 
-                                    String query = "insert into messages(groupID, userID, message) values(?,?,?);";
+                                    String query = "insert into messages(groupID, userID, message, emotion) values(?,?,?,?);";
                                     try{
-                                        dbLib.prepareMessageQuery(query, message.groupID, message.userID, message.message);
+                                        dbLib.prepareMessageQuery(query, message.groupID, message.userID, message.message, message.emotion);
                                         Server.showMessage(query);
                                     }
                                     catch(Exception e){

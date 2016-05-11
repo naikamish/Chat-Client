@@ -5,10 +5,16 @@
  */
 package message;
 
-
+/**
+ *
+ * @author Amish Naik
+ */
 import java.io.Serializable;
-import java.util.LinkedList;
 
+/**
+ *
+ * @author Amish Naik
+ */
 public class Message implements Serializable{
     private static final long serialVersionUID = 5950169519310163575L;
     public String type="", cmd="", groupName="", clientName="", message="";
@@ -23,6 +29,7 @@ public class Message implements Serializable{
     public int userID, groupID, creatorID;
     public int[] groupUserIDs, groupIDList;
     public byte[][] groupImages;
+    public int emotion=0;
 
     public Message(){
 

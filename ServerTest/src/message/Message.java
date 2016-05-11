@@ -9,9 +9,7 @@ package message;
  *
  * @author Amish Naik
  */
-import java.awt.geom.GeneralPath;
 import java.io.Serializable;
-import java.util.LinkedList;
 
 /**
  *
@@ -31,6 +29,7 @@ public class Message implements Serializable{
     public int userID, groupID, creatorID;
     public int[] groupUserIDs, groupIDList;
     public byte[][] groupImages;
+    public int emotion=0;
     
     public Message(){
         

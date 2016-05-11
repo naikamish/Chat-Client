@@ -31,12 +31,13 @@ public class Server extends JFrame{
     private static ArrayList<Connection> connections = new ArrayList<Connection>();
     private static String fullText = "";
     private static LoadDriver dbLib;
+    public static TrieTree dictionary;
 
     private Thread t1;
     
     public Server(){
         super("Server Chat");
-        
+        createTrie();
         chatWindow = new JTextPane();
         chatWindow.setContentType("text/html");
         chatWindow.setAutoscrolls(true);
@@ -207,5 +208,38 @@ public class Server extends JFrame{
                 }
             }
         );
+    }
+    
+    public static void createTrie(){
+        dictionary = new TrieTree();
+        
+        populateDictionary("negative-words.txt",-1);
+        populateDictionary("positive-words.txt",1);
+    }
+    
+    public static void populateDictionary(String string, int value){
+        try {
+            InputStream is = ServerTest.class.getResourceAsStream(string);  
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String line = br.readLine();
+            while (line != null) {
+                dictionary.addWord(line, value);
+                line = br.readLine();
+            }
+            br.close();
+        } 
+        catch(Exception e){
+            e.printStackTrace();
+        } 
+    }
+    
+    public static int calculateEmotion(String string){
+        int emotion=0;
+        String[] sentence = string.split(" ");
+        for(String str:sentence){
+            emotion+=dictionary.findWord(str);
+        }
+        return emotion;
     }
 }
