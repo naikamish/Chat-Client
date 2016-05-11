@@ -32,6 +32,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -49,8 +50,12 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
@@ -113,17 +118,18 @@ public class ChatWindowController implements Initializable {
         this.groupID = groupID;
         this.userID = userID;
         this.groupName = groupName;
-        System.out.println(groupName+"hello");
     }
     
     @FXML
     private void enterPressed(ActionEvent event) {
         TextField source = (TextField)event.getSource();
-        Message message = new Message("MSG", "SEND", groupID, clientName, source.getText());
-        message.groupName = getGroupName();
-        message.userID = this.userID;
-        sendMessage(message);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
-        source.clear();
+        if(source.getText().length()>0){
+            Message message = new Message("MSG", "SEND", groupID, clientName, source.getText());
+            message.groupName = getGroupName();
+            message.userID = this.userID;
+            sendMessage(message);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+            source.clear();
+        }
     }
     
     public String getGroupName(){
@@ -148,9 +154,30 @@ public class ChatWindowController implements Initializable {
                 text.getChildren().add(activeUser);
                 
                 if(message.cmd.equals("SEND")){
-                Text messageText=new Text(message.message);
-                messageText.getStyleClass().add("messageText");
-                text.getChildren().add(messageText);
+                    Text messageText=new Text(message.message);
+                    messageText.getStyleClass().add("messageText");
+                    text.getChildren().add(messageText);
+                    int emotion = message.emotion;
+                    if(emotion<0){
+                        int r = 255;
+                        int g = 255-Math.min(25*Math.abs(emotion),255);
+                        int b = 255-Math.min(25*Math.abs(emotion),255);
+                        text.setStyle("-fx-background-color: rgba("+r+","+g+","+b+",1);");
+                        //text.setStyle("-fx-padding: 45px;");
+                        //text.setStyle("-fx-background-radius: 5;");
+                        //text.setBackground(new Background(new BackgroundFill(Color.rgb(r,g,b), CornerRadii.EMPTY, Insets.EMPTY)));
+                        messageText.setFill(Color.rgb(255 - r, 255 - g, 255 - b));
+                        activeUser.setFill(Color.rgb(255-r, 255-g, 255-b));
+                    }
+                    else{
+                        int r = 255-Math.min(25*emotion,255);
+                        int g = 255;
+                        int b = 255-Math.min(25*emotion,255);
+                        text.setStyle("-fx-background-color: rgba("+r+","+g+","+b+",1);");
+                        //text.setBackground(new Background(new BackgroundFill(Color.rgb(r, 255, b), CornerRadii.EMPTY, Insets.EMPTY)));
+                        messageText.setFill(Color.rgb(255 - r, 255 - g, 255 - b));
+                        activeUser.setFill(Color.rgb(255 - r, 255 - g, 255 - b));
+                    }
                 }
                 
                 else if(message.cmd.equals("FILE")||message.cmd.equals("DOODLE")){

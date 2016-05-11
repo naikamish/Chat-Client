@@ -27,19 +27,15 @@ and open the template in the editor.
 
 .message{
     -fx-padding:15px;
-    -fx-color:#fff;
-    -fx-background-color:#fff;
     -fx-background-radius: 5;
 }
 
 .activeUser{
     -fx-font-weight:bold;
-    -fx-fill:#f00;
 }
 
 .passiveUser{
     -fx-font-weight:bold;
-    -fx-fill:#00f;
 }
 
 .messageText{

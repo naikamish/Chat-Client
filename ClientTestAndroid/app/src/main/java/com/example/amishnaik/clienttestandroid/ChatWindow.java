@@ -72,19 +72,26 @@ public class ChatWindow extends AppCompatActivity {
         }
 
 
-
+        final ChatWindow activity = this;
         final EditText sendMessageBox = (EditText) findViewById(R.id.sendMessageBox);
         sendMessageBox.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    Message newMessage = new Message("MSG", "SEND", groupID, chat.username, sendMessageBox.getText().toString());
-                    newMessage.groupName = chat.groupName;
-                    newMessage.userID = chat.userID;
-                    sendMessage(newMessage);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
-                    sendMessageBox.clearFocus();
-                    sendMessageBox.setText("");
-                    return true;
+                    if(sendMessageBox.getText().length()>0) {
+                        Message newMessage = new Message("MSG", "SEND", groupID, chat.username, sendMessageBox.getText().toString());
+                        newMessage.groupName = chat.groupName;
+                        newMessage.userID = chat.userID;
+                        sendMessage(newMessage);//MSG "+groupName+" "+clientName + " - " + e.getActionCommand());
+                        sendMessageBox.clearFocus();
+                        sendMessageBox.setText("");
+                        return true;
+                    }
+                    else{
+                        Toast toast = Toast.makeText(activity, "Message cannot be blank.", Toast.LENGTH_LONG);
+                        toast.show();
+                        return false;
+                    }
                 }
                 return false;
             }

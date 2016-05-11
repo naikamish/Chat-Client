@@ -51,9 +51,9 @@ public class Connection {
                     while(true){
                         try{
                             Message message = (Message) input.readObject();
-                            System.out.println(message.type);
                             if(message.type.equals("CMD")){
                                 if(message.cmd.equals("START")){
+                                    System.out.println("Start");
                                     channelListController.sendGroupList(message.groupID, message.clientList, message.groupUserIDs, message.creatorID, message.groupName, message.groupImages);//groupName, groupList);
                                 }
                                 else if(message.cmd.equals("ADD")){
@@ -72,6 +72,7 @@ public class Connection {
                                 JOptionPane.showMessageDialog(null,"You have been banned from this group");
                             }
                             else if(message.type.equals("MSG")){
+                                System.out.println("MSG");
                                 channelListController.showMessage(message);
                             }
                             else if(message.type.equals("LOGIN SUCCESSFUL")){

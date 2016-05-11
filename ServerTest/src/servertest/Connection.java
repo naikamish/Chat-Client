@@ -92,7 +92,7 @@ public class Connection{
                                             String insertQuery = "insert into groupJoins(groupID, userID, status) values(?,?,?);";
                                             try{
                                                 dbLib.prepareJoinExitQuery(insertQuery, message.groupID, message.userID, 1);
-                                                String selectQuery = "select b.* from (select u.username as username, m.userID as userID, m.message as message, m.messageID from messages m inner join users u on m.userID=u.userID where m.groupID="+message.groupID+" order by messageID desc LIMIT 20) b order by b.messageID asc;";
+                                                String selectQuery = "select b.* from (select m.emotion as emotion, u.username as username, m.userID as userID, m.message as message, m.messageID from messages m inner join users u on m.userID=u.userID where m.groupID="+message.groupID+" order by messageID desc LIMIT 20) b order by b.messageID asc;";
                                                 try{
                                                 Server.showMessage(selectQuery);
                                                 ResultSet resultSet2 = dbLib.selectQuery(selectQuery);
@@ -104,6 +104,7 @@ public class Connection{
                                                     message2.clientName = resultSet2.getString("username");
                                                     message2.groupID=message.groupID;
                                                     message2.message=resultSet2.getString("message");
+                                                    message2.emotion = resultSet2.getInt("emotion");
                                                     sendMessage(message2);
                                                     Server.showMessage(message2.message);
                                                 }

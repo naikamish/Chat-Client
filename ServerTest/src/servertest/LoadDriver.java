@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import java.util.Properties;
 /**
  *
  * @author Amish Naik
@@ -23,8 +24,13 @@ public class LoadDriver {
     
     public LoadDriver(String address, String user, String password){
         try {
+            Properties props = new Properties();
+            props.put("user", user);
+            props.put("password", password);
+
+            props.put("autoReconnect", "true");
             conn =
-               DriverManager.getConnection(address,user,password);
+               DriverManager.getConnection(address,props);
         } catch (SQLException ex) {
             // handle any errors
             System.out.println("SQLException: " + ex.getMessage());
